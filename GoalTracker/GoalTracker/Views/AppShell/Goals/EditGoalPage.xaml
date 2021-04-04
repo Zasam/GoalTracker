@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:textInputLayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms"
+             xmlns:pickers="clr-namespace:Syncfusion.XForms.Pickers;assembly=Syncfusion.SfPicker.XForms"
+             xmlns:buttons="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
+             xmlns:xForms="clr-namespace:Syncfusion.SfPicker.XForms;assembly=Syncfusion.SfPicker.XForms"
+             xmlns:border="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
+             xmlns:progressBar="clr-namespace:Syncfusion.XForms.ProgressBar;assembly=Syncfusion.SfProgressBar.XForms"
+             x:Class="GoalTracker.Views.AppShell.Goals.EditGoalPage">
+    <ContentPage.Content>
+        <ScrollView>
+            <Grid Style="{StaticResource DefaultGrid}" RowSpacing="15">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="250"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="250"/>
+                    <RowDefinition Height="200"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <textInputLayout:SfTextInputLayout x:Name="GoalTitleTextInputLayout" Hint="&#x1F945; Titel" ErrorText="Du solltest deinem Ziel einen beschreibenden Namen geben." HelperText="Formuliere dein Ziel genau aus">
+                    <textInputLayout:SfTextInputLayout.InputView>
+                        <Entry x:Name="GoalTitleEntry" Text="{Binding GoalTitle}"/>
+                    </textInputLayout:SfTextInputLayout.InputView>
+                </textInputLayout:SfTextInputLayout>
+
+                <textInputLayout:SfTextInputLayout x:Name="GoalNotesTextInputLayout" Hint="&#x1F4D6; Notizen" Grid.Row="1" HelperText="Hinterlasse eine Notiz, z.B warum du dieses Ziel verwirklichen willst">
+                    <textInputLayout:SfTextInputLayout.InputView>
+                        <Editor x:Name="GoalNotesEditor" AutoSize="TextChanges" Text="{Binding GoalNotes}"/>
+                    </textInputLayout:SfTextInputLayout.InputView>
+                </textInputLayout:SfTextInputLayout>
+
+                <border:SfBorder Grid.Row="2" HasShadow="True" ShadowColor="Black" BorderWidth="0">
+                    <pickers:SfDatePicker x:Name="GoalStartDatePicker"
+                                                       Date="{Binding GoalStartDate}"
+                                                       MinimumDate="{Binding GoalMinimumStartDate}"
+                                                       HeaderText="&#x1F5D3; Start"/>
+                </border:SfBorder>
+
+                <buttons:SfCheckBox Grid.Row="3"  x:Name="GoalHasDueDateCheckBox"
+                                              IsChecked="{Binding GoalHasDueDate}" 
+                                              Text="Endet"/>
+
+                <pickers:SfDatePicker x:Name="GoalEndDatePicker"
+                                                   Grid.Row="4"
+                                                   Grid.Column="0"
+                                                   Date="{Binding GoalEndDate}"
+                                                   MinimumDate="{Binding GoalMinimumEndDate}"
+                                                   IsVisible="{Binding GoalHasDueDate}"
+                                                   HeaderText="&#x1F5D3; Ende"/>
+
+                <pickers:SfTimePicker x:Name="GoalNotificationTimePicker"
+                                                   Grid.Row="5"
+                                                   Grid.Column="0"
+                                                   HeaderText="&#x23F0; Erste Benachrichtigung"
+                                                   EnableLooping="True"
+                                                   Time="{Binding GoalNotificationTime}"
+                                                   TimeSelected="GoalNotificationTimePicker_TimeSelected"/>
+                <!--Margin="{Binding GoalHasDueDate, Converter={StaticResource BoolToMarginConverter}}"/> -->
+
+                <xForms:SfPicker x:Name="GoalNotificationIntervalPicker"
+                                           Grid.Row="6"
+                                           Grid.Column="0"
+                                           HeaderText="&#x23F0; Erinnerungsinterval"
+                                           ItemsSource="{Binding GoalNotificationIntervals}"
+                                           SelectedIndex="{Binding GoalNotificationIntervalIndex}"/>
+
+                <!-- Goal Tasks section -->
+                <ScrollView Grid.Row="7" BackgroundColor="{DynamicResource Surface}">
+                    <StackLayout Padding="15">
+                        <Label Style="{StaticResource HeaderLabel}" Text="Aufgaben"/>
+                        <StackLayout x:Name="GoalTaskStackLayout"/>
+                        <StackLayout Padding="75, 0, 75, 0">
+                            <buttons:SfButton WidthRequest="75" x:Name="AddGoalTaskButton" Text="Aufgabe hinzufügen" Clicked="AddGoalTaskButton_OnClicked" FontSize="10" HorizontalOptions="Fill"/>
+                        </StackLayout>
+                        <StackLayout Padding="75, 0, 75, 0">
+                            <buttons:SfButton WidthRequest="75" x:Name="RemoveGoalTaskButton" IsVisible="False" Text="Aufgabe entfernen" Clicked="RemoveGoalTaskButton_OnClicked" FontSize="10" HorizontalOptions="Fill"/>
+                        </StackLayout>
+                    </StackLayout>
+                </ScrollView>
+
+                <Label x:Name="ErrorTextLabel" IsVisible="False" TextColor="{StaticResource Error}" Text="Du hast leider nicht alle benötigten Felder ausgefüllt." Grid.Row="8"/>
+
+                <StackLayout Grid.Row="9" Padding="50, 0, 50, 0">
+                    <buttons:SfButton x:Name="SaveGoalButton" Text="Speichern" Clicked="SaveGoalButton_OnClicked"/>
+                </StackLayout>
+            </Grid>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

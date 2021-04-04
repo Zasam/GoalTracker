@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:syncfusionBorder="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
+             xmlns:syncfusionButton="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
+             xmlns:syncfusionDatePicker="clr-namespace:Syncfusion.XForms.Pickers;assembly=Syncfusion.SfPicker.XForms"
+             xmlns:syncfusionListView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+             xmlns:syncfusionTextInputLayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms"
+             xmlns:syncfusionPicker="clr-namespace:Syncfusion.SfPicker.XForms;assembly=Syncfusion.SfPicker.XForms"
+             xmlns:syncfusionNumericUpDown="clr-namespace:Syncfusion.SfNumericUpDown.XForms;assembly=Syncfusion.SfNumericUpDown.XForms"
+             xmlns:syncfusionPullToRefresh="clr-namespace:Syncfusion.SfPullToRefresh.XForms;assembly=Syncfusion.SfPullToRefresh.XForms"
+             xmlns:syncfusionCalendar="clr-namespace:Syncfusion.SfCalendar.XForms;assembly=Syncfusion.SfCalendar.XForms"
+             x:Class="GoalTracker.App">
+    <!--
+        Define global resources and styles here, that apply to all pages in your app.
+    -->
+    <Application.Resources>
+        <ResourceDictionary Source="Themes/LightTheme.xaml">
+            <!-- Main colors -->
+            <Color x:Key="Primary">#86B5FC</Color>
+            <Color x:Key="PrimaryVariant">#006BB3</Color>
+            <Color x:Key="Secondary">#03DAC6</Color>
+            <Color x:Key="SecondaryVariant">#03DAC6</Color>
+            <Color x:Key="TextOnPrimary">#000000</Color>
+            <Color x:Key="TextOnSecondary">#000000</Color>
+
+            <!-- Indication colors -->
+            <Color x:Key="Error">#CF6679</Color>
+            <Color x:Key="Success">#64CCA4</Color>
+
+            <!-- StackLayout -->
+            <Style TargetType="StackLayout" x:Key="DefaultStackLayout">
+                <Setter Property="BackgroundColor" Value="{DynamicResource Background}"/>
+            </Style>
+
+            <!-- ScrollView -->
+            <Style TargetType="ScrollView">
+                <Setter Property="HorizontalOptions" Value="Fill"/>
+                <Setter Property="VerticalOptions" Value="Fill"/>
+                <Setter Property="VerticalScrollBarVisibility" Value="Never"/>
+                <Setter Property="BackgroundColor" Value="{DynamicResource Background}"/>
+            </Style>
+
+            <!-- Grid -->
+            <Style TargetType="Grid">
+                <Setter Property="RowSpacing" Value="0"/>
+                <Setter Property="ColumnSpacing" Value="0"/>
+            </Style>
+
+            <Style TargetType="Grid" x:Key="DefaultGrid">
+                <Setter Property="RowSpacing" Value="0"/>
+                <Setter Property="ColumnSpacing" Value="0"/>
+                <Setter Property="BackgroundColor" Value="{DynamicResource Background}"/>
+                <Setter Property="Padding" Value="15"/>
+            </Style>
+
+            <!-- Image -->
+            <Style TargetType="Image" x:Key="ListViewItemImage">
+                <Setter Property="Scale" Value="0.45"/>
+            </Style>
+
+            <Style TargetType="Image" x:Key="ListViewDetailItemImage">
+                <Setter Property="Scale" Value="0.35"/>
+            </Style>
+
+            <!-- Label -->
+            <Style TargetType="Label">
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="TextColor" Value="{DynamicResource TextOnSurface}"/>
+            </Style>
+
+            <Style TargetType="Label" x:Key="HeaderLabel">
+                <Setter Property="FontSize" Value="25"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="VerticalTextAlignment" Value="Center"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="TextColor" Value="{DynamicResource TextOnSurface}"/>
+            </Style>
+
+            <Style TargetType="Label" x:Key="ItemLabel">
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="VerticalTextAlignment" Value="Center"/>
+                <Setter Property="HorizontalTextAlignment" Value="Start"/>
+                <Setter Property="TextColor" Value="{DynamicResource TextOnSurface}"/>
+                <Setter Property="LineBreakMode" Value="WordWrap"/>
+            </Style>
+
+            <Style TargetType="Label" x:Key="DetailItemLabel">
+                <Setter Property="FontSize" Value="10"/>
+                <Setter Property="VerticalTextAlignment" Value="Center"/>
+                <Setter Property="HorizontalTextAlignment" Value="Start"/>
+                <Setter Property="TextColor" Value="{DynamicResource TextOnSurface}"/>
+                <Setter Property="LineBreakMode" Value="WordWrap"/>
+            </Style>
+
+            <!-- Syncfusion text input layout -->
+            <Style TargetType="syncfusionTextInputLayout:SfTextInputLayout">
+                <Setter Property="ContainerType" Value="Filled"/>
+                <Setter Property="OutlineCornerRadius" Value="8"/>
+                <Setter Property="ContainerBackgroundColor" Value="{DynamicResource Surface}"/>
+                <Setter Property="FocusedColor" Value="{StaticResource Primary}"/>
+                <Setter Property="BackgroundColor" Value="{DynamicResource SurfaceVariant}"/>
+                <Setter Property="Margin" Value="0, 0, 0, 10"/>
+            </Style>
+
+            <Style TargetType="syncfusionTextInputLayout:SfTextInputLayout" x:Key="TextInputLayoutVariantStyle">
+                <Setter Property="ContainerType" Value="Filled"/>
+                <Setter Property="OutlineCornerRadius" Value="8"/>
+                <Setter Property="ContainerBackgroundColor" Value="{DynamicResource Surface}"/>
+                <Setter Property="FocusedColor" Value="{StaticResource Primary}"/>
+            </Style>
+
+            <!-- syncfusion border -->
+            <Style TargetType="syncfusionBorder:SfBorder" x:Key="BorderContainer">
+                <Setter Property="BackgroundColor" Value="{DynamicResource Surface}"/>
+                <Setter Property="BorderColor" Value="Transparent"/>
+            </Style>
+
+            <Style TargetType="syncfusionBorder:SfBorder" x:Key="ViewcellBorderContainer">
+                <Setter Property="BackgroundColor" Value="{DynamicResource Surface}"/>
+                <Setter Property="BorderWidth" Value="1"/>
+                <Setter Property="BorderColor" Value="{DynamicResource SurfaceVariant}"/>
+            </Style>
+
+            <Style TargetType="syncfusionBorder:SfBorder" x:Key="SelectedViewcellBorderContainer">
+                <Setter Property="BackgroundColor" Value="{DynamicResource SurfaceVariant}"/>
+                <Setter Property="BorderWidth" Value="1"/>
+                <Setter Property="BorderColor" Value="{DynamicResource Primary}"/>
+            </Style>
+
+            <!-- Entry -->
+            <Style TargetType="Entry">
+                <Setter Property="TextColor" Value="{DynamicResource TextOnSurface}"/>
+            </Style>
+
+            <!-- Syncfusion date picker -->
+            <Style TargetType="syncfusionDatePicker:SfDatePicker">
+                <Setter Property="Format" Value="dd_MMM_yyyy"/>
+                <Setter Property="HeightRequest" Value="200"/>
+                <Setter Property="HeaderBackgroundColor" Value="{DynamicResource Primary}"/>
+                <Setter Property="ColumnHeaderBackgroundColor" Value="{DynamicResource PrimaryVariant}"/>
+                <Setter Property="BackgroundColor" Value="{DynamicResource Surface}"/>
+                <Setter Property="SelectedItemTextColor" Value="{StaticResource Primary}"/>
+                <Setter Property="UnselectedItemTextColor" Value="{StaticResource Primary}"/>
+                <Setter Property="BorderColor" Value="{DynamicResource SurfaceVariant}"/>
+                <Setter Property="ColumnHeaderTextColor" Value="{DynamicResource TextOnSurface}"/>
+            </Style>
+
+            <!-- Syncfusion time picker -->
+            <Style TargetType="syncfusionDatePicker:SfTimePicker">
+                <Setter Property="Format" Value="HH_mm"/>
+                <Setter Property="HeightRequest" Value="200"/>
+                <Setter Property="HeaderBackgroundColor" Value="{DynamicResource Primary}"/>
+                <Setter Property="ColumnHeaderBackgroundColor" Value="{DynamicResource PrimaryVariant}"/>
+                <Setter Property="BackgroundColor" Value="{DynamicResource Surface}"/>
+                <Setter Property="SelectedItemTextColor" Value="{StaticResource Primary}"/>
+                <Setter Property="UnselectedItemTextColor" Value="{StaticResource Primary}"/>
+                <Setter Property="BorderColor" Value="{DynamicResource SurfaceVariant}"/>
+                <Setter Property="ColumnHeaderTextColor" Value="{DynamicResource TextOnSurface}"/>
+            </Style>
+
+            <Style TargetType="syncfusionDatePicker:SfTimePicker" x:Key="TimePickerAppConfiguration">
+                <Setter Property="Format" Value="HH_mm"/>
+                <Setter Property="HeightRequest" Value="200"/>
+                <Setter Property="HeaderBackgroundColor" Value="{DynamicResource Primary}"/>
+                <Setter Property="ColumnHeaderBackgroundColor" Value="{DynamicResource PrimaryVariant}"/>
+                <Setter Property="BackgroundColor" Value="{DynamicResource Surface}"/>
+                <Setter Property="SelectedItemTextColor" Value="{StaticResource Primary}"/>
+                <Setter Property="UnselectedItemTextColor" Value="{StaticResource Primary}"/>
+                <Setter Property="BorderColor" Value="{DynamicResource SurfaceVariant}"/>
+                <Setter Property="ColumnHeaderTextColor" Value="{DynamicResource TextOnSurface}"/>
+            </Style>
+
+            <!-- Syncfusion picker -->
+            <Style TargetType="syncfusionPicker:SfPicker">
+                <Setter Property="SelectedIndex" Value="0"/>
+                <Setter Property="HeightRequest" Value="150"/>
+                <Setter Property="HeaderBackgroundColor" Value="{DynamicResource Primary}"/>
+                <Setter Property="ColumnHeaderBackgroundColor" Value="{DynamicResource PrimaryVariant}"/>
+                <Setter Property="BackgroundColor" Value="{DynamicResource Surface}"/>
+                <Setter Property="SelectedItemTextColor" Value="{StaticResource Primary}"/>
+                <Setter Property="BorderColor" Value="{DynamicResource SurfaceVariant}"/>
+                <Setter Property="ColumnHeaderTextColor" Value="{DynamicResource TextOnSurface}"/>
+            </Style>
+
+            <!-- Syncfusion pull to refresh -->
+            <Style TargetType="syncfusionPullToRefresh:SfPullToRefresh">
+                <Setter Property="VerticalOptions" Value="FillAndExpand"/>
+                <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+                <Setter Property="HeightRequest" Value="1000"/>
+                <Setter Property="ProgressStrokeColor" Value="{StaticResource Primary}"/>
+                <Setter Property="ProgressBackgroundColor" Value="{StaticResource PrimaryVariant}"/>
+            </Style>
+
+            <!-- Syncfusion listview -->
+            <Style TargetType="syncfusionListView:SfListView">
+                <Setter Property="IsStickyHeader" Value="True"/>
+                <Setter Property="AutoFitMode" Value="DynamicHeight"/>
+                <Setter Property="VerticalOptions" Value="FillAndExpand"/>
+                <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+                <Setter Property="ItemsSourceChangeCachingStrategy" Value="ClearItems"/>
+                <Setter Property="BackgroundColor" Value="{DynamicResource Surface}"/>
+                <Setter Property="SelectionBackgroundColor" Value="{StaticResource Primary}"/>
+                <Setter Property="FocusBorderColor" Value="{StaticResource PrimaryVariant}"/>
+                <Setter Property="SelectionMode" Value="SingleDeselect"/>
+                <Setter Property="SelectionGesture" Value="Tap"/>
+            </Style>
+
+            <!-- Syncfusion checkbox -->
+            <Style TargetType="syncfusionButton:SfCheckBox">
+                <Setter Property="FontSize" Value="20"/>
+                <Setter Property="HorizontalOptions" Value="CenterAndExpand"/>
+                <Setter Property="TextColor" Value="{DynamicResource TextOnBackground}"/>
+                <Setter Property="TickColor" Value="{DynamicResource SurfaceVariant}"/>
+                <Setter Property="CheckedColor" Value="{StaticResource Primary}"/>
+                <Setter Property="UncheckedColor" Value="{DynamicResource TextOnSurface}"/>
+            </Style>
+
+            <!-- Syncfusion numeric up down -->
+            <Style TargetType="syncfusionNumericUpDown:SfNumericUpDown">
+                <Setter Property="FontSize" Value="25"/>
+                <Setter Property="HeightRequest" Value="50"/>
+            </Style>
+
+            <!-- Syncfusion button -->
+            <Style TargetType="syncfusionButton:SfButton">
+                <Setter Property="CornerRadius" Value="15"/>
+                <Setter Property="WidthRequest" Value="50"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource Primary}"/>
+                <Setter Property="TextColor" Value="{StaticResource TextOnPrimary}"/>
+                <Setter Property="HasShadow" Value="True"/>
+                <Setter Property="BorderWidth" Value="1"/>
+                <Setter Property="BorderColor" Value="{DynamicResource SurfaceVariant}"/>
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="{StaticResource Primary}"/>
+                                    <Setter Property="TextColor" Value="{StaticResource TextOnPrimary}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="{DynamicResource SurfaceVariant}" />
+                                    <Setter Property="TextColor" Value="{DynamicResource TextOnSurface}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Pressed">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="{StaticResource PrimaryVariant}"/>
+                                    <Setter Property="TextColor" Value="{StaticResource TextOnPrimary}"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

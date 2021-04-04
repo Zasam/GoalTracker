@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:syncfusionListView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:converter="clr-namespace:GoalTracker.Converter"
+             x:Class="GoalTracker.Views.AppShell.Settings.Achievements.AchievementsPage"
+             Title="Erfolge">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:BoolToStringConverter x:Key="boolToStringConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout>
+            <StackLayout>
+                <syncfusionListView:SfListView ItemsSource="{Binding Achievements}">
+                    <syncfusionListView:SfListView.HeaderTemplate>
+                        <DataTemplate>
+                            <StackLayout>
+                                <Label Style="{StaticResource HeaderLabel}" Text="Erfolge"/>
+                            </StackLayout>
+                        </DataTemplate>
+                    </syncfusionListView:SfListView.HeaderTemplate>
+
+                    <syncfusionListView:SfListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout Orientation="Horizontal">
+                                <StackLayout>
+                                    <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+                                        <Label Text="{Binding Title, StringFormat='Titel: {0}'}"/>
+                                    </StackLayout>
+                                    <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+                                        <Label Text="{Binding Unlocked, Converter={StaticResource boolToStringConverter}, StringFormat='Freigeschaltet: {0}'}"/>
+                                    </StackLayout>
+                                </StackLayout>
+                            </StackLayout>
+                        </DataTemplate>
+                    </syncfusionListView:SfListView.ItemTemplate>
+                </syncfusionListView:SfListView>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,284 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:syncfusionListView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+             xmlns:syncfusionPullToRefresh="clr-namespace:Syncfusion.SfPullToRefresh.XForms;assembly=Syncfusion.SfPullToRefresh.XForms"
+             xmlns:progressbar="clr-namespace:Syncfusion.XForms.ProgressBar;assembly=Syncfusion.SfProgressBar.XForms"
+             xmlns:border="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
+             xmlns:converter="clr-namespace:GoalTracker.Converter;assembly=GoalTracker"
+             x:Class="GoalTracker.Views.AppShell.Goals.GoalsPage"
+             Title="Meine Ziele">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Neues Ziel" Clicked="AddGoalToolbarItem_OnClicked"/>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:ValueToVisibilityConverter x:Key="ValueToVisibilityConverter"/>
+            <converter:BoolToStringConverter x:Key="BoolToStringConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="75"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="55*"/>
+                    <ColumnDefinition Width="45*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0" Grid.Column="0" x:Name="UsernameLabel" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontSize="12" LineBreakMode="WordWrap" Margin="20, 0, 0, 0"/>
+                <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="1" HorizontalOptions="Center">
+                    <Label Text="{Binding AchievementProgressPoints}" FontSize="12" VerticalTextAlignment="Center"/>
+                    <Label Text="XP gesammelt" FontSize="12" VerticalTextAlignment="Center"/>
+                    <progressbar:SfCircularProgressBar Progress="{Binding AchievementProgress}" WidthRequest="50" HeightRequest="50"/>
+                </StackLayout>
+            </Grid>
+            <StackLayout Grid.Column="0" Grid.Row="1" Padding="15,5,15,15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <syncfusionPullToRefresh:SfPullToRefresh x:Name="GoalListViewPullToRefresh"
+                                                             Refreshing="GoalListViewPullToRefresh_OnRefreshing"
+                                                             Grid.Row="0"
+                                                             Grid.Column="0">
+                        <syncfusionPullToRefresh:SfPullToRefresh.PullableContent>
+                            <syncfusionListView:SfListView x:Name="GoalListView"
+                                                           ItemsSource="{Binding Goals}"
+                                                           AllowSwiping="True"
+                                                           SwipeStarted="GoalListView_OnSwipeStarted"
+                                                           SwipeEnded="GoalListView_OnSwipeEnded"
+                                                           ItemSize="100"
+                                                           SelectionChanged="GoalListView_OnSelectionChanged">
+                                <!-- Goal listview header template -->
+                                <syncfusionListView:SfListView.HeaderTemplate>
+                                    <DataTemplate>
+                                        <StackLayout BackgroundColor="{DynamicResource Primary}" Padding="5">
+                                            <Label Style="{StaticResource HeaderLabel}" Text="Deine Ziele"/>
+                                        </StackLayout>
+                                    </DataTemplate>
+                                </syncfusionListView:SfListView.HeaderTemplate>
+
+                                <!-- Goal list view left-swipe template -->
+                                <syncfusionListView:SfListView.LeftSwipeTemplate>
+                                    <DataTemplate>
+                                        <border:SfBorder Style="{StaticResource SelectedViewcellBorderContainer}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
+                                                    <Grid VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                                                        <Image Grid.Column="0"
+                                                               Grid.Row="0"
+                                                               HeightRequest="35"
+                                                               WidthRequest="35"
+                                                               Source="DetailsPopup.png"
+                                                               BackgroundColor="Transparent"
+                                                               x:Name="ShowGoalAppointmentSwipeMenu"/>
+                                                    </Grid>
+                                                    <Grid.GestureRecognizers>
+                                                        <TapGestureRecognizer x:Name="ShowGoalAppointmentsTapGestureRecognizer" Tapped="ShowGoalAppointmentsTapGestureRecognizer_OnTapped"/>
+                                                    </Grid.GestureRecognizers>
+                                                </Grid>
+
+                                                <Grid HorizontalOptions="Fill" VerticalOptions="Fill" Grid.Column="1" Grid.Row="0">
+                                                    <Grid VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                                                        <Image Grid.Column="0"
+                                                               Grid.Row="0"
+                                                               HeightRequest="35"
+                                                               WidthRequest="35"
+                                                               Source="Search.png"
+                                                               BackgroundColor="Transparent"
+                                                               x:Name="ShowGoalTasksSwipe"/>
+                                                    </Grid>
+                                                    <Grid.GestureRecognizers>
+                                                        <TapGestureRecognizer x:Name="ShowGoalTasksTapGestureRecognizers" Tapped="ShowGoalTasksTapGestureRecognizers_OnTapped"/>
+                                                    </Grid.GestureRecognizers>
+                                                </Grid>
+                                            </Grid>
+                                        </border:SfBorder>
+                                    </DataTemplate>
+                                </syncfusionListView:SfListView.LeftSwipeTemplate>
+
+                                <!-- Goal list view right-swipe template -->
+
+                                <syncfusionListView:SfListView.RightSwipeTemplate>
+                                    <DataTemplate>
+                                        <border:SfBorder Style="{StaticResource SelectedViewcellBorderContainer}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <Grid HorizontalOptions="Fill" VerticalOptions="Fill" Grid.Column="0">
+                                                    <Grid VerticalOptions="Center" HorizontalOptions="Center">
+                                                        <Image Grid.Column="0"
+                                                               Grid.Row="0"
+                                                               BackgroundColor="Transparent"
+                                                               HeightRequest="35"
+                                                               WidthRequest="35"
+                                                               Source="Edit.png"
+                                                               x:Name="EditGoalRightSwipe"
+                                                               BindingContextChanged="EditGoalRightSwipe_OnBindingContextChanged"/>
+                                                    </Grid>
+                                                </Grid>
+
+                                                <Grid HorizontalOptions="Fill" VerticalOptions="Fill" Grid.Column="1">
+                                                    <Grid VerticalOptions="Center" HorizontalOptions="Center">
+                                                        <Image Grid.Column="0"
+                                                        Grid.Row="0"
+                                                        BackgroundColor="Transparent"
+                                                        HeightRequest="35"
+                                                        WidthRequest="35"
+                                                        Source="Delete.png"
+                                                        x:Name="DeleteGoalRightSwipe"
+                                                        BindingContextChanged="DeleteGoalRightSwipe_OnBindingContextChanged"/>
+                                                    </Grid>
+                                                </Grid>
+                                            </Grid>
+                                        </border:SfBorder>
+                                    </DataTemplate>
+                                </syncfusionListView:SfListView.RightSwipeTemplate>
+
+                                <!-- Goal listview item template -->
+                                <syncfusionListView:SfListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <border:SfBorder Style="{StaticResource ViewcellBorderContainer}">
+                                            <!-- Main item grid -->
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="50"/>
+                                                    <RowDefinition Height="50"/>
+                                                    <RowDefinition Height="50"/>
+                                                    <RowDefinition Height="2"/>
+                                                    <RowDefinition Height="35"/>
+                                                </Grid.RowDefinitions>
+
+                                                <StackLayout Grid.Column="0" Grid.Row="0" Orientation="Vertical" Grid.RowSpan="3" Padding="15">
+                                                    <Label FontSize="16" FontAttributes="Bold" Text="{Binding Title}" Style="{StaticResource ItemLabel}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                                    <BoxView HeightRequest="100" WidthRequest="50" BackgroundColor="{DynamicResource SurfaceVariant}"/>
+                                                </StackLayout>
+
+                                                <StackLayout Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" IsVisible="{Binding Notes, Converter={StaticResource ValueToVisibilityConverter}}">
+                                                    <Image Source="Notes.png" Style="{StaticResource ListViewItemImage}"/>
+                                                    <Label Text="{Binding Notes}" Style="{StaticResource ItemLabel}"/>
+                                                </StackLayout>
+
+                                                <StackLayout Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
+                                                    <Image Source="NotificationTime.png" Style="{StaticResource ListViewItemImage}"/>
+                                                    <Label Text="{Binding NotificationTime}" Style="{StaticResource ItemLabel}"/>
+                                                </StackLayout>
+                                                <StackLayout Grid.Column="2" Grid.Row="1" Orientation="Horizontal">
+                                                    <Image Source="PushNotificationInterval.png" Style="{StaticResource ListViewItemImage}"/>
+                                                    <Label Text="{Binding GoalAppointmentInterval}" Style="{StaticResource ItemLabel}"/>
+                                                </StackLayout>
+                                                <StackLayout Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
+                                                    <Image Source="TaskCompleted.png" Style="{StaticResource ListViewItemImage}"/>
+                                                    <Label Text="{Binding AllTasksCompleted, Converter={StaticResource BoolToStringConverter}}" Style="{StaticResource ItemLabel}"/>
+                                                </StackLayout>
+                                                <BoxView Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3" HeightRequest="5" BackgroundColor="{DynamicResource SurfaceVariant}"/>
+
+                                                <Label Grid.Column="0" Grid.Row="4" Text="{Binding GoalTaskCount, StringFormat='{0} Aufgaben hinterlegt'}" Style="{StaticResource ItemLabel}" HorizontalTextAlignment="End"/>
+                                                <StackLayout Grid.Column="1" Grid.Row="4" Orientation="Horizontal" Grid.ColumnSpan="2" HorizontalOptions="EndAndExpand">
+                                                    <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand">
+                                                        <Image Source="FromDate.png" Style="{StaticResource ListViewDetailItemImage}"/>
+                                                        <Label Text="{Binding StartDate, StringFormat='{0:dd.MM.yy}'}" Style="{StaticResource DetailItemLabel}"/>
+                                                    </StackLayout>
+                                                    <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand" Margin="0, 0, 10, 0">
+                                                        <Image Source="ToDate.png" Style="{StaticResource ListViewDetailItemImage}"/>
+                                                        <Label Text="{Binding EndDate, StringFormat='{0:dd.MM.yy}'}" Style="{StaticResource DetailItemLabel}"/>
+                                                    </StackLayout>
+                                                </StackLayout>
+                                            </Grid>
+                                        </border:SfBorder>
+                                    </DataTemplate>
+                                </syncfusionListView:SfListView.ItemTemplate>
+
+                                <syncfusionListView:SfListView.SelectedItemTemplate>
+                                    <DataTemplate>
+                                        <border:SfBorder Style="{StaticResource SelectedViewcellBorderContainer}">
+                                            <!-- Main item grid -->
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="50"/>
+                                                    <RowDefinition Height="50"/>
+                                                    <RowDefinition Height="50"/>
+                                                    <RowDefinition Height="2"/>
+                                                    <RowDefinition Height="35"/>
+                                                </Grid.RowDefinitions>
+
+                                                <StackLayout Grid.Column="0" Grid.Row="0" Orientation="Vertical" Grid.RowSpan="3" Padding="15">
+                                                    <Label FontSize="16" FontAttributes="Bold" Text="{Binding Title}" Style="{StaticResource ItemLabel}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                                    <BoxView HeightRequest="100" WidthRequest="50" BackgroundColor="{DynamicResource Surface}"/>
+                                                </StackLayout>
+
+                                                <StackLayout Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" IsVisible="{Binding Notes, Converter={StaticResource ValueToVisibilityConverter}}">
+                                                    <Image Source="Notes.png" Style="{StaticResource ListViewItemImage}"/>
+                                                    <Label Text="{Binding Notes}" Style="{StaticResource ItemLabel}"/>
+                                                </StackLayout>
+
+                                                <StackLayout Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
+                                                    <Image Source="NotificationTime.png" Style="{StaticResource ListViewItemImage}"/>
+                                                    <Label Text="{Binding NotificationTime}" Style="{StaticResource ItemLabel}"/>
+                                                </StackLayout>
+                                                <StackLayout Grid.Column="2" Grid.Row="1" Orientation="Horizontal">
+                                                    <Image Source="PushNotificationInterval.png" Style="{StaticResource ListViewItemImage}"/>
+                                                    <Label Text="{Binding GoalAppointmentInterval}" Style="{StaticResource ItemLabel}"/>
+                                                </StackLayout>
+                                                <StackLayout Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
+                                                    <Image Source="TaskCompleted.png" Style="{StaticResource ListViewItemImage}"/>
+                                                    <Label Text="{Binding AllTasksCompleted, Converter={StaticResource BoolToStringConverter}}" Style="{StaticResource ItemLabel}"/>
+                                                </StackLayout>
+                                                <BoxView Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3" HeightRequest="5" BackgroundColor="{DynamicResource Surface}"/>
+
+                                                <Label Grid.Column="0" Grid.Row="4" Text="{Binding GoalTaskCount, StringFormat='{0} Aufgaben hinterlegt'}" Style="{StaticResource ItemLabel}" HorizontalTextAlignment="End"/>
+                                                <StackLayout Grid.Column="1" Grid.Row="4" Orientation="Horizontal" Grid.ColumnSpan="2" HorizontalOptions="EndAndExpand">
+                                                    <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand">
+                                                        <Image Source="FromDate.png" Style="{StaticResource ListViewDetailItemImage}"/>
+                                                        <Label Text="{Binding StartDate, StringFormat='{0:dd.MM.yy}'}" Style="{StaticResource DetailItemLabel}"/>
+                                                    </StackLayout>
+                                                    <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand" Margin="0, 0, 10, 0">
+                                                        <Image Source="ToDate.png" Style="{StaticResource ListViewDetailItemImage}"/>
+                                                        <Label Text="{Binding EndDate, StringFormat='{0:dd.MM.yy}'}" Style="{StaticResource DetailItemLabel}"/>
+                                                    </StackLayout>
+                                                </StackLayout>
+                                            </Grid>
+                                        </border:SfBorder>
+                                    </DataTemplate>
+                                </syncfusionListView:SfListView.SelectedItemTemplate>
+                            </syncfusionListView:SfListView>
+                        </syncfusionPullToRefresh:SfPullToRefresh.PullableContent>
+                    </syncfusionPullToRefresh:SfPullToRefresh>
+                </Grid>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

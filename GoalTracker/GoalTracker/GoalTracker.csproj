@@ -1,0 +1,116 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+    <Authors>Nicklas Wagener</Authors>
+    <Company>ZasamStudio</Company>
+    <Copyright>© Nicklas Wagener 2021</Copyright>
+    <PackageIcon></PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="SyncfusionLicense.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="SyncfusionLicense.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="6.1.0" />
+    <PackageReference Include="Autofac.Configuration" Version="6.0.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
+    <PackageReference Include="Microsoft.AppCenter" Version="4.2.0" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.2.0" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Syncfusion.Licensing" Version="18.4.0.48" />
+    <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="18.4.0.48" />
+    <PackageReference Include="Syncfusion.Xamarin.Core" Version="18.4.0.48" />
+    <PackageReference Include="Syncfusion.Xamarin.SfAutoComplete" Version="18.4.0.48" />
+    <PackageReference Include="Syncfusion.Xamarin.SfCalendar" Version="18.4.0.48" />
+    <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="18.4.0.48" />
+    <PackageReference Include="Syncfusion.Xamarin.SfListView" Version="18.4.0.48" />
+    <PackageReference Include="Syncfusion.Xamarin.SfNumericTextBox" Version="18.4.0.48" />
+    <PackageReference Include="Syncfusion.Xamarin.SfNumericUpDown" Version="18.4.0.48" />
+    <PackageReference Include="Syncfusion.Xamarin.SfPicker" Version="18.4.0.48" />
+    <PackageReference Include="Syncfusion.Xamarin.SfPopupLayout" Version="18.4.0.48" />
+    <PackageReference Include="Syncfusion.Xamarin.SfProgressBar" Version="18.4.0.48" />
+    <PackageReference Include="Syncfusion.Xamarin.SfPullToRefresh" Version="18.4.0.48" />
+    <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />  
+    <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="AppConfigurationShell.xaml.cs">
+      <DependentUpon>AppConfigurationShell.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\TranslationResources_DE.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TranslationResources_DE.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Views\RegistrationShell\RegistrationPage.xaml.cs">
+      <DependentUpon>RegistrationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\AppShell\Goals\GoalsPage.xaml.cs">
+      <DependentUpon>GoalsPage.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="AppConfigurationShell.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="InitializationShell.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\TranslationResources_DE.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TranslationResources_DE.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Themes\DarkTheme.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Themes\LightTheme.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\AppShell\Calendar\CalendarPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\AppShell\Goals\AddGoalPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\AppShell\Goals\EditGoalPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\AppShell\Goals\GoalAppointmentsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\AppShell\Goals\GoalTasksPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\AppShell\Settings\Achievements\AchievementsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\AppShell\Settings\SettingsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\InitializationShell\InitializationPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\RegistrationShell\RegistrationPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\GoalTracker.Entities\GoalTracker.Entities.csproj" />
+  </ItemGroup>
+</Project>

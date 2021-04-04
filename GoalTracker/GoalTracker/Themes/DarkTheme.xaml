@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    x:Class="GoalTracker.Themes.DarkTheme">
+    <Color x:Key="Bar">#1F1F1F</Color>
+    <Color x:Key="Background">#1D1D1D</Color>
+    <Color x:Key="Surface">#242424</Color>
+    <!-- TODO: Look further into surface and surface variant colors? based on light theme colors maybe... -->
+    <Color x:Key="SurfaceVariant">#121212</Color>
+    <Color x:Key="TextOnBackground">#FFFFFF</Color>
+    <Color x:Key="TextOnSurface">#E2E2E2</Color>
+</ResourceDictionary>

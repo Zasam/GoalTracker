@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoalTracker.Android", "GoalTracker\GoalTracker.Android\GoalTracker.Android.csproj", "{456A92EC-715E-4379-8D4A-CFEB74FAF160}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoalTracker", "GoalTracker\GoalTracker\GoalTracker.csproj", "{9E6A66A2-156D-4907-90D7-371E6F22558E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoalTracker.MigrationConsole", "GoalTracker.MigrationConsole\GoalTracker.MigrationConsole.csproj", "{497B8BEB-94AA-4904-8602-AAF1CA602F4D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoalTracker.Entities", "GoalTracker.Entities\GoalTracker.Entities.csproj", "{E0AEBD00-F470-4267-BBD9-B94F8BCCD6F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoalTracker.UITest", "GoalTracker.UITest\GoalTracker.UITest.csproj", "{D70D4AE1-4635-4F81-94D6-DD1CA7412F17}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{456A92EC-715E-4379-8D4A-CFEB74FAF160}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{456A92EC-715E-4379-8D4A-CFEB74FAF160}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{456A92EC-715E-4379-8D4A-CFEB74FAF160}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{456A92EC-715E-4379-8D4A-CFEB74FAF160}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{456A92EC-715E-4379-8D4A-CFEB74FAF160}.Release|Any CPU.Build.0 = Release|Any CPU
+		{456A92EC-715E-4379-8D4A-CFEB74FAF160}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{9E6A66A2-156D-4907-90D7-371E6F22558E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E6A66A2-156D-4907-90D7-371E6F22558E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E6A66A2-156D-4907-90D7-371E6F22558E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{9E6A66A2-156D-4907-90D7-371E6F22558E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E6A66A2-156D-4907-90D7-371E6F22558E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E6A66A2-156D-4907-90D7-371E6F22558E}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{497B8BEB-94AA-4904-8602-AAF1CA602F4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{497B8BEB-94AA-4904-8602-AAF1CA602F4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{497B8BEB-94AA-4904-8602-AAF1CA602F4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{497B8BEB-94AA-4904-8602-AAF1CA602F4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0AEBD00-F470-4267-BBD9-B94F8BCCD6F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0AEBD00-F470-4267-BBD9-B94F8BCCD6F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0AEBD00-F470-4267-BBD9-B94F8BCCD6F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0AEBD00-F470-4267-BBD9-B94F8BCCD6F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D70D4AE1-4635-4F81-94D6-DD1CA7412F17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D70D4AE1-4635-4F81-94D6-DD1CA7412F17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D70D4AE1-4635-4F81-94D6-DD1CA7412F17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D70D4AE1-4635-4F81-94D6-DD1CA7412F17}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B8BBFB0B-C59F-494B-A334-111077C43A95}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    x:Class="GoalTracker.Themes.LightTheme">
+    <Color x:Key="Bar">#EFEFEF</Color>
+    <Color x:Key="Background">#E2E2E2</Color>
+    <Color x:Key="Surface">#F2F2F2</Color>
+    <Color x:Key="SurfaceVariant">#C4C4C4</Color>
+    <Color x:Key="TextOnBackground">#000000</Color>
+    <Color x:Key="TextOnSurface">#121212</Color>
+</ResourceDictionary>
