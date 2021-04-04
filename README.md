@@ -1,4 +1,4 @@
-[![Board Status](https://nicklasw-outlook.visualstudio.com/278f6640-47c3-4f9c-9e54-4aa92f34b24d/bac6f1a5-25de-4899-8382-facaa7d3f8bc/_apis/work/boardbadge/ded4cc2b-5d8a-486e-87ec-8de496730c64)](https://nicklasw-outlook.visualstudio.com/278f6640-47c3-4f9c-9e54-4aa92f34b24d/_boards/board/t/bac6f1a5-25de-4899-8382-facaa7d3f8bc/Microsoft.RequirementCategory)
+[![Board Status](https://nicklasw-outlook.visualstudio.com/3313b553-fe8e-445a-916a-17587a8a64bc/c871cda7-07b3-425d-a54e-b208001b5299/_apis/work/boardbadge/be61f0bd-8688-4851-8487-c62b2109c5f9?columnOptions=1)](https://nicklasw-outlook.visualstudio.com/3313b553-fe8e-445a-916a-17587a8a64bc/_boards/board/t/c871cda7-07b3-425d-a54e-b208001b5299/Microsoft.RequirementCategory/)
 # XF.GoalTracker
 Xamarin Forms - Mobile application which allows you to track your goals and needed tasks to complete the goal, by notify you in specified intervals through push notifications.
 
