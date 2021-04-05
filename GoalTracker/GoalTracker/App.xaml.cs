@@ -1,10 +1,9 @@
 ﻿using System;
 using Autofac;
+using BQFramework.Tasks;
 using GoalTracker.Services;
-using GoalTracker.Utilities;
 using GoalTracker.ViewModels;
 using Microsoft.AppCenter.Crashes;
-using Syncfusion.Licensing;
 using Xamarin.Forms;
 
 namespace GoalTracker
@@ -30,9 +29,6 @@ namespace GoalTracker
             {
                 this.container = container;
 
-                SyncfusionLicenseProvider.RegisterLicense(
-                    FileHelpers.GetFileTextInAssembly("GoalTracker.SyncfusionLicense.txt"));
-
                 // TODO: Implementation of theme changing is missing! ThemeManager.ChangeTheme(ThemeManager.Themes.Dark); => Specific android implementation is missing: https://medium.com/@milan.gohil/adding-themes-to-your-xamarin-forms-app-3da3032cc3a1
                 ThemeManager.LoadTheme();
 
@@ -53,7 +49,7 @@ namespace GoalTracker
 
                 Instance = this;
 
-                var user = AsyncHelpers.RunSync(() => userRepository.GetAsync(1));
+                var user = AsyncHelper.RunSync(() => userRepository.GetAsync(1));
 
                 if (user == null)
                     MainPage = new InitializationShell(userRepository, achievementRepository);

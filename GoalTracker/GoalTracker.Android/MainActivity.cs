@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Reflection;
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Autofac;
+using BQFramework.IO;
 using GoalTracker.Context;
 using GoalTracker.Droid.PlatformServices.GoalNotificationQueue;
 using GoalTracker.Droid.PlatformServices.Notification;
@@ -13,6 +15,7 @@ using GoalTracker.ViewModels;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Syncfusion.Licensing;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using Color = Android.Graphics.Color;
@@ -77,7 +80,13 @@ namespace GoalTracker.Droid
 
                 base.OnCreate(savedInstanceState);
 
-                AppCenter.Start("AppCenter-Secrets",
+                var assembly = typeof(MainActivity).GetTypeInfo().Assembly;
+
+                SyncfusionLicenseProvider.RegisterLicense(
+                    FileHelper.GetTextFromFile("GoalTracker.Droid.SyncfusionLicense.txt", assembly));
+
+                AppCenter.Start(
+                    FileHelper.GetTextFromFile("GoalTracker.Droid.AppCenterSecrets.txt", assembly),
                     typeof(Analytics), typeof(Crashes));
 
                 Window?.SetNavigationBarColor(Color.Rgb(196, 196, 196));

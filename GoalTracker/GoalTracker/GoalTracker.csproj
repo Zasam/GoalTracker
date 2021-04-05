@@ -10,16 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="SyncfusionLicense.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="SyncfusionLicense.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Autofac" Version="6.1.0" />
     <PackageReference Include="Autofac.Configuration" Version="6.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
@@ -112,5 +102,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\GoalTracker.Entities\GoalTracker.Entities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BQFramework">
+      <HintPath>..\..\..\..\..\Frameworks\BQFramework\BQFramework\bin\Release\netstandard2.1\BQFramework.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

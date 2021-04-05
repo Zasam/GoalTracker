@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using BQFramework.Tasks;
 using GoalTracker.Entities;
 using GoalTracker.PlatformServices;
 using GoalTracker.Services;
@@ -247,7 +248,7 @@ namespace GoalTracker.Views.AppShell.Goals
         {
             try
             {
-                var goalTasks = AsyncHelpers.RunSync(() => goalTaskRepository.GetAllByParentAsync(goalToEdit));
+                var goalTasks = AsyncHelper.RunSync(() => goalTaskRepository.GetAllByParentAsync(goalToEdit));
                 var goalTasksEnumerable = goalTasks as GoalTask[] ?? goalTasks.ToArray();
                 if (goalTasksEnumerable.Any())
                 {
