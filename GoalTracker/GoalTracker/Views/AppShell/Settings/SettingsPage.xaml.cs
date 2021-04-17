@@ -1,32 +1,27 @@
-﻿using GoalTracker.Views.AppShell.Settings.Achievements;
-using GoalTracker.ViewModels;
-using GoalTracker.Services;
-using Xamarin.Forms.Xaml;
+﻿using System;
+using GoalTracker.ViewModels.Interface;
+using GoalTracker.Views.AppShell.Settings.Achievements;
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace GoalTracker.Views.AppShell.Settings
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SettingsPage : ContentPage
     {
-        private readonly IUserRepository userRepository;
-        private readonly IAchievementRepository achievementRepository;
-        private readonly ISettingsViewModel viewModel;
+        private readonly ISettingViewModel settingViewModel;
 
-        public SettingsPage(IUserRepository userRepository, IAchievementRepository achievementRepository, ISettingsViewModel viewModel)
+        public SettingsPage(ISettingViewModel settingViewModel)
         {
-            this.viewModel = viewModel;
-            this.userRepository = userRepository;
-            this.achievementRepository = achievementRepository;
-
-            BindingContext = this.viewModel;
+            this.settingViewModel = settingViewModel;
+            BindingContext = this.settingViewModel;
 
             InitializeComponent();
         }
 
-        private void ShowAchievementsButton_Clicked(object sender, System.EventArgs e)
+        private void ShowAchievementsButton_Clicked(object sender, EventArgs e)
         {
-            Navigation.PushAsync(new AchievementsPage(achievementRepository, viewModel), true);
+            Navigation.PushAsync(new AchievementsPage(settingViewModel), true);
         }
     }
 }

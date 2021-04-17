@@ -6,7 +6,8 @@
              xmlns:progressbar="clr-namespace:Syncfusion.XForms.ProgressBar;assembly=Syncfusion.SfProgressBar.XForms"
              xmlns:border="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
              xmlns:converter="clr-namespace:GoalTracker.Converter;assembly=GoalTracker"
-             x:Class="GoalTracker.Views.AppShell.Goals.GoalsPage"
+             x:Class="GoalTracker.Views.AppShell.Home.Goals.GoalsPage"
+             x:Name="Root"
              Title="Meine Ziele">
 
     <ContentPage.ToolbarItems>
@@ -21,7 +22,7 @@
     </ContentPage.Resources>
 
     <ContentPage.Content>
-        <Grid>
+        <Grid Style="{StaticResource DefaultGrid}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="75"/>
                 <RowDefinition Height="*"/>
@@ -39,12 +40,12 @@
                 </Grid.ColumnDefinitions>
                 <Label Grid.Row="0" Grid.Column="0" x:Name="UsernameLabel" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontSize="12" LineBreakMode="WordWrap" Margin="20, 0, 0, 0"/>
                 <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="1" HorizontalOptions="Center">
-                    <Label Text="{Binding AchievementProgressPoints}" FontSize="12" VerticalTextAlignment="Center"/>
+                    <Label Text="{Binding SettingViewModel.AchievementProgressPoints, Source={x:Reference Root}}" FontSize="12" VerticalTextAlignment="Center"/>
                     <Label Text="XP gesammelt" FontSize="12" VerticalTextAlignment="Center"/>
-                    <progressbar:SfCircularProgressBar Progress="{Binding AchievementProgress}" WidthRequest="50" HeightRequest="50"/>
+                    <progressbar:SfCircularProgressBar Progress="{Binding SettingViewModel.AchievementProgress, Source={x:Reference Root}}" WidthRequest="50" HeightRequest="50" ProgressColor="{StaticResource PrimaryVariant}" TrackColor="{StaticResource Primary}"/>
                 </StackLayout>
             </Grid>
-            <StackLayout Grid.Column="0" Grid.Row="1" Padding="15,5,15,15">
+            <StackLayout Grid.Column="0" Grid.Row="1">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
@@ -178,8 +179,10 @@
                                                 </Grid.RowDefinitions>
 
                                                 <StackLayout Grid.Column="0" Grid.Row="0" Orientation="Vertical" Grid.RowSpan="3" Padding="15">
-                                                    <Label FontSize="16" FontAttributes="Bold" Text="{Binding Title}" Style="{StaticResource ItemLabel}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                                                    <BoxView HeightRequest="100" WidthRequest="50" BackgroundColor="{DynamicResource SurfaceVariant}"/>
+                                                    <Label FontSize="12" FontAttributes="Bold" Text="{Binding Title}" Style="{StaticResource ItemLabel}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" LineBreakMode="WordWrap"/>
+                                                    <StackLayout HeightRequest="92" WidthRequest="50">
+                                                        <Label Text="{Binding DetailImage}" FontSize="60" HorizontalTextAlignment="Center" Margin="0, 0, 0, 15" VerticalOptions="CenterAndExpand"/>
+                                                    </StackLayout>
                                                 </StackLayout>
 
                                                 <StackLayout Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" IsVisible="{Binding Notes, Converter={StaticResource ValueToVisibilityConverter}}">
@@ -191,17 +194,22 @@
                                                     <Image Source="NotificationTime.png" Style="{StaticResource ListViewItemImage}"/>
                                                     <Label Text="{Binding NotificationTime}" Style="{StaticResource ItemLabel}"/>
                                                 </StackLayout>
+
                                                 <StackLayout Grid.Column="2" Grid.Row="1" Orientation="Horizontal">
                                                     <Image Source="PushNotificationInterval.png" Style="{StaticResource ListViewItemImage}"/>
-                                                    <Label Text="{Binding GoalAppointmentInterval}" Style="{StaticResource ItemLabel}"/>
+                                                    <Label Text="{Binding GoalAppointmentInterval}" Style="{StaticResource ItemLabel}" LineBreakMode="NoWrap"/>
                                                 </StackLayout>
+
                                                 <StackLayout Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
                                                     <Image Source="TaskCompleted.png" Style="{StaticResource ListViewItemImage}"/>
                                                     <Label Text="{Binding AllTasksCompleted, Converter={StaticResource BoolToStringConverter}}" Style="{StaticResource ItemLabel}"/>
                                                 </StackLayout>
                                                 <BoxView Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3" HeightRequest="5" BackgroundColor="{DynamicResource SurfaceVariant}"/>
 
-                                                <Label Grid.Column="0" Grid.Row="4" Text="{Binding GoalTaskCount, StringFormat='{0} Aufgaben hinterlegt'}" Style="{StaticResource ItemLabel}" HorizontalTextAlignment="End"/>
+                                                <StackLayout Grid.Column="0" Grid.Row="4" Orientation="Horizontal" HorizontalOptions="End" Margin="5, 0, 0, 0">
+                                                    <Image Source="TaskList.png" Style="{StaticResource ListViewDetailItemImage}"/>
+                                                    <Label Text="{Binding GoalTaskCount, StringFormat='{0} Aufgaben hinterlegt'}" Style="{StaticResource DetailItemLabel}"/>
+                                                </StackLayout>
                                                 <StackLayout Grid.Column="1" Grid.Row="4" Orientation="Horizontal" Grid.ColumnSpan="2" HorizontalOptions="EndAndExpand">
                                                     <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand">
                                                         <Image Source="FromDate.png" Style="{StaticResource ListViewDetailItemImage}"/>
@@ -236,8 +244,10 @@
                                                 </Grid.RowDefinitions>
 
                                                 <StackLayout Grid.Column="0" Grid.Row="0" Orientation="Vertical" Grid.RowSpan="3" Padding="15">
-                                                    <Label FontSize="16" FontAttributes="Bold" Text="{Binding Title}" Style="{StaticResource ItemLabel}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                                                    <BoxView HeightRequest="100" WidthRequest="50" BackgroundColor="{DynamicResource Surface}"/>
+                                                    <Label FontSize="12" FontAttributes="Bold" Text="{Binding Title}" Style="{StaticResource ItemLabel}" HorizontalTextAlignment="Center" LineBreakMode="WordWrap"/>
+                                                    <StackLayout HeightRequest="92" WidthRequest="50">
+                                                        <Label Text="{Binding DetailImage}" FontSize="60" HorizontalTextAlignment="Center" Margin="0, 0, 0, 15" VerticalOptions="CenterAndExpand"/>
+                                                    </StackLayout>
                                                 </StackLayout>
 
                                                 <StackLayout Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" IsVisible="{Binding Notes, Converter={StaticResource ValueToVisibilityConverter}}">
@@ -251,7 +261,7 @@
                                                 </StackLayout>
                                                 <StackLayout Grid.Column="2" Grid.Row="1" Orientation="Horizontal">
                                                     <Image Source="PushNotificationInterval.png" Style="{StaticResource ListViewItemImage}"/>
-                                                    <Label Text="{Binding GoalAppointmentInterval}" Style="{StaticResource ItemLabel}"/>
+                                                    <Label Text="{Binding GoalAppointmentInterval}" Style="{StaticResource ItemLabel}" LineBreakMode="NoWrap"/>
                                                 </StackLayout>
                                                 <StackLayout Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
                                                     <Image Source="TaskCompleted.png" Style="{StaticResource ListViewItemImage}"/>
@@ -259,7 +269,10 @@
                                                 </StackLayout>
                                                 <BoxView Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3" HeightRequest="5" BackgroundColor="{DynamicResource Surface}"/>
 
-                                                <Label Grid.Column="0" Grid.Row="4" Text="{Binding GoalTaskCount, StringFormat='{0} Aufgaben hinterlegt'}" Style="{StaticResource ItemLabel}" HorizontalTextAlignment="End"/>
+                                                <StackLayout Grid.Column="0" Grid.Row="4" Orientation="Horizontal" HorizontalOptions="End" Margin="5, 0, 0, 0">
+                                                    <Image Source="TaskList.png" Style="{StaticResource ListViewDetailItemImage}"/>
+                                                    <Label Text="{Binding GoalTaskCount, StringFormat='{0} Aufgaben hinterlegt'}" Style="{StaticResource DetailItemLabel}"/>
+                                                </StackLayout>
                                                 <StackLayout Grid.Column="1" Grid.Row="4" Orientation="Horizontal" Grid.ColumnSpan="2" HorizontalOptions="EndAndExpand">
                                                     <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand">
                                                         <Image Source="FromDate.png" Style="{StaticResource ListViewDetailItemImage}"/>

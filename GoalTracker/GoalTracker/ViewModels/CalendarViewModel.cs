@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GoalTracker.Extensions;
 using GoalTracker.Models;
 using GoalTracker.Services;
+using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 using Syncfusion.SfCalendar.XForms;
 
@@ -60,7 +61,7 @@ namespace GoalTracker.ViewModels
         public DateTime CalendarMinDate { get; set; }
         public DateTime CalendarMaxDate { get; set; }
 
-        public async Task GenerateCalendarEvents()
+        public async Task LoadEventsAsync()
         {
             try
             {

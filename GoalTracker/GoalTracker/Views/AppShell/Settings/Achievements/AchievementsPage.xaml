@@ -2,41 +2,68 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              xmlns:syncfusionListView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:converter="clr-namespace:GoalTracker.Converter"
+             xmlns:border="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
              x:Class="GoalTracker.Views.AppShell.Settings.Achievements.AchievementsPage"
              Title="Erfolge">
     <ContentPage.Resources>
         <ResourceDictionary>
-            <converter:BoolToStringConverter x:Key="boolToStringConverter"/>
+            <converter:BoolToImageConverter x:Key="boolToImageConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
-        <StackLayout>
-            <StackLayout>
-                <syncfusionListView:SfListView ItemsSource="{Binding Achievements}">
-                    <syncfusionListView:SfListView.HeaderTemplate>
-                        <DataTemplate>
-                            <StackLayout>
-                                <Label Style="{StaticResource HeaderLabel}" Text="Erfolge"/>
-                            </StackLayout>
-                        </DataTemplate>
-                    </syncfusionListView:SfListView.HeaderTemplate>
+        <Grid Style="{StaticResource DefaultGrid}">
+            <syncfusionListView:SfListView ItemsSource="{Binding Achievements}">
+                <syncfusionListView:SfListView.HeaderTemplate>
+                    <DataTemplate>
+                        <StackLayout BackgroundColor="{DynamicResource Primary}" Padding="5">
+                            <Label Style="{StaticResource HeaderLabel}" Text="Erfolge"/>
+                        </StackLayout>
+                    </DataTemplate>
+                </syncfusionListView:SfListView.HeaderTemplate>
 
-                    <syncfusionListView:SfListView.ItemTemplate>
-                        <DataTemplate>
-                            <StackLayout Orientation="Horizontal">
-                                <StackLayout>
-                                    <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
-                                        <Label Text="{Binding Title, StringFormat='Titel: {0}'}"/>
-                                    </StackLayout>
-                                    <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
-                                        <Label Text="{Binding Unlocked, Converter={StaticResource boolToStringConverter}, StringFormat='Freigeschaltet: {0}'}"/>
-                                    </StackLayout>
+                <syncfusionListView:SfListView.ItemTemplate>
+                    <DataTemplate>
+                        <border:SfBorder Style="{StaticResource ViewcellBorderContainer}">
+                            <Grid Padding="15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="50"/>
+                                </Grid.RowDefinitions>
+                                <StackLayout HorizontalOptions="CenterAndExpand">
+                                    <Label Text="{Binding Title}"/>
                                 </StackLayout>
-                            </StackLayout>
-                        </DataTemplate>
-                    </syncfusionListView:SfListView.ItemTemplate>
-                </syncfusionListView:SfListView>
-            </StackLayout>
-        </StackLayout>
+                                <StackLayout Grid.Row="1" Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+                                    <Image Source="{Binding Unlocked, Converter={StaticResource boolToImageConverter}}" Style="{StaticResource ListViewItemImage}" Scale="0.7" Margin="0, 5, 0, 0"/>
+                                </StackLayout>
+                            </Grid>
+                        </border:SfBorder>
+                    </DataTemplate>
+                </syncfusionListView:SfListView.ItemTemplate>
+                <syncfusionListView:SfListView.SelectedItemTemplate>
+                    <DataTemplate>
+                        <border:SfBorder Style="{StaticResource SelectedViewcellBorderContainer}">
+                            <Grid Padding="15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="50"/>
+                                </Grid.RowDefinitions>
+                                <StackLayout HorizontalOptions="CenterAndExpand">
+                                    <Label Text="{Binding Title}"/>
+                                </StackLayout>
+                                <StackLayout Grid.Row="1" Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+                                    <Image Source="{Binding Unlocked, Converter={StaticResource boolToImageConverter}}" Style="{StaticResource ListViewItemImage}" Scale="0.7" Margin="0, 5, 0, 0"/>
+                                </StackLayout>
+                            </Grid>
+                        </border:SfBorder>
+                    </DataTemplate>
+                </syncfusionListView:SfListView.SelectedItemTemplate>
+            </syncfusionListView:SfListView>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

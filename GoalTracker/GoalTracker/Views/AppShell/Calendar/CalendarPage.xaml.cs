@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Globalization;
-using GoalTracker.PlatformServices;
-using GoalTracker.Services;
-using GoalTracker.ViewModels;
+using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -12,33 +10,29 @@ namespace GoalTracker.Views.AppShell.Calendar
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class CalendarPage : ContentPage
     {
-        private readonly IGoalAppointmentRepository goalDateRepository;
-        private readonly ICalendarViewModel viewModel;
+        private readonly ICalendarViewModel calendarViewModel;
 
-        public CalendarPage(ICalendarViewModel viewModel, IGoalAppointmentRepository goalDateRepository)
+        public CalendarPage(ICalendarViewModel calendarViewModel)
         {
             InitializeComponent();
 
-            this.viewModel = viewModel;
-            this.goalDateRepository = goalDateRepository;
+            this.calendarViewModel = calendarViewModel;
 
             GoalReminderCalendar.Locale = new CultureInfo("de-DE");
-            BindingContext = this.viewModel;
+            BindingContext = this.calendarViewModel;
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             try
             {
-                viewModel.GenerateCalendarEvents();
+                await calendarViewModel.LoadEventsAsync();
                 GoalReminderCalendar.Refresh();
 
                 base.OnAppearing();
             }
             catch (Exception ex)
             {
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
                 Crashes.TrackError(ex);
             }
         }

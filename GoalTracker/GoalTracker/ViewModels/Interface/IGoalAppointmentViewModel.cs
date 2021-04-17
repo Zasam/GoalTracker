@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using GoalTracker.Entities;
 
-namespace GoalTracker.ViewModels
+namespace GoalTracker.ViewModels.Interface
 {
     public interface IGoalAppointmentViewModel
     {
@@ -9,6 +9,7 @@ namespace GoalTracker.ViewModels
         public string ParentTitle { get; }
         public GoalAppointment[] GoalAppointments { get; set; }
         public GoalAppointment SelectedGoalAppointment { get; set; }
-        public Task LoadAppointments();
+        public Task LoadAppointmentsAsync();
+        public Task ApproveAppointmentAsync(bool success);
     }
 }

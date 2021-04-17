@@ -4,10 +4,17 @@
              x:Class="GoalTracker.Views.AppShell.Settings.SettingsPage"
              Title="Einstellungen">
     <ContentPage.Content>
-        <StackLayout>
-            <StackLayout>
-                <Label Text="Credits" Style="{StaticResource HeaderLabel}"/>
-                <Label HorizontalTextAlignment="Center">
+        <Grid Style="{StaticResource DefaultGrid}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="150"/>
+            </Grid.RowDefinitions>
+                <Label Grid.Column="0" Grid.Row="0" Text="Credits" Style="{StaticResource HeaderLabel}"/>
+                <Label Grid.Column="0" Grid.Row="1" HorizontalTextAlignment="Center">
                     <Label.FormattedText>
                         <FormattedString>
                             <Span Text="Alle icons stammen von"/>
@@ -21,11 +28,10 @@
                     </Label.FormattedText>
                 </Label>
                 
-                <StackLayout Margin="0, 15, 0, 0">
+                <StackLayout Grid.Column="0" Grid.Row="2">
                     <Label Style="{StaticResource HeaderLabel}" Text="Erfolge"/>
                     <Button x:Name="ShowAchievementsButton" Text="Erfolge anzeigen" Clicked="ShowAchievementsButton_Clicked"/>
                 </StackLayout>
-            </StackLayout>
-        </StackLayout>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

@@ -1,38 +1,36 @@
 ﻿using System;
 using System.Linq;
-using BQFramework.Tasks;
 using GoalTracker.Entities;
 using GoalTracker.PlatformServices;
-using GoalTracker.Services;
 using GoalTracker.Utilities;
-using GoalTracker.ViewModels;
+using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 using Syncfusion.XForms.Pickers;
 using Syncfusion.XForms.TextInputLayout;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace GoalTracker.Views.AppShell.Goals
+namespace GoalTracker.Views.AppShell.Home.Goals
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class EditGoalPage : ContentPage
     {
-        private readonly IGoalRepository goalRepository;
-        private readonly IGoalTaskRepository goalTaskRepository;
+        private readonly GoalTask[] goalTasks;
         private readonly Goal goalToEdit;
         private readonly string username;
         private readonly IGoalViewModel viewModel;
+        private bool contentLoaded;
         private int goalTaskCounter;
         private bool saving;
 
-        public EditGoalPage(IGoalViewModel viewModel, IGoalRepository goalRepository,
-            IGoalTaskRepository goalTaskRepository, Goal goal, string username)
+        public EditGoalPage(IGoalViewModel viewModel, Goal goal, GoalTask[] goalTasks, string username)
         {
             goalToEdit = goal;
+            this.goalTasks = goalTasks;
             this.username = username;
             this.viewModel = viewModel;
-            this.goalRepository = goalRepository;
-            this.goalTaskRepository = goalTaskRepository;
+
+            contentLoaded = false;
 
             BindingContext = viewModel;
 
@@ -48,17 +46,16 @@ namespace GoalTracker.Views.AppShell.Goals
                 base.OnAppearing();
 
                 saving = false;
-                InitializeComponentValues(goalToEdit);
+                InitializeComponentValues(goalToEdit, goalTasks);
+                contentLoaded = true;
             }
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
-        private void InitializeComponentValues(Goal goal)
+        private void InitializeComponentValues(Goal goal, GoalTask[] goalTasks)
         {
             try
             {
@@ -69,13 +66,11 @@ namespace GoalTracker.Views.AppShell.Goals
                 GoalHasDueDateCheckBox.IsChecked = goal.HasDueDate;
                 GoalNotificationTimePicker.Time = goal.NotificationTime;
                 GoalNotificationIntervalPicker.SelectedIndex = (int) goal.GoalAppointmentInterval;
-                InitializeGoalTasksComponent(goal);
+                InitializeGoalTasksComponent(goalTasks);
             }
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
@@ -83,53 +78,26 @@ namespace GoalTracker.Views.AppShell.Goals
         {
             try
             {
-                saving = true;
-                goalToEdit.Title = viewModel.GoalTitle;
-                goalToEdit.Notes = viewModel.GoalNotes;
-                goalToEdit.StartDate = viewModel.GoalStartDate;
-                goalToEdit.HasDueDate = viewModel.GoalHasDueDate;
-                goalToEdit.EndDate = viewModel.GoalEndDate;
-                goalToEdit.GoalAppointmentInterval = viewModel.GoalNotificationInterval;
-                goalToEdit.NotificationTime = viewModel.GoalNotificationTime;
-
                 var valid = ValidateInputs(goalToEdit);
                 if (!valid)
                     return;
 
-                await goalRepository.SaveChangesAsync();
+                saving = true;
 
-                var goalTasks = GetTasks(goalToEdit);
-                var currentGoalTasks = await goalTaskRepository.GetAllByParentAsync(goalToEdit);
-                await goalTaskRepository.RemoveRangeAsync(currentGoalTasks);
+                var goal = await viewModel.EditGoalAsync(goalToEdit, GetTasks(goalToEdit), username);
 
-                if (goalTasks.Any())
+                if (goal != null)
                 {
-                    foreach (var goalTask in goalTasks)
-                        await goalTaskRepository.AddAsync(goalTask);
+                    //TODO: Achievement unlockable for first editing of goal?
+                    var messenger = DependencyService.Get<IMessenger>();
+                    messenger.LongMessage($"Ziel: {goalToEdit.Title} wurde erfolgreich bearbeitet.");
 
-                    goalToEdit.GoalTaskCount = goalTasks.Count();
+                    await Navigation.PopAsync();
                 }
-
-                var messenger = DependencyService.Get<IMessenger>();
-                messenger.LongMessage($"Ziel: {goalToEdit.Title} wurde erfolgreich bearbeitet.");
-
-                await goalTaskRepository.SaveChangesAsync();
-
-                var notificationQueueManager = DependencyService.Get<INotificationQueueManager>();
-
-                //TODO: Achievement unlockable for first editing of goal?
-
-                //TODO: Alarms canceled properly?
-                notificationQueueManager.CancelAlarms(goalToEdit);
-                notificationQueueManager.QueueGoalNotificationBroadcast(goalRepository, goalToEdit,
-                    new[] {goalToEdit.RequestCode, goalToEdit.RequestCode - 1, goalToEdit.RequestCode - 2}, username);
-                await Navigation.PopAsync();
             }
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
@@ -151,7 +119,7 @@ namespace GoalTracker.Views.AppShell.Goals
                 var minute = DateTime.Now.Minute;
                 if ((newValue < TimeSpan.FromHours(hour) || newValue.Hours == hour && newValue.Minutes <= minute) &&
                     GoalStartDatePicker.Date.Day <= DateTime.Now.Day &&
-                    GoalStartDatePicker.Date.Month <= DateTime.Now.Month && !saving)
+                    GoalStartDatePicker.Date.Month <= DateTime.Now.Month && !saving && contentLoaded)
                 {
                     GoalNotificationTimePicker.Time = new TimeSpan(hour + 1, 00, 00);
                     DependencyService.Get<IMessenger>().ShortMessage("Bitte wähle einen Zeitpunkt in der Zukunft aus.");
@@ -160,8 +128,6 @@ namespace GoalTracker.Views.AppShell.Goals
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
@@ -200,8 +166,6 @@ namespace GoalTracker.Views.AppShell.Goals
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
@@ -238,21 +202,17 @@ namespace GoalTracker.Views.AppShell.Goals
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
                 return null;
             }
         }
 
-        private void InitializeGoalTasksComponent(Goal parent)
+        private void InitializeGoalTasksComponent(GoalTask[] goalTasks)
         {
             try
             {
-                var goalTasks = AsyncHelper.RunSync(() => goalTaskRepository.GetAllByParentAsync(goalToEdit));
-                var goalTasksEnumerable = goalTasks as GoalTask[] ?? goalTasks.ToArray();
-                if (goalTasksEnumerable.Any())
+                if (goalTasks.Any())
                 {
-                    foreach (var goalTask in goalTasksEnumerable)
+                    foreach (var goalTask in goalTasks)
                     {
                         goalTaskCounter++;
 
@@ -288,9 +248,15 @@ namespace GoalTracker.Views.AppShell.Goals
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
+        }
+
+        private void GoalImageEntry_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            var text = GoalImageEntry.Text;
+            if (text.Length != 2)
+                // TODO: Implement check if a emoji was selected
+                GoalImageEntry.Text = string.Empty;
         }
     }
 }

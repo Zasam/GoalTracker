@@ -3,23 +3,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using GoalTracker.Entities;
 using GoalTracker.Services;
+using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 
 namespace GoalTracker.ViewModels
 {
     public class GoalAppointmentViewModel : BaseViewModel, IGoalAppointmentViewModel
     {
+        #region Properties
+
+        #region Repositories
+
         private readonly IGoalAppointmentRepository goalAppointmentRepository;
 
-        private GoalAppointment goalAppointment;
+        #endregion // Repositories
 
         private GoalAppointment[] goalAppointments;
-
-        public GoalAppointmentViewModel(Goal parent, IGoalAppointmentRepository goalAppointmentRepository)
-        {
-            this.goalAppointmentRepository = goalAppointmentRepository;
-            Parent = parent;
-        }
+        private GoalAppointment goalAppointment;
 
         public GoalAppointment[] GoalAppointments
         {
@@ -41,11 +41,18 @@ namespace GoalTracker.ViewModels
             }
         }
 
+        public Goal Parent { get; set; }
         public string ParentTitle => Parent == null ? "N/A" : Parent.Title;
 
-        public Goal Parent { get; set; }
+        #endregion // Properties
 
-        public async Task LoadAppointments()
+        public GoalAppointmentViewModel(Goal parent, IGoalAppointmentRepository goalAppointmentRepository)
+        {
+            this.goalAppointmentRepository = goalAppointmentRepository;
+            Parent = parent;
+        }
+
+        public async Task LoadAppointmentsAsync()
         {
             try
             {
@@ -57,6 +64,14 @@ namespace GoalTracker.ViewModels
             {
                 Crashes.TrackError(ex);
             }
+        }
+
+        public async Task ApproveAppointmentAsync(bool success)
+        {
+            var dbGoalAppointment = await goalAppointmentRepository.GetAsync(goalAppointment.Id);
+            dbGoalAppointment.Approve(success);
+            await goalAppointmentRepository.SaveChangesAsync();
+            SelectedGoalAppointment = dbGoalAppointment;
         }
     }
 }

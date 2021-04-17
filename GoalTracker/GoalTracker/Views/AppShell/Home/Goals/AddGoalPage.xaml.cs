@@ -1,45 +1,36 @@
 ﻿using System;
-using System.Linq;
 using GoalTracker.Entities;
 using GoalTracker.Extensions;
 using GoalTracker.PlatformServices;
-using GoalTracker.Services;
 using GoalTracker.Utilities;
-using GoalTracker.ViewModels;
+using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 using Syncfusion.XForms.Pickers;
 using Syncfusion.XForms.TextInputLayout;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace GoalTracker.Views.AppShell.Goals
+namespace GoalTracker.Views.AppShell.Home.Goals
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AddGoalPage : ContentPage
     {
-        private readonly IAchievementRepository achievementRepository;
-        private readonly IGoalAppointmentRepository goalAppointmentRepository;
-        private readonly IGoalRepository goalRepository;
-        private readonly IGoalTaskRepository goalTaskRepository;
         private readonly string username;
-        private readonly IGoalViewModel viewModel;
+        private readonly IGoalViewModel goalViewModel;
+        private readonly ISettingViewModel settingViewModel;
+        private bool contentLoaded;
         private int goalTaskCounter;
         private bool saving;
 
-        public AddGoalPage(IGoalViewModel viewModel, IGoalRepository goalRepository,
-            IGoalAppointmentRepository goalAppointmentRepository, IAchievementRepository achievementRepository,
-            IGoalTaskRepository goalTaskRepository,
-            string username)
+        public AddGoalPage(IGoalViewModel goalViewModel, ISettingViewModel settingViewModel, string username)
         {
             this.username = username;
-            this.viewModel = viewModel;
-            this.goalRepository = goalRepository;
-            this.goalAppointmentRepository = goalAppointmentRepository;
-            this.achievementRepository = achievementRepository;
-            this.goalTaskRepository = goalTaskRepository;
+            this.goalViewModel = goalViewModel;
+            this.settingViewModel = settingViewModel;
 
-            viewModel.GoalHasDueDate = false;
-            BindingContext = viewModel;
+            contentLoaded = false;
+            goalViewModel.GoalHasDueDate = false;
+            BindingContext = goalViewModel;
 
             InitializeComponent();
         }
@@ -52,11 +43,10 @@ namespace GoalTracker.Views.AppShell.Goals
                 ResetInputs();
                 base.OnAppearing();
                 AchievementStackLayout.InitializeAchievementAnimation();
+                contentLoaded = true;
             }
             catch (Exception ex)
             {
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
                 Crashes.TrackError(ex);
             }
         }
@@ -66,67 +56,39 @@ namespace GoalTracker.Views.AppShell.Goals
             try
             {
                 saving = true;
-                var goalNotificationId = await goalRepository.GetNextNotificationId();
-                var goalRequestCodes = await goalRepository.GetNextRequestCodesForNotificationWithOptions();
-                var newGoal = new Goal(viewModel.GoalTitle, viewModel.GoalNotes, viewModel.GoalStartDate,
-                    viewModel.GoalHasDueDate, viewModel.GoalEndDate, viewModel.GoalNotificationInterval,
-                    viewModel.GoalNotificationTime, goalNotificationId, goalRequestCodes.Max());
+
+                var newGoal = new Goal(goalViewModel.GoalTitle, goalViewModel.GoalNotes, goalViewModel.GoalStartDate,
+                    goalViewModel.GoalHasDueDate, goalViewModel.GoalEndDate, goalViewModel.GoalNotificationInterval,
+                    goalViewModel.GoalNotificationTime, goalViewModel.GoalImage);
 
                 var valid = ValidateInputs(newGoal);
                 if (!valid)
                     return;
 
-                await goalRepository.AddAsync(newGoal);
-
-                var goalAppointments = newGoal.GetAppointments();
-                await goalAppointmentRepository.AddRangeAsync(goalAppointments);
-
                 var goalTasks = GetTasks(newGoal);
-                if (goalTasks != null && goalTasks.Any())
+                var goal = await goalViewModel.AddGoalAsync(newGoal, goalTasks, username);
+
+                if (goal != null)
                 {
-                    foreach (var goalTask in goalTasks)
-                        await goalTaskRepository.AddAsync(goalTask);
+                    DependencyService.Get<IMessenger>()
+                        .LongMessage($"Neues Ziel erfolgreich hinzugefügt: {newGoal.Title}.");
 
-                    //goalTaskRepository.AddRange(goalTasks);
-                    newGoal.GoalTaskCount = goalTasks.Count();
-                }
+                    var unlockableAchievement = await settingViewModel.GetAchievementAsync("GOALADD");
 
-                await goalRepository.SaveChangesAsync();
-
-                var messenger = DependencyService.Get<IMessenger>();
-                messenger.LongMessage($"Neues Ziel erfolgreich hinzugefügt: {newGoal.Title}.");
-
-                var notificationQueueManager = DependencyService.Get<INotificationQueueManager>();
-                notificationQueueManager.QueueGoalNotificationBroadcast(goalRepository, newGoal, goalRequestCodes,
-                    username);
-
-                var unlockableAchievements = await
-                    achievementRepository.FindAsync(a => a.InternalTag == "GOALADD");
-                var unlockableAchievement = unlockableAchievements.FirstOrDefault();
-                if (unlockableAchievement != null)
-                {
-                    var firstUnlock = unlockableAchievement.Unlock();
-                    if (firstUnlock)
+                    if (unlockableAchievement != null)
                     {
-                        await achievementRepository.SaveChangesAsync();
-                        await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel,
-                            AchievementProgressBar, unlockableAchievement.Title);
-                        await Navigation.PopAsync(true);
+                        var unlocked = await settingViewModel.UnlockAchievementAsync("GOALADD");
+
+                        if (unlocked)
+                            await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel,
+                                AchievementProgressBar, unlockableAchievement.Title);
                     }
-                    else
-                    {
-                        await Navigation.PopAsync(true);
-                    }
-                }
-                else
-                {
+
                     await Navigation.PopAsync(true);
                 }
             }
             catch (Exception ex)
             {
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
                 Crashes.TrackError(ex);
             }
         }
@@ -145,16 +107,14 @@ namespace GoalTracker.Views.AppShell.Goals
             {
                 GoalTitleEntry.Text = string.Empty;
                 GoalNotesEditor.Text = string.Empty;
-                GoalStartDatePicker.Date = viewModel.GoalMinimumStartDate;
+                GoalStartDatePicker.Date = goalViewModel.GoalMinimumStartDate;
                 GoalHasDueDateCheckBox.IsChecked = false;
-                GoalEndDatePicker.Date = viewModel.GoalMinimumEndDate;
+                GoalEndDatePicker.Date = goalViewModel.GoalMinimumEndDate;
                 GoalNotificationTimePicker.Time = TimeSpan.FromHours(DateTime.Now.Hour);
                 GoalNotificationIntervalPicker.SelectedIndex = 3;
             }
             catch (Exception ex)
             {
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
                 Crashes.TrackError(ex);
             }
         }
@@ -169,7 +129,7 @@ namespace GoalTracker.Views.AppShell.Goals
                 var minute = DateTime.Now.Minute;
                 if ((newValue < TimeSpan.FromHours(hour) || newValue.Hours == hour && newValue.Minutes <= minute) &&
                     GoalStartDatePicker.Date.Day <= DateTime.Now.Day &&
-                    GoalStartDatePicker.Date.Month <= DateTime.Now.Month && !saving)
+                    GoalStartDatePicker.Date.Month <= DateTime.Now.Month && !saving && contentLoaded)
                 {
                     GoalNotificationTimePicker.Time = new TimeSpan(hour + 1, 00, 00);
                     DependencyService.Get<IMessenger>().ShortMessage("Bitte wähle einen Zeitpunkt in der Zukunft aus.");
@@ -178,8 +138,6 @@ namespace GoalTracker.Views.AppShell.Goals
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
@@ -233,6 +191,18 @@ namespace GoalTracker.Views.AppShell.Goals
 
             if (goalTaskCounter == 0)
                 RemoveGoalTaskButton.IsVisible = false;
+        }
+
+        private void GoalImageEntry_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            var text = GoalImageEntry.Text;
+            if (text.Length != 2)
+            {
+                // TODO: Implement check if a emoji was selected
+                GoalImageEntry.Text = string.Empty;
+                DependencyService.Get<IMessenger>()
+                    .ShortMessage("Bitte hinterlege nur ein Emoji als beschreibendes Bild");
+            }
         }
 
         private GoalTask[] GetTasks(Goal parent)

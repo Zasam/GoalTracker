@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Linq;
 using GoalTracker.Extensions;
 using GoalTracker.PlatformServices;
-using GoalTracker.Services;
-using GoalTracker.ViewModels;
+using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 using Syncfusion.XForms.ProgressBar;
 using Xamarin.Forms;
@@ -14,20 +12,14 @@ namespace GoalTracker.Views.RegistrationShell
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class RegistrationPage : ContentPage
     {
-        private readonly IAchievementRepository achievementRepository;
-        private readonly IUserRepository userRepository;
-        private readonly IRegistrationViewModel viewModel;
+        private readonly ISettingViewModel settingViewModel;
 
-        public RegistrationPage(IUserRepository userRepository, IAchievementRepository achievementRepository,
-            IRegistrationViewModel viewModel)
+        public RegistrationPage(ISettingViewModel settingViewModel)
         {
             InitializeComponent();
 
-            this.viewModel = viewModel;
-            this.userRepository = userRepository;
-            this.achievementRepository = achievementRepository;
-
-            BindingContext = viewModel;
+            this.settingViewModel = settingViewModel;
+            BindingContext = settingViewModel;
         }
 
         protected override void OnAppearing()
@@ -50,28 +42,15 @@ namespace GoalTracker.Views.RegistrationShell
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(viewModel.Username))
+                if (string.IsNullOrWhiteSpace(settingViewModel.Username))
                     //TODO: Show validation message to user!
                     return;
 
-                var defaultUser = await userRepository.GetAsync(1);
-
-                if (defaultUser == null)
-                    throw new InvalidOperationException(
-                        "Default initialization has not been started or has not been completed");
-
-                defaultUser.Name = viewModel.Username;
-                await userRepository.SaveChangesAsync();
-
-                var unlockableAchievements = await achievementRepository.FindAsync(a => a.InternalTag == "SIGNUP");
-                var unlockableAchievement = unlockableAchievements.FirstOrDefault();
+                var unlockableAchievement = await settingViewModel.GetAchievementAsync("SIGNUP");
 
                 if (unlockableAchievement != null)
                 {
-                    unlockableAchievement.Unlock();
-                    await achievementRepository.SaveChangesAsync();
-
-                    //TODO: Implement progress bar not only for achievement unlocked, but (also) for progress of signup!
+                    await settingViewModel.UnlockAchievementAsync("SIGNUP");
                     await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel,
                         AchievementProgressBar, "Erfolg freigeschaltet: " + unlockableAchievement.Title);
                 }

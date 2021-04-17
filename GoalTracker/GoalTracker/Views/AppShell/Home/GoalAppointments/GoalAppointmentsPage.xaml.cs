@@ -1,34 +1,34 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using GoalTracker.Entities;
 using GoalTracker.PlatformServices;
-using GoalTracker.Services;
-using GoalTracker.ViewModels;
+using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
+using Syncfusion.ListView.XForms;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using SwipeEndedEventArgs = Syncfusion.ListView.XForms.SwipeEndedEventArgs;
 using SwipeStartedEventArgs = Syncfusion.ListView.XForms.SwipeStartedEventArgs;
 
-namespace GoalTracker.Views.AppShell.Goals
+namespace GoalTracker.Views.AppShell.Home.GoalAppointments
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class GoalAppointmentsPage : ContentPage
     {
-        private readonly IGoalAppointmentRepository goalAppointmentRepository;
         private readonly IGoalAppointmentViewModel viewModel;
         private Image approveGoalAppointmentFailureImage;
         private Image approveGoalAppointmentSuccessImage;
         private int itemIndex;
 
-        public GoalAppointmentsPage(IGoalAppointmentViewModel viewModel,
-            IGoalAppointmentRepository goalAppointmentRepository)
+        public GoalAppointmentsPage(IGoalAppointmentViewModel viewModel, Goal parent)
         {
             InitializeComponent();
 
-            this.goalAppointmentRepository = goalAppointmentRepository;
             this.viewModel = viewModel;
             BindingContext = viewModel;
+
+            Title = "Benachrichtigungen für: " + parent.Title;
         }
 
         protected override void OnAppearing()
@@ -41,8 +41,6 @@ namespace GoalTracker.Views.AppShell.Goals
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
@@ -58,10 +56,10 @@ namespace GoalTracker.Views.AppShell.Goals
             RefreshGoalAppointments();
         }
 
-        private void RefreshGoalAppointments()
+        private async void RefreshGoalAppointments()
         {
             GoalAppointmentListViewPullToRefresh.IsRefreshing = true;
-            viewModel.LoadAppointments();
+            await viewModel.LoadAppointmentsAsync();
             GoalAppointmentListViewPullToRefresh.IsRefreshing = false;
         }
 
@@ -79,16 +77,12 @@ namespace GoalTracker.Views.AppShell.Goals
         {
             try
             {
-                var dbGoalAppointment = await goalAppointmentRepository.GetAsync(viewModel.SelectedGoalAppointment.Id);
-                dbGoalAppointment.Approve(success);
-                viewModel.SelectedGoalAppointment = dbGoalAppointment;
+                await viewModel.ApproveAppointmentAsync(success);
                 RefreshGoalAppointments();
             }
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
@@ -113,8 +107,6 @@ namespace GoalTracker.Views.AppShell.Goals
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
@@ -139,8 +131,6 @@ namespace GoalTracker.Views.AppShell.Goals
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
@@ -148,45 +138,57 @@ namespace GoalTracker.Views.AppShell.Goals
         {
             try
             {
-                itemIndex = e.ItemIndex;
+                await viewModel.LoadAppointmentsAsync();
+                var goalAppointments = viewModel.GoalAppointments.OrderBy(ga => ga.AppointmentDate).ToArray();
 
-                var goalAppointmentTask = await goalAppointmentRepository.GetAllByParentAsync(viewModel.Parent);
-                var goalAppointments = goalAppointmentTask.OrderBy(ga => ga.AppointmentDate).ToArray();
+                var listviewSelectedGoalAppointment = (GoalAppointment) GoalAppointmentListView.SelectedItem;
+                var swipeSelectedGoalAppointment = goalAppointments[e.ItemIndex];
 
-                viewModel.SelectedGoalAppointment = goalAppointments[itemIndex];
-
-                if (viewModel.SelectedGoalAppointment != null &&
-                    viewModel.SelectedGoalAppointment.AppointmentDate >= DateTime.Now)
+                if (swipeSelectedGoalAppointment != null && swipeSelectedGoalAppointment.AppointmentDate > DateTime.Now)
                 {
-                    e.Cancel = true;
-                    itemIndex = -1;
-                    viewModel.SelectedGoalAppointment = null;
                     DependencyService.Get<IMessenger>()
-                        .ShortMessage("Dieser Termin kann noch nicht validiert werden, da er in der Zukunft liegt.");
+                        .ShortMessage("Der Termin kann noch nicht bestätigt werden, da er noch in der Zukunft liegt.");
+                    e.Cancel = true;
+                    return;
+                }
+
+                if (listviewSelectedGoalAppointment == null ||
+                    listviewSelectedGoalAppointment.Id != swipeSelectedGoalAppointment.Id &&
+                    swipeSelectedGoalAppointment.AppointmentDate <= DateTime.Now)
+                {
+                    GoalAppointmentListView.Focus();
+                    GoalAppointmentListView.SelectedItem = swipeSelectedGoalAppointment;
+                    viewModel.SelectedGoalAppointment = swipeSelectedGoalAppointment;
                 }
             }
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
-        private async void GoalAppointmentListView_OnSwipeEnded(object sender, SwipeEndedEventArgs e)
+        private void GoalAppointmentListView_OnSwipeEnded(object sender, SwipeEndedEventArgs e)
         {
             try
             {
                 itemIndex = e.ItemIndex;
-                var goalAppointmentTask = await goalAppointmentRepository.GetAllByParentAsync(viewModel.Parent);
-                var goalAppointments = goalAppointmentTask.OrderBy(ga => ga.AppointmentDate).ToArray();
-                viewModel.SelectedGoalAppointment = goalAppointments[itemIndex];
             }
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
+            }
+        }
+
+        private void GoalAppointmentListView_OnSelectionChanged(object sender, ItemSelectionChangedEventArgs e)
+        {
+            try
+            {
+                if (e.AddedItems.Any())
+                    viewModel.SelectedGoalAppointment = (GoalAppointment) e.AddedItems[0];
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
             }
         }
     }

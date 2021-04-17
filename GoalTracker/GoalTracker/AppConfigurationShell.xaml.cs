@@ -1,15 +1,14 @@
-﻿using GoalTracker.Views.RegistrationShell;
-using GoalTracker.ViewModels;
-using GoalTracker.Services;
-using Xamarin.Forms.Xaml;
+﻿using GoalTracker.ViewModels.Interface;
+using GoalTracker.Views.RegistrationShell;
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace GoalTracker
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AppConfigurationShell : Shell
     {
-        public AppConfigurationShell(IUserRepository userRepository, IAchievementRepository achievementRepository, IRegistrationViewModel registrationViewModel)
+        public AppConfigurationShell(ISettingViewModel settingViewModel)
         {
             InitializeComponent();
 
@@ -17,7 +16,7 @@ namespace GoalTracker
             {
                 Title = "Konfiguration",
                 Icon = "Settings.png",
-                Content = new RegistrationPage(userRepository, achievementRepository, registrationViewModel),
+                Content = new RegistrationPage(settingViewModel),
                 Route = "UserSettingsPage"
             });
         }

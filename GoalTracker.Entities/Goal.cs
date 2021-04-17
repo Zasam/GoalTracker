@@ -15,6 +15,7 @@ namespace GoalTracker.Entities
             NotificationTime = TimeSpan.FromHours(8);
             NotificationId = 1;
             RequestCode = 1;
+            DetailImage = "❔";
         }
 
         /// <summary>
@@ -31,7 +32,7 @@ namespace GoalTracker.Entities
         /// <param name="startingRequestCode">The starting request code of the goal</param>
         public Goal(string title, string notes, DateTime startDate, bool hasDueDate, DateTime endDate,
             GoalAppointmentInterval goalAppointmentInterval, TimeSpan notificationTime, int notificationId,
-            int startingRequestCode)
+            int startingRequestCode, string goalImage)
         {
             Title = title;
             Notes = notes;
@@ -42,57 +43,100 @@ namespace GoalTracker.Entities
             NotificationTime = notificationTime;
             NotificationId = notificationId;
             RequestCode = startingRequestCode;
+            DetailImage = goalImage;
+        }
+
+        public Goal(string title, string notes, DateTime startDate, bool hasDueDate, DateTime endDate,
+            GoalAppointmentInterval goalAppointmentInterval, TimeSpan notificationTime, string goalImage)
+        {
+            Title = title;
+            Notes = notes;
+            StartDate = startDate;
+            HasDueDate = hasDueDate;
+            EndDate = endDate;
+            GoalAppointmentInterval = goalAppointmentInterval;
+            NotificationTime = notificationTime;
+            DetailImage = goalImage;
+        }
+
+        public void SetNotificationIndex(int notificationId, int startingRequestCode)
+        {
+            NotificationId = notificationId;
+            RequestCode = startingRequestCode;
         }
 
         #region Properties
 
         /// <summary>
-        ///     Title describing the goal
+        /// Title describing the goal
         /// </summary>
         public string Title { get; set; }
 
         /// <summary>
-        ///     Notes describing the goal more intensively
+        /// Notes describing the goal more intensively
         /// </summary>
         public string Notes { get; set; }
 
         /// <summary>
-        ///     Date when tracking of the goal should start
+        /// The single line string presented as detail image in viewcell (preferable only emoticons)
+        /// </summary>
+        public string DetailImage { get; set; }
+
+        /// <summary>
+        /// Date when tracking of the goal should start
         /// </summary>
         public DateTime StartDate { get; set; }
 
         /// <summary>
-        ///     Indicates whether the goal has a end date or not
+        /// Indicates whether the goal has a end date or not
         /// </summary>
         public bool HasDueDate { get; set; }
 
         /// <summary>
-        ///     Date when tracking of the goal should end
+        /// Date when tracking of the goal should end
         /// </summary>
         public DateTime EndDate { get; set; }
 
         /// <summary>
-        ///     The interval to notify the user of the goal
+        /// The interval to notify the user of the goal
         /// </summary>
         public GoalAppointmentInterval GoalAppointmentInterval { get; set; }
 
+        /// <summary>
+        /// Collection of associated goal appointments
+        /// </summary>
         public virtual IEnumerable<GoalAppointment> GoalAppointments { get; set; }
 
+        /// <summary>
+        /// Collection of associated goal tasks
+        /// </summary>
         public virtual IEnumerable<GoalTask> GoalTasks { get; set; }
 
+        /// <summary>
+        /// The number of tasks associated with this goal
+        /// </summary>
         public int GoalTaskCount { get; set; }
 
+        /// <summary>
+        /// Indication if all the associated goal tasks are finished by now
+        /// </summary>
         public bool AllTasksCompleted { get; set; }
 
         #region Notification
 
         /// <summary>
-        ///     The time when the first notification should be triggered
+        /// The time when the first notification should be triggered
         /// </summary>
         public TimeSpan NotificationTime { get; set; }
 
+        /// <summary>
+        /// The id to handle notifications associated with this goal
+        /// </summary>
         public int NotificationId { get; set; }
 
+        /// <summary>
+        /// The request codes to use with the notifications associated with this goal
+        /// </summary>
         public int RequestCode { get; set; }
 
         #endregion Notification

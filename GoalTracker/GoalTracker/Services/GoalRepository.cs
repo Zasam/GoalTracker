@@ -20,7 +20,7 @@ namespace GoalTracker.Services
 
         public new async Task<IEnumerable<Goal>> GetAllAsync()
         {
-            return await context.Goals.Include(g => g.GoalAppointments).ToListAsync();
+            return await context.Goals.Include(g => g.GoalAppointments).Include(g => g.GoalTasks).ToListAsync();
         }
 
         public async Task<IEnumerable<Goal>> GetAllInDateAsync(DateTime date)

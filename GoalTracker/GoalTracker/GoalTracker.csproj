@@ -49,7 +49,7 @@
     <Compile Update="Views\RegistrationShell\RegistrationPage.xaml.cs">
       <DependentUpon>RegistrationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\AppShell\Goals\GoalsPage.xaml.cs">
+    <Compile Update="Views\AppShell\Home\Goals\GoalsPage.xaml.cs">
       <DependentUpon>GoalsPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -74,16 +74,16 @@
     <EmbeddedResource Update="Views\AppShell\Calendar\CalendarPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\AppShell\Goals\AddGoalPage.xaml">
+    <EmbeddedResource Update="Views\AppShell\Home\Goals\AddGoalPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\AppShell\Goals\EditGoalPage.xaml">
+    <EmbeddedResource Update="Views\AppShell\Home\Goals\EditGoalPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\AppShell\Goals\GoalAppointmentsPage.xaml">
+    <EmbeddedResource Update="Views\AppShell\Home\GoalAppointments\GoalAppointmentsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\AppShell\Goals\GoalTasksPage.xaml">
+    <EmbeddedResource Update="Views\AppShell\Home\GoalTasks\GoalTasksPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\AppShell\Settings\Achievements\AchievementsPage.xaml">

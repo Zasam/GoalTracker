@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Autofac;
+using BQFramework.Tasks;
+using GoalTracker.DI;
 using GoalTracker.Entities;
 using GoalTracker.Services;
 using Microsoft.AppCenter.Crashes;
@@ -31,7 +33,7 @@ namespace GoalTracker.Converter
                     // Initialization on first conversion date || Min and max conversion dates are the first and last shown dates of the calendar component
                     if (date == startConversionDate)
                     {
-                        var container = App.Instance.container;
+                        var container = AsyncHelper.RunSync(Bootstrapper.GetContainer);
 
                         goalRepository ??= container.Resolve<IGoalRepository>();
                         goalDateRepository ??= container.Resolve<IGoalAppointmentRepository>();

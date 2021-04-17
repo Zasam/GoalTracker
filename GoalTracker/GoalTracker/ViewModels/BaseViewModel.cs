@@ -1,5 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using Microsoft.AppCenter.Crashes;
 
 namespace GoalTracker.ViewModels
 {
@@ -9,9 +11,14 @@ namespace GoalTracker.ViewModels
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            var changed = PropertyChanged;
-
-            changed?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            try
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
     }
 }

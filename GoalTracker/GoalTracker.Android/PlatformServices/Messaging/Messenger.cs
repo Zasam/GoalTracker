@@ -12,12 +12,12 @@ namespace GoalTracker.Droid.PlatformServices.Messaging
     {
         public void LongMessage(string message)
         {
-            Toast.MakeText(Application.Context, message, ToastLength.Long).Show();
+            Toast.MakeText(Application.Context, message, ToastLength.Long)?.Show();
         }
 
         public void ShortMessage(string message)
         {
-            Toast.MakeText(Application.Context, message, ToastLength.Short).Show();
+            Toast.MakeText(Application.Context, message, ToastLength.Short)?.Show();
         }
     }
 }

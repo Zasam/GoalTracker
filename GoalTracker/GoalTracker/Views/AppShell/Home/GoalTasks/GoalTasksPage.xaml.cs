@@ -1,40 +1,40 @@
 ﻿using System;
 using System.Linq;
+using GoalTracker.Entities;
 using GoalTracker.PlatformServices;
-using GoalTracker.Services;
-using GoalTracker.ViewModels;
+using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
+using Syncfusion.ListView.XForms;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using SwipeEndedEventArgs = Syncfusion.ListView.XForms.SwipeEndedEventArgs;
 using SwipeStartedEventArgs = Syncfusion.ListView.XForms.SwipeStartedEventArgs;
 
-namespace GoalTracker.Views.AppShell.Goals
+namespace GoalTracker.Views.AppShell.Home.GoalTasks
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class GoalTasksPage : ContentPage
     {
-        private readonly IGoalTaskRepository goalTaskRepository;
         private readonly IGoalTaskViewModel viewModel;
         private Image deleteSwipeImage;
         private Image editSwipeImage;
         private int itemIndex;
 
-        public GoalTasksPage(IGoalTaskViewModel viewModel, IGoalTaskRepository goalTaskRepository)
+        public GoalTasksPage(IGoalTaskViewModel viewModel, Goal parent)
         {
             InitializeComponent();
 
-            this.goalTaskRepository = goalTaskRepository;
             this.viewModel = viewModel;
             BindingContext = viewModel;
+            Title = "Aufgaben für: " + parent.Title;
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             try
             {
-                RefreshGoalTasks();
                 base.OnAppearing();
+                await viewModel.LoadTasksAsync();
             }
             catch (Exception ex)
             {
@@ -44,29 +44,55 @@ namespace GoalTracker.Views.AppShell.Goals
             }
         }
 
-        private void RefreshGoalTasks()
-        {
-            GoalTaskListViewPullToRefresh.IsRefreshing = true;
-            viewModel.LoadTasks();
-            GoalTaskListViewPullToRefresh.IsRefreshing = false;
-        }
-
         private void GoalTaskListViewPullToRefresh_OnRefreshing(object sender, EventArgs e)
         {
-            RefreshGoalTasks();
+            try
+            {
+                GoalTaskListViewPullToRefresh.IsRefreshing = true;
+                viewModel.LoadTasksAsync();
+                DependencyService.Get<IMessenger>().ShortMessage("Deine Aufgaben wurden erfolgreich aktualisiert.");
+                GoalTaskListViewPullToRefresh.IsRefreshing = false;
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                DependencyService.Get<IMessenger>()
+                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
+            }
         }
 
-        private void GoalTaskListView_OnSwipeStarted(object sender, SwipeStartedEventArgs e)
+        private async void GoalTaskListView_OnSwipeStarted(object sender, SwipeStartedEventArgs e)
         {
-            itemIndex = -1;
-            viewModel.SelectedGoalTask = null;
+            try
+            {
+                await viewModel.LoadTasksAsync();
+
+                var listviewSelectedGoalTask = (Goal) GoalTaskListView.SelectedItem;
+                var swipeSelectedGoalTask = viewModel.GoalTasks[e.ItemIndex];
+
+                if (listviewSelectedGoalTask == null || listviewSelectedGoalTask.Id != swipeSelectedGoalTask.Id)
+                {
+                    GoalTaskListView.Focus();
+                    GoalTaskListView.SelectedItem = swipeSelectedGoalTask;
+                    viewModel.SelectedGoalTask = swipeSelectedGoalTask;
+                }
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
-        private async void GoalTaskListView_OnSwipeEnded(object sender, SwipeEndedEventArgs e)
+        private void GoalTaskListView_OnSwipeEnded(object sender, SwipeEndedEventArgs e)
         {
-            itemIndex = e.ItemIndex;
-            var goalTasks = await goalTaskRepository.GetAllAsync();
-            viewModel.SelectedGoalTask = goalTasks.ToArray()[itemIndex];
+            try
+            {
+                itemIndex = e.ItemIndex;
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         private async void DeleteGoalTask()
@@ -76,12 +102,12 @@ namespace GoalTracker.Views.AppShell.Goals
                 if (itemIndex >= 0)
                 {
                     var selectedGoalTask = viewModel.GoalTasks[itemIndex];
-                    await goalTaskRepository.RemoveAsync(selectedGoalTask);
+                    await viewModel.DeleteTaskAsync(selectedGoalTask);
                     DependencyService.Get<IMessenger>()
                         .LongMessage($"Aufgabe {selectedGoalTask.Title} erfolgreich gelöscht.");
 
                     GoalTaskListView.ResetSwipe();
-                    RefreshGoalTasks();
+                    await viewModel.LoadTasksAsync();
                 }
             }
             catch (Exception ex)
@@ -149,14 +175,7 @@ namespace GoalTracker.Views.AppShell.Goals
         {
             try
             {
-                var dbSelectedGoalTask = await goalTaskRepository
-                    .GetAllByParentAsync(viewModel.Parent);
-                var selectedGoalTask = dbSelectedGoalTask.FirstOrDefault(gt => gt.Id == viewModel.SelectedGoalTask.Id);
-
-
-                if (selectedGoalTask != null)
-                    selectedGoalTask.Completed = !selectedGoalTask.Completed;
-                await goalTaskRepository.SaveChangesAsync();
+                await viewModel.SetTaskCompletedAsync();
                 GoalTaskListView.ResetSwipe();
             }
             catch (Exception ex)
@@ -164,6 +183,19 @@ namespace GoalTracker.Views.AppShell.Goals
                 Crashes.TrackError(ex);
                 DependencyService.Get<IMessenger>()
                     .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
+            }
+        }
+
+        private void GoalTaskListView_OnSelectionChanged(object sender, ItemSelectionChangedEventArgs e)
+        {
+            try
+            {
+                if (e.AddedItems.Any())
+                    viewModel.SelectedGoalTask = (GoalTask) e.AddedItems[0];
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
             }
         }
     }

@@ -50,7 +50,7 @@ namespace GoalTracker.Droid.PlatformServices.Notification
 
                 // Large icon resource bitmap conversion
                 var imagefileName = "Icon.png";
-                // Remove the file extention from the image filename
+                // Remove the file extension from the image filename
                 imagefileName = imagefileName.Replace(".jpg", "").Replace(".png", "");
 
                 // Retrieving the local Resource ID from the name

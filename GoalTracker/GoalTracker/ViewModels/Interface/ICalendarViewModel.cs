@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Syncfusion.SfCalendar.XForms;
 
-namespace GoalTracker.ViewModels
+namespace GoalTracker.ViewModels.Interface
 {
     public interface ICalendarViewModel
     {
@@ -11,6 +11,6 @@ namespace GoalTracker.ViewModels
         public int FailureApprovalsWeek { get; set; }
         public DateTime CalendarMinDate { get; set; }
         public DateTime CalendarMaxDate { get; set; }
-        public Task GenerateCalendarEvents();
+        public Task LoadEventsAsync();
     }
 }

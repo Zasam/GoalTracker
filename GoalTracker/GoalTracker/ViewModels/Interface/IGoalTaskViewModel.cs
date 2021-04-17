@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using GoalTracker.Entities;
 
-namespace GoalTracker.ViewModels
+namespace GoalTracker.ViewModels.Interface
 {
     public interface IGoalTaskViewModel
     {
@@ -9,6 +9,8 @@ namespace GoalTracker.ViewModels
         public string ParentTitle { get; }
         public GoalTask[] GoalTasks { get; set; }
         public GoalTask SelectedGoalTask { get; set; }
-        public Task LoadTasks();
+        public Task LoadTasksAsync();
+        Task<bool> DeleteTaskAsync(GoalTask goalTask);
+        Task<bool> SetTaskCompletedAsync();
     }
 }

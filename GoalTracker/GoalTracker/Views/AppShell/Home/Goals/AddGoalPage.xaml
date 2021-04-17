@@ -8,21 +8,22 @@
              xmlns:progressbar="clr-namespace:Syncfusion.XForms.ProgressBar;assembly=Syncfusion.SfProgressBar.XForms" 
              xmlns:border="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
              xmlns:converters="clr-namespace:GoalTracker.Converter;assembly=GoalTracker"
-             x:Class="GoalTracker.Views.AppShell.Goals.AddGoalPage"
+             x:Class="GoalTracker.Views.AppShell.Home.Goals.AddGoalPage"
              Title="Neues Ziel hinzufügen">
 
-    <!--<ContentPage.Resources>
+    <ContentPage.Resources>
         <ResourceDictionary>
             <converters:BoolToMarginConverter x:Key="BoolToMarginConverter"/>
         </ResourceDictionary>
-    </ContentPage.Resources>-->
+    </ContentPage.Resources>
 
     <ContentPage.Content>
         <ScrollView>
             <Grid Style="{StaticResource DefaultGrid}" RowSpacing="15">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="80"/>
-                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="95"/>
+                    <RowDefinition Height="85"/>
                     <RowDefinition Height="250"/>
                     <RowDefinition Height="20"/>
                     <RowDefinition Height="Auto"/>
@@ -45,23 +46,28 @@
 
                 <syncfusionTextInputLayout:SfTextInputLayout x:Name="GoalNotesTextInputLayout" Hint="&#x1F4D6; Notizen" Grid.Row="1" HelperText="Hinterlasse eine Notiz, z.B warum du dieses Ziel verwirklichen willst">
                     <syncfusionTextInputLayout:SfTextInputLayout.InputView>
-                        <Editor x:Name="GoalNotesEditor" AutoSize="TextChanges" Text="{Binding GoalNotes}"/>
+                        <Editor x:Name="GoalNotesEditor" AutoSize="TextChanges" Text="{Binding GoalNotes}" TextColor="Black"/>
                     </syncfusionTextInputLayout:SfTextInputLayout.InputView>
                 </syncfusionTextInputLayout:SfTextInputLayout>
 
-                <border:SfBorder Grid.Row="2" HasShadow="True" ShadowColor="Black" BorderWidth="0">
-                    <syncfusionDatePicker:SfDatePicker x:Name="GoalStartDatePicker"
-                                                       Date="{Binding GoalStartDate}"
-                                                       MinimumDate="{Binding GoalMinimumStartDate}"
-                                                       HeaderText="&#x1F5D3; Start"/>
-                </border:SfBorder>
+                <syncfusionTextInputLayout:SfTextInputLayout x:Name="GoalImageTextInputLayout" Hint="&#x1F306; Bild" Grid.Row="2" HelperText="Hinterlege ein Emoji das dein Ziel beschreibt">
+                    <syncfusionTextInputLayout:SfTextInputLayout.InputView>
+                        <Entry x:Name="GoalImageEntry" Text="{Binding GoalImage}" TextColor="Black" TextChanged="GoalImageEntry_OnTextChanged"/>
+                    </syncfusionTextInputLayout:SfTextInputLayout.InputView>
+                </syncfusionTextInputLayout:SfTextInputLayout>
 
-                <syncfusionButtons:SfCheckBox Grid.Row="3"  x:Name="GoalHasDueDateCheckBox"
+                <syncfusionDatePicker:SfDatePicker x:Name="GoalStartDatePicker"
+                                                   Date="{Binding GoalStartDate}"
+                                                   MinimumDate="{Binding GoalMinimumStartDate}"
+                                                   HeaderText="&#x1F5D3; Start"
+                                                   Grid.Row="3"/>
+
+                <syncfusionButtons:SfCheckBox Grid.Row="4"  x:Name="GoalHasDueDateCheckBox"
                                               IsChecked="{Binding GoalHasDueDate}" 
                                               Text="Endet"/>
 
                 <syncfusionDatePicker:SfDatePicker x:Name="GoalEndDatePicker"
-                                                   Grid.Row="4"
+                                                   Grid.Row="5"
                                                    Grid.Column="0"
                                                    Date="{Binding GoalEndDate}"
                                                    MinimumDate="{Binding GoalMinimumEndDate}"
@@ -69,23 +75,23 @@
                                                    HeaderText="&#x1F5D3; Ende"/>
 
                 <syncfusionDatePicker:SfTimePicker x:Name="GoalNotificationTimePicker"
-                                                   Grid.Row="5"
+                                                   Grid.Row="6"
                                                    Grid.Column="0"
                                                    HeaderText="&#x23F0; Erste Benachrichtigung"
                                                    EnableLooping="True"
                                                    Time="{Binding GoalNotificationTime}"
-                                                   TimeSelected="GoalNotificationTimePicker_TimeSelected"/>
-                <!--Margin="{Binding GoalHasDueDate, Converter={StaticResource BoolToMarginConverter}}"/> -->
+                                                   TimeSelected="GoalNotificationTimePicker_TimeSelected"
+                                                   Margin="{Binding GoalHasDueDate, Converter={StaticResource BoolToMarginConverter}}"/>
 
                 <syncfusionPicker:SfPicker x:Name="GoalNotificationIntervalPicker"
-                                           Grid.Row="6"
+                                           Grid.Row="7"
                                            Grid.Column="0"
                                            HeaderText="&#x23F0; Erinnerungsinterval"
                                            ItemsSource="{Binding GoalNotificationIntervals}"
                                            SelectedIndex="{Binding GoalNotificationIntervalIndex}"/>
 
                 <!-- Goal Tasks section -->
-                <ScrollView Grid.Row="7" BackgroundColor="{DynamicResource Surface}">
+                <ScrollView Grid.Row="8" BackgroundColor="{DynamicResource Surface}">
                     <StackLayout Padding="15">
                         <Label Style="{StaticResource HeaderLabel}" Text="Aufgaben"/>
                         <StackLayout x:Name="GoalTaskStackLayout"/>
@@ -98,13 +104,13 @@
                     </StackLayout>
                 </ScrollView>
 
-                <Label x:Name="ErrorTextLabel" IsVisible="False" TextColor="{StaticResource Error}" Text="Du hast leider nicht alle benötigten Felder ausgefüllt." Grid.Row="8"/>
+                <Label x:Name="ErrorTextLabel" IsVisible="False" TextColor="{StaticResource Error}" Text="Du hast leider nicht alle benötigten Felder ausgefüllt." Grid.Row="9"/>
 
-                <StackLayout Grid.Row="9" Padding="50, 0, 50, 0">
+                <StackLayout Grid.Row="10" Padding="50, 0, 50, 0">
                     <syncfusionButtons:SfButton x:Name="SaveGoalButton" Text="Speichern" Clicked="SaveGoalButton_OnClicked"/>
                 </StackLayout>
 
-                <StackLayout x:Name="AchievementStackLayout" Margin="0, 15, 0, 0" Grid.Row="10" Grid.Column="0">
+                <StackLayout x:Name="AchievementStackLayout" Margin="0, 15, 0, 0" Grid.Row="11" Grid.Column="0">
                     <Label x:Name="AchievementLabel" Text="Erfolg freigeschaltet" HorizontalTextAlignment="Center" HorizontalOptions="FillAndExpand"/>
                     <progressbar:SfCircularProgressBar x:Name="AchievementProgressBar" Progress="0" AnimationDuration="1000" IndeterminateAnimationDuration="1000" EasingEffect="Linear" IndicatorOuterRadius="0.7" IndicatorInnerRadius="0.65">
                         <progressbar:SfCircularProgressBar.RangeColors>

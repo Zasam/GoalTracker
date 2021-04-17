@@ -41,7 +41,7 @@ namespace GoalTracker.Services
 
         private async Task<Goal> GetParentAsync(GoalTask child)
         {
-            return await Context.Goals.FindAsync(child.GoalId);
+            return await context.Goals.FindAsync(child.GoalId);
         }
     }
 }
