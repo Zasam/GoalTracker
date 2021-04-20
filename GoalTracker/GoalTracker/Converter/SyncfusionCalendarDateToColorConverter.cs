@@ -6,7 +6,7 @@ using Autofac;
 using BQFramework.Tasks;
 using GoalTracker.DI;
 using GoalTracker.Entities;
-using GoalTracker.Services;
+using GoalTracker.Services.Interface;
 using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 

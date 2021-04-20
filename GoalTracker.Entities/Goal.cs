@@ -16,6 +16,8 @@ namespace GoalTracker.Entities
             NotificationId = 1;
             RequestCode = 1;
             DetailImage = "❔";
+            GoalAppointments = new List<GoalAppointment>();
+            GoalTasks = new List<GoalTask>();
         }
 
         /// <summary>
@@ -44,6 +46,8 @@ namespace GoalTracker.Entities
             NotificationId = notificationId;
             RequestCode = startingRequestCode;
             DetailImage = goalImage;
+            GoalAppointments = new List<GoalAppointment>();
+            GoalTasks = new List<GoalTask>();
         }
 
         public Goal(string title, string notes, DateTime startDate, bool hasDueDate, DateTime endDate,
@@ -57,6 +61,8 @@ namespace GoalTracker.Entities
             GoalAppointmentInterval = goalAppointmentInterval;
             NotificationTime = notificationTime;
             DetailImage = goalImage;
+            GoalAppointments = new List<GoalAppointment>();
+            GoalTasks = new List<GoalTask>();
         }
 
         public void SetNotificationIndex(int notificationId, int startingRequestCode)

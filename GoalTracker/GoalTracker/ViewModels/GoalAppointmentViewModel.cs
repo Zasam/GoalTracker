@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using GoalTracker.Entities;
-using GoalTracker.Services;
+using GoalTracker.Services.Interface;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 
@@ -10,21 +10,19 @@ namespace GoalTracker.ViewModels
 {
     public class GoalAppointmentViewModel : BaseViewModel, IGoalAppointmentViewModel
     {
-        #region Properties
-
-        #region Repositories
-
         private readonly IGoalAppointmentRepository goalAppointmentRepository;
-
-        #endregion // Repositories
 
         private GoalAppointment[] goalAppointments;
         private GoalAppointment goalAppointment;
 
+        #region Properties
+
+        #region ReadOnly Bindings
+
         public GoalAppointment[] GoalAppointments
         {
             get => goalAppointments;
-            set
+            private set
             {
                 goalAppointments = value;
                 OnPropertyChanged();
@@ -34,15 +32,17 @@ namespace GoalTracker.ViewModels
         public GoalAppointment SelectedGoalAppointment
         {
             get => goalAppointment;
-            set
+            private set
             {
                 goalAppointment = value;
                 OnPropertyChanged();
             }
         }
 
-        public Goal Parent { get; set; }
+        public Goal Parent { get; }
         public string ParentTitle => Parent == null ? "N/A" : Parent.Title;
+
+        #endregion // ReadOnly Bindings
 
         #endregion // Properties
 
@@ -68,10 +68,15 @@ namespace GoalTracker.ViewModels
 
         public async Task ApproveAppointmentAsync(bool success)
         {
-            var dbGoalAppointment = await goalAppointmentRepository.GetAsync(goalAppointment.Id);
+            var dbGoalAppointment = await goalAppointmentRepository.GetByIdAsync(goalAppointment.Id);
             dbGoalAppointment.Approve(success);
             await goalAppointmentRepository.SaveChangesAsync();
             SelectedGoalAppointment = dbGoalAppointment;
+        }
+
+        public void SetAppointment(GoalAppointment appointment)
+        {
+            SelectedGoalAppointment = appointment;
         }
     }
 }

@@ -5,9 +5,8 @@ using Android.Graphics;
 using AndroidX.Core.App;
 using GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver;
 using GoalTracker.Droid.PlatformServices.Notification;
-using GoalTracker.Entities;
 using GoalTracker.PlatformServices;
-using GoalTracker.Services;
+using GoalTracker.Services.Interface;
 using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 using Application = Android.App.Application;
@@ -18,7 +17,7 @@ namespace GoalTracker.Droid.PlatformServices.Notification
 {
     public class Notifier : INotifier
     {
-        public void PushNotification(IRepository<Goal> repository, string goalTitle, int goalNotificationId,
+        public void PushNotification(IGoalRepository repository, string goalTitle, int goalNotificationId,
             int goalRequestCode, string username)
         {
             try

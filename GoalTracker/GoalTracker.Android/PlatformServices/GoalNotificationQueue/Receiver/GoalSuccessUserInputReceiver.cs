@@ -4,7 +4,7 @@ using Autofac;
 using GoalTracker.DI;
 using GoalTracker.Droid.PlatformServices.Notification;
 using GoalTracker.PlatformServices;
-using GoalTracker.Services;
+using GoalTracker.Services.Interface;
 using Microsoft.AppCenter.Crashes;
 
 namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver
@@ -31,7 +31,7 @@ namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver
 
                 var goalTitle = intent.Extras.GetString("GoalTitle");
                 var goalNotificationId = intent.Extras.GetInt("GoalNotificationId");
-                var savedGoal = await goalRepository.GetByTitleAsnyc(goalTitle);
+                var savedGoal = await goalRepository.GetByTitleAsync(goalTitle);
 
                 INotifier notifier = new Notifier();
                 notifier.CancelNotification(goalNotificationId);

@@ -9,9 +9,6 @@ using Xamarin.Forms;
 
 namespace GoalTracker
 {
-    /// <summary>
-    ///     TODO: Add system so earn XP when leveling up goals (multiple wins)
-    /// </summary>
     public partial class AppShell : Shell
     {
         public AppShell(User user, IGoalViewModel goalViewModel, ICalendarViewModel calendarViewModel, ISettingViewModel settingViewModel)
@@ -20,6 +17,7 @@ namespace GoalTracker
             {
                 InitializeComponent();
 
+                //TODO: Change to routing?
                 Tabbar.Items.Add(new ShellContent
                 {
                     Title = "Ziele",
@@ -48,11 +46,6 @@ namespace GoalTracker
             {
                 Crashes.TrackError(ex);
             }
-        }
-
-        private async void OnMenuItemClicked(object sender, EventArgs e)
-        {
-            await Current.GoToAsync("//GoalsPage");
         }
     }
 }

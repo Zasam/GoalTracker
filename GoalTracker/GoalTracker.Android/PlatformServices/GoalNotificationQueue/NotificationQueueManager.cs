@@ -7,7 +7,7 @@ using GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver;
 using GoalTracker.Entities;
 using GoalTracker.Extensions;
 using GoalTracker.PlatformServices;
-using GoalTracker.Services;
+using GoalTracker.Services.Interface;
 using Microsoft.AppCenter.Crashes;
 using Newtonsoft.Json;
 
@@ -22,7 +22,7 @@ namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue
 
         private List<NotificationQueueItem> NotificationQueue { get; }
 
-        public void QueueGoalNotificationBroadcast(IRepository<Goal> repository, Goal goal, int[] requestCodes,
+        public void QueueGoalNotificationBroadcast(IGoalRepository repository, Goal goal, int[] requestCodes,
             string username)
         {
             try

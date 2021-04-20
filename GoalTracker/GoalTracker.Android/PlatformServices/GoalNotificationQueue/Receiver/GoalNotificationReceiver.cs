@@ -7,7 +7,7 @@ using GoalTracker.Droid.PlatformServices.Notification;
 using GoalTracker.Entities;
 using GoalTracker.Extensions;
 using GoalTracker.PlatformServices;
-using GoalTracker.Services;
+using GoalTracker.Services.Interface;
 using Microsoft.AppCenter.Crashes;
 using Newtonsoft.Json;
 

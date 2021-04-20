@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GoalTracker.Context;
 using GoalTracker.Entities;
+using GoalTracker.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 
 namespace GoalTracker.Services
@@ -16,6 +17,11 @@ namespace GoalTracker.Services
             : base(context)
         {
             this.context = context;
+        }
+
+        public async Task<GoalAppointment> GetByIdAsync(int id)
+        {
+            return await GetAsync(id);
         }
 
         public new async Task<IEnumerable<GoalAppointment>> GetAllAsync()
@@ -38,6 +44,11 @@ namespace GoalTracker.Services
             var goalAppointments = await FindAsync(ga =>
                 ga.GoalId == goal.Id && ga.ApprovalDate.HasValue && ga.ApprovalDate == day.Date);
             return goalAppointments.FirstOrDefault();
+        }
+
+        public new async Task AddRangeAsync(IEnumerable<GoalAppointment> goalAppointments)
+        {
+            await base.AddRangeAsync(goalAppointments);
         }
     }
 }

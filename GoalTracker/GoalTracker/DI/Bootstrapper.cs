@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using GoalTracker.Context;
 using GoalTracker.Services;
+using GoalTracker.Services.Interface;
 using GoalTracker.ViewModels;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
@@ -44,9 +44,7 @@ namespace GoalTracker.DI
 
                 // Check if user has already signed up and user exists
                 var userRepository = container.Resolve<IUserRepository>();
-                var users = await userRepository.GetAllAsync();
-                var user = users.FirstOrDefault();
-
+                var user = await userRepository.GetUserAsync();
                 return new App(user, goalViewModel, calendarViewModel, settingViewModel);
             }
             catch (Exception ex)

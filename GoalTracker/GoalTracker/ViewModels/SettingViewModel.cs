@@ -4,8 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using GoalTracker.Entities;
-using GoalTracker.PlatformServices;
-using GoalTracker.Services;
+using GoalTracker.Services.Interface;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 using Xamarin.Essentials;
@@ -15,25 +14,20 @@ namespace GoalTracker.ViewModels
 {
     public class SettingViewModel : BaseViewModel, ISettingViewModel
     {
-        #region Properties
-
-        #region Repositories
-
         private readonly IAchievementRepository achievementRepository;
         private readonly IUserRepository userRepository;
 
-        #endregion // Repositories
-
+        private User user;
         private double achievementProgress;
         private int achievementProgressPoints;
         private List<Achievement> achievements;
 
-        public string Username { get; set; }
+        #region Properties
 
         public List<Achievement> Achievements
         {
             get => achievements;
-            set
+            private set
             {
                 achievements = value;
                 OnPropertyChanged();
@@ -43,7 +37,7 @@ namespace GoalTracker.ViewModels
         public double AchievementProgress
         {
             get => achievementProgress;
-            set
+            private set
             {
                 achievementProgress = value;
                 OnPropertyChanged();
@@ -53,12 +47,24 @@ namespace GoalTracker.ViewModels
         public int AchievementProgressPoints
         {
             get => achievementProgressPoints;
-            set
+            private set
             {
                 achievementProgressPoints = value;
                 OnPropertyChanged();
             }
         }
+
+        public User User
+        {
+            get => user;
+            private set
+            {
+                user = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string Username { get; set; }
 
         public ICommand OpenLinkCommand => new Command<string>(OpenLink);
 
@@ -79,10 +85,7 @@ namespace GoalTracker.ViewModels
         {
             try
             {
-                var unlockableAchievements = await
-                    achievementRepository.FindAsync(a => a.InternalTag == internalTag);
-                var unlockableAchievement = unlockableAchievements.FirstOrDefault();
-                return unlockableAchievement;
+                return await achievementRepository.GetByInternalTag(internalTag);
             }
             catch (Exception ex)
             {
@@ -133,11 +136,11 @@ namespace GoalTracker.ViewModels
             }
         }
 
-        public async IAsyncEnumerable<Tuple<string, int>> CreateDefaultUserAsync()
+        public async IAsyncEnumerable<Tuple<string, int>> RegisterDefaultUserAsync()
         {
             yield return new Tuple<string, int>("Datenbank wird initialisiert...", 33);
-            var user = new User("Default");
-            await userRepository.AddAsync(user);
+            var newUser = new User("Default");
+            await userRepository.AddUserAsync(newUser);
 
             yield return new Tuple<string, int>("Erfolge werden erstellt...", 66);
             await CreateAchievementsAsync(user);
@@ -183,14 +186,17 @@ namespace GoalTracker.ViewModels
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
-        public async void LoadUsername()
+        public async Task LoadUserAsync()
         {
-            Username = await userRepository.GetUsernameAsync();
+            User = await userRepository.GetUserAsync();
+        }
+
+        public async Task ChangeUsername(string name)
+        {
+            await userRepository.ChangeUsernameAsync(name);
         }
     }
 }

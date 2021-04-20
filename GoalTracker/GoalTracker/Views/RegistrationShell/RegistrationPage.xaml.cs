@@ -1,6 +1,5 @@
 ﻿using System;
 using GoalTracker.Extensions;
-using GoalTracker.PlatformServices;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 using Syncfusion.XForms.ProgressBar;
@@ -18,8 +17,7 @@ namespace GoalTracker.Views.RegistrationShell
         {
             InitializeComponent();
 
-            this.settingViewModel = settingViewModel;
-            BindingContext = settingViewModel;
+            BindingContext = this.settingViewModel = settingViewModel;
         }
 
         protected override void OnAppearing()
@@ -33,8 +31,6 @@ namespace GoalTracker.Views.RegistrationShell
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
@@ -50,26 +46,25 @@ namespace GoalTracker.Views.RegistrationShell
 
                 if (unlockableAchievement != null)
                 {
+                    await settingViewModel.ChangeUsername(settingViewModel.Username);
                     await settingViewModel.UnlockAchievementAsync("SIGNUP");
                     await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel,
                         AchievementProgressBar, "Erfolg freigeschaltet: " + unlockableAchievement.Title);
                 }
                 else
                 {
-                    App.Instance.ChangeToAppShell();
+                    await App.Instance.ChangeToAppShell();
                 }
             }
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
-        private void AchievementProgressBar_OnProgressCompleted(object sender, ProgressValueEventArgs e)
+        private async void AchievementProgressBar_OnProgressCompleted(object sender, ProgressValueEventArgs e)
         {
-            App.Instance.ChangeToAppShell();
+            await App.Instance.ChangeToAppShell();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using GoalTracker.Entities;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
@@ -10,7 +11,6 @@ namespace GoalTracker
     {
         public static App Instance;
 
-        private readonly User user;
         private readonly IGoalViewModel goalViewModel;
         private readonly ICalendarViewModel calendarViewModel;
         private readonly ISettingViewModel settingViewModel;
@@ -19,16 +19,16 @@ namespace GoalTracker
         {
             try
             {
-                // TODO: Implementation of theme changing is missing! ThemeManager.ChangeTheme(ThemeManager.Themes.Dark); => Specific android implementation is missing: https://medium.com/@milan.gohil/adding-themes-to-your-xamarin-forms-app-3da3032cc3a1
-                ThemeManager.LoadTheme();
-
                 InitializeComponent();
-                Instance = this;
 
-                this.user = user;
                 this.goalViewModel = goalViewModel;
                 this.calendarViewModel = calendarViewModel;
                 this.settingViewModel = settingViewModel;
+
+                Instance = this;
+
+                // TODO: Implementation of theme changing is missing! ThemeManager.ChangeTheme(ThemeManager.Themes.Dark); => Specific android implementation is missing: https://medium.com/@milan.gohil/adding-themes-to-your-xamarin-forms-app-3da3032cc3a1
+                ThemeManager.LoadTheme();
 
                 if (user == null)
                     MainPage = new InitializationShell(settingViewModel);
@@ -56,12 +56,15 @@ namespace GoalTracker
             }
         }
 
-        public void ChangeToAppShell()
+        public async Task ChangeToAppShell()
         {
             try
             {
                 if (MainPage.GetType() == typeof(AppConfigurationShell))
-                    MainPage = new AppShell(user, goalViewModel, calendarViewModel, settingViewModel);
+                {
+                    await settingViewModel.LoadUserAsync();
+                    MainPage = new AppShell(settingViewModel.User, goalViewModel, calendarViewModel, settingViewModel);
+                }
             }
             catch (Exception ex)
             {

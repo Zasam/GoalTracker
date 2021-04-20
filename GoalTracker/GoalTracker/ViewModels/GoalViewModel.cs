@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using GoalTracker.Entities;
 using GoalTracker.Extensions;
 using GoalTracker.PlatformServices;
-using GoalTracker.Services;
+using GoalTracker.Services.Interface;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
@@ -14,12 +14,9 @@ namespace GoalTracker.ViewModels
 {
     public class GoalViewModel : BaseViewModel, IGoalViewModel
     {
-        #region Properties
-
         #region Repositories
 
         private readonly IGoalRepository goalRepository;
-
         public IGoalTaskRepository GoalTaskRepository { get; }
         public IGoalAppointmentRepository GoalAppointmentRepository { get; }
 
@@ -28,31 +25,8 @@ namespace GoalTracker.ViewModels
         private List<Goal> goals;
         private bool goalHasDueDate;
 
-        public string GoalImage { get; set; }
+        #region Properties
 
-        public Goal SelectedGoal { get; set; }
-
-        public List<Goal> Goals
-        {
-            get => goals;
-            set
-            {
-                goals = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public bool GoalHasDueDate
-        {
-            get => goalHasDueDate;
-            set
-            {
-                goalHasDueDate = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public List<string> GoalNotificationIntervals { get; set; }
         public string GoalTitle { get; set; }
         public string GoalNotes { get; set; }
         public DateTime GoalMinimumStartDate { get; set; }
@@ -65,10 +39,39 @@ namespace GoalTracker.ViewModels
         public GoalAppointmentInterval GoalNotificationInterval =>
             (GoalAppointmentInterval) GoalNotificationIntervalIndex;
 
+        public string GoalImage { get; set; }
+
+        public bool GoalHasDueDate
+        {
+            get => goalHasDueDate;
+            set
+            {
+                goalHasDueDate = value;
+                OnPropertyChanged();
+            }
+        }
+
+        #region ReadOnly Bindings
+
+        public Goal SelectedGoal { get; private set; }
+
+        public List<Goal> Goals
+        {
+            get => goals;
+            private set
+            {
+                goals = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public List<string> GoalNotificationIntervals { get; }
+
+        #endregion // ReadOnly Bindings
+
         #endregion // Properties
 
-        public GoalViewModel(IGoalRepository goalRepository, IGoalAppointmentRepository goalAppointmentRepository,
-            IGoalTaskRepository goalTaskRepository)
+        public GoalViewModel(IGoalRepository goalRepository, IGoalAppointmentRepository goalAppointmentRepository, IGoalTaskRepository goalTaskRepository)
         {
             this.goalRepository = goalRepository;
             GoalTaskRepository = goalTaskRepository;
@@ -85,7 +88,6 @@ namespace GoalTracker.ViewModels
             foreach (var notificationInterval in Enum.GetValues(typeof(GoalAppointmentInterval)))
                 GoalNotificationIntervals.Add(Enum.GetName(typeof(GoalAppointmentInterval), notificationInterval));
         }
-
 
         public async Task<Goal> EditGoalAsync(Goal goal, GoalTask[] goalTasks, string username)
         {
@@ -205,6 +207,23 @@ namespace GoalTracker.ViewModels
             {
                 Crashes.TrackError(ex);
             }
+        }
+
+        public async Task DeleteGoal(int itemIndex)
+        {
+            try
+            {
+                await goalRepository.RemoveAsync(Goals[itemIndex]);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
+        }
+
+        public void SetGoal(Goal goal)
+        {
+            SelectedGoal = goal;
         }
     }
 }

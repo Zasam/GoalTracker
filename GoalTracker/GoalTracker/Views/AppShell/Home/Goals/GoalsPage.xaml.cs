@@ -42,7 +42,6 @@ namespace GoalTracker.Views.AppShell.Home.Goals
 
         #region Page Events
 
-        //TODO: Add option to show listview with history of approvals
         protected override async void OnAppearing()
         {
             try
@@ -81,8 +80,6 @@ namespace GoalTracker.Views.AppShell.Home.Goals
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
@@ -154,7 +151,7 @@ namespace GoalTracker.Views.AppShell.Home.Goals
                 {
                     GoalListView.Focus();
                     GoalListView.SelectedItem = swipeSelectedGoal;
-                    goalViewModel.SelectedGoal = swipeSelectedGoal;
+                    goalViewModel.SetGoal(swipeSelectedGoal);
                 }
             }
             catch (Exception ex)
@@ -177,10 +174,8 @@ namespace GoalTracker.Views.AppShell.Home.Goals
                 if (selectedGoal == null)
                     throw new ArgumentNullException("Selected goal not correctly assigned");
 
-                var goalAppointmentViewModel =
-                    new GoalAppointmentViewModel(selectedGoal, goalViewModel.GoalAppointmentRepository);
-                var goalAppointmentsPage =
-                    new GoalAppointmentsPage(goalAppointmentViewModel, selectedGoal);
+                var goalAppointmentViewModel = new GoalAppointmentViewModel(selectedGoal, goalViewModel.GoalAppointmentRepository);
+                var goalAppointmentsPage = new GoalAppointmentsPage(goalAppointmentViewModel, selectedGoal);
                 Navigation.PushAsync(goalAppointmentsPage, true);
             }
             catch (Exception ex)
@@ -218,7 +213,7 @@ namespace GoalTracker.Views.AppShell.Home.Goals
             try
             {
                 if (e.AddedItems.Any())
-                    goalViewModel.SelectedGoal = (Goal) e.AddedItems[0];
+                    goalViewModel.SetGoal((Goal) e.AddedItems[0]);
             }
             catch (Exception ex)
             {
@@ -253,8 +248,6 @@ namespace GoalTracker.Views.AppShell.Home.Goals
                 GoalListViewPullToRefresh.IsRefreshing = true;
                 await goalViewModel.LoadGoalsAsync();
                 await SettingViewModel.LoadAchievementsAsync();
-                var ppoints = SettingViewModel.AchievementProgressPoints;
-                var progress = SettingViewModel.AchievementProgress;
                 GoalListViewPullToRefresh.IsRefreshing = false;
             }
             catch (Exception ex)
@@ -271,11 +264,9 @@ namespace GoalTracker.Views.AppShell.Home.Goals
                 {
                     var selectedGoal = goalViewModel.Goals[itemIndex];
                     var delete = await goalViewModel.DeleteGoalAsync(selectedGoal);
-
                     if (delete)
                     {
-                        DependencyService.Get<IMessenger>()
-                            .LongMessage($"Ziel {selectedGoal.Title} erfolgreich gelöscht.");
+                        DependencyService.Get<IMessenger>().LongMessage($"Ziel {selectedGoal.Title} erfolgreich gelöscht.");
                         DependencyService.Get<INotificationQueueManager>().CancelAlarms(selectedGoal);
                     }
 

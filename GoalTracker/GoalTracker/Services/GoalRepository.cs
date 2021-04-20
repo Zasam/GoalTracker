@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GoalTracker.Context;
 using GoalTracker.Entities;
+using GoalTracker.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 
 namespace GoalTracker.Services
@@ -16,6 +17,11 @@ namespace GoalTracker.Services
             : base(context)
         {
             this.context = context;
+        }
+
+        public new async Task AddAsync(Goal goal)
+        {
+            await base.AddAsync(goal);
         }
 
         public new async Task<IEnumerable<Goal>> GetAllAsync()
@@ -52,7 +58,7 @@ namespace GoalTracker.Services
             await base.RemoveRangeAsync(goalCollection);
         }
 
-        public async Task<Goal> GetByTitleAsnyc(string title)
+        public async Task<Goal> GetByTitleAsync(string title)
         {
             var goals = await FindAsync(g => g.Title == title);
             return goals.FirstOrDefault();

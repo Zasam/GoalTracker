@@ -158,7 +158,7 @@ namespace GoalTracker.Views.AppShell.Home.GoalAppointments
                 {
                     GoalAppointmentListView.Focus();
                     GoalAppointmentListView.SelectedItem = swipeSelectedGoalAppointment;
-                    viewModel.SelectedGoalAppointment = swipeSelectedGoalAppointment;
+                    viewModel.SetAppointment(swipeSelectedGoalAppointment);
                 }
             }
             catch (Exception ex)
@@ -184,7 +184,7 @@ namespace GoalTracker.Views.AppShell.Home.GoalAppointments
             try
             {
                 if (e.AddedItems.Any())
-                    viewModel.SelectedGoalAppointment = (GoalAppointment) e.AddedItems[0];
+                    viewModel.SetAppointment((GoalAppointment) e.AddedItems[0]);
             }
             catch (Exception ex)
             {

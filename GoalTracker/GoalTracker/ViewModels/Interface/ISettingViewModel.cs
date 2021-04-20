@@ -1,20 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using GoalTracker.Entities;
 
 namespace GoalTracker.ViewModels.Interface
 {
     public interface ISettingViewModel
     {
-        List<Achievement> Achievements { get; set; }
-        double AchievementProgress { get; set; }
-        int AchievementProgressPoints { get; set; }
+        List<Achievement> Achievements { get; }
+        double AchievementProgress { get; }
+        int AchievementProgressPoints { get; }
+        User User { get; }
         string Username { get; set; }
+        ICommand OpenLinkCommand { get; }
         Task<Achievement> GetAchievementAsync(string internalTag);
         Task<bool> UnlockAchievementAsync(string internalTag);
         Task LoadAchievementsAsync();
-        IAsyncEnumerable<Tuple<string, int>> CreateDefaultUserAsync();
-        void LoadUsername();
+        IAsyncEnumerable<Tuple<string, int>> RegisterDefaultUserAsync();
+        Task LoadUserAsync();
+        Task ChangeUsername(string name);
     }
 }

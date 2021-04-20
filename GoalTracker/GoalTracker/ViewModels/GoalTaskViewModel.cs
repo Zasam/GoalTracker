@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using GoalTracker.Entities;
-using GoalTracker.Services;
+using GoalTracker.Services.Interface;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 
@@ -10,21 +10,20 @@ namespace GoalTracker.ViewModels
 {
     public class GoalTaskViewModel : BaseViewModel, IGoalTaskViewModel
     {
-        #region Properties
-
-        #region Repositories
-
         private readonly IGoalTaskRepository goalTaskRepository;
-
-        #endregion // Repositories
 
         private GoalTask goalTask;
         private GoalTask[] goalTasks;
+        private readonly Goal parent;
+
+        #region Properties
+
+        #region ReadOnly Bindings
 
         public GoalTask[] GoalTasks
         {
             get => goalTasks;
-            set
+            private set
             {
                 goalTasks = value;
                 OnPropertyChanged();
@@ -34,22 +33,23 @@ namespace GoalTracker.ViewModels
         public GoalTask SelectedGoalTask
         {
             get => goalTask;
-            set
+            private set
             {
                 goalTask = value;
                 OnPropertyChanged();
             }
         }
 
-        public Goal Parent { get; set; }
-        public string ParentTitle => Parent == null ? "N/A" : Parent.Title;
+        public string ParentTitle => parent == null ? "N/A" : parent.Title;
+
+        #endregion // ReadOnly Bindings
 
         #endregion // Properties
 
         public GoalTaskViewModel(Goal parent, IGoalTaskRepository goalTaskRepository)
         {
             this.goalTaskRepository = goalTaskRepository;
-            Parent = parent;
+            this.parent = parent;
         }
 
         public async Task<bool> DeleteTaskAsync(GoalTask goalTask)
@@ -71,7 +71,7 @@ namespace GoalTracker.ViewModels
             try
             {
                 var dbSelectedGoalTask = await goalTaskRepository
-                    .GetAllByParentAsync(Parent);
+                    .GetAllByParentAsync(parent);
                 var selectedGoalTask = dbSelectedGoalTask.FirstOrDefault(gt => gt.Id == SelectedGoalTask.Id);
 
                 if (selectedGoalTask != null)
@@ -90,13 +90,18 @@ namespace GoalTracker.ViewModels
         {
             try
             {
-                var goalTaskCollection = await goalTaskRepository.GetAllByParentAsync(Parent);
+                var goalTaskCollection = await goalTaskRepository.GetAllByParentAsync(parent);
                 GoalTasks = goalTaskCollection.ToArray();
             }
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
             }
+        }
+
+        public void SetTask(GoalTask task)
+        {
+            SelectedGoalTask = task;
         }
     }
 }

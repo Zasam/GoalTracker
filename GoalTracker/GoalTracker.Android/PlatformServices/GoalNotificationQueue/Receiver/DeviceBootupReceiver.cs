@@ -5,7 +5,7 @@ using Autofac;
 using GoalTracker.DI;
 using GoalTracker.Extensions;
 using GoalTracker.PlatformServices;
-using GoalTracker.Services;
+using GoalTracker.Services.Interface;
 using Microsoft.AppCenter.Crashes;
 
 namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver
@@ -28,20 +28,17 @@ namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver
                         var goalRepository = container.Resolve<IGoalRepository>();
                         var userRepository = container.Resolve<IUserRepository>();
                         var goals = await goalRepository.GetAllAsync();
-                        var username = await userRepository.GetUsernameAsync();
+                        var user = await userRepository.GetUserAsync();
+                        var username = user.Name;
 
                         if (goals != null)
                         {
                             INotificationQueueManager notificationQueueManager = new NotificationQueueManager();
 
-                            var goalCount = 0;
                             foreach (var goal in goals)
                             {
-                                var goalRequestCodes =
-                                    await goalRepository.GetNextRequestCodesForNotificationWithOptions();
-                                notificationQueueManager.QueueGoalNotificationBroadcast(goalRepository, goal,
-                                    goalRequestCodes, username);
-                                goalCount++;
+                                var goalRequestCodes = await goalRepository.GetNextRequestCodesForNotificationWithOptions();
+                                notificationQueueManager.QueueGoalNotificationBroadcast(goalRepository, goal, goalRequestCodes, username);
                             }
                         }
                     }

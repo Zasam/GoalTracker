@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace GoalTracker.Entities
 {
@@ -17,20 +16,7 @@ namespace GoalTracker.Entities
         public User(string name)
         {
             Name = name;
-        }
-
-        public int GetExperience()
-        {
-            var unlocked = Achievements != null && Achievements.Count(a => a.Unlocked) > 0;
-            int experience = 0;
-
-            if (unlocked)
-            {
-                foreach (var achievement in Achievements.Where(a => a.Unlocked))
-                    experience += achievement.Experience;
-            }
-
-            return experience;
+            Achievements = new List<Achievement>();
         }
     }
 }

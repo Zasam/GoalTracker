@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GoalTracker.Extensions;
 using GoalTracker.Models;
-using GoalTracker.Services;
+using GoalTracker.Services.Interface;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 using Syncfusion.SfCalendar.XForms;
@@ -14,24 +14,19 @@ namespace GoalTracker.ViewModels
     {
         private readonly IGoalAppointmentRepository goalAppointmentRepository;
         private readonly IGoalRepository goalRepository;
-        private CalendarEventCollection calendarInlineEvents;
 
+        private CalendarEventCollection calendarInlineEvents;
         private int failureApprovalsWeek;
         private int successApprovalsWeek;
 
-        public CalendarViewModel(IGoalRepository goalRepository, IGoalAppointmentRepository goalAppointmentRepository)
-        {
-            this.goalRepository = goalRepository;
-            this.goalAppointmentRepository = goalAppointmentRepository;
-            var now = DateTime.Now;
-            CalendarMinDate = new DateTime(now.Year - 1, now.Month, now.Day);
-            CalendarMaxDate = new DateTime(now.Year + 1, now.Month, now.Day);
-        }
+        #region Properties
+
+        #region ReadOnly Bindings
 
         public CalendarEventCollection CalendarInlineEvents
         {
             get => calendarInlineEvents;
-            set
+            private set
             {
                 calendarInlineEvents = value;
                 OnPropertyChanged();
@@ -41,7 +36,7 @@ namespace GoalTracker.ViewModels
         public int SuccessApprovalsWeek
         {
             get => successApprovalsWeek;
-            set
+            private set
             {
                 successApprovalsWeek = value;
                 OnPropertyChanged();
@@ -51,15 +46,29 @@ namespace GoalTracker.ViewModels
         public int FailureApprovalsWeek
         {
             get => failureApprovalsWeek;
-            set
+            private set
             {
                 failureApprovalsWeek = value;
                 OnPropertyChanged();
             }
         }
 
-        public DateTime CalendarMinDate { get; set; }
-        public DateTime CalendarMaxDate { get; set; }
+        public DateTime CalendarMinDate { get; }
+        public DateTime CalendarMaxDate { get; }
+
+        #endregion // ReadOnly Bindings
+
+        #endregion // Properties
+
+        public CalendarViewModel(IGoalRepository goalRepository, IGoalAppointmentRepository goalAppointmentRepository)
+        {
+            this.goalRepository = goalRepository;
+            this.goalAppointmentRepository = goalAppointmentRepository;
+
+            var now = DateTime.Now;
+            CalendarMinDate = new DateTime(now.Year - 1, now.Month, now.Day);
+            CalendarMaxDate = new DateTime(now.Year + 1, now.Month, now.Day);
+        }
 
         public async Task LoadEventsAsync()
         {

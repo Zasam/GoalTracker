@@ -39,8 +39,6 @@ namespace GoalTracker.Views.AppShell.Home.GoalTasks
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
@@ -56,8 +54,6 @@ namespace GoalTracker.Views.AppShell.Home.GoalTasks
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
@@ -74,7 +70,7 @@ namespace GoalTracker.Views.AppShell.Home.GoalTasks
                 {
                     GoalTaskListView.Focus();
                     GoalTaskListView.SelectedItem = swipeSelectedGoalTask;
-                    viewModel.SelectedGoalTask = swipeSelectedGoalTask;
+                    viewModel.SetTask(swipeSelectedGoalTask);
                 }
             }
             catch (Exception ex)
@@ -113,8 +109,6 @@ namespace GoalTracker.Views.AppShell.Home.GoalTasks
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
@@ -142,8 +136,6 @@ namespace GoalTracker.Views.AppShell.Home.GoalTasks
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
@@ -166,8 +158,6 @@ namespace GoalTracker.Views.AppShell.Home.GoalTasks
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
@@ -181,8 +171,6 @@ namespace GoalTracker.Views.AppShell.Home.GoalTasks
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
 
@@ -191,7 +179,7 @@ namespace GoalTracker.Views.AppShell.Home.GoalTasks
             try
             {
                 if (e.AddedItems.Any())
-                    viewModel.SelectedGoalTask = (GoalTask) e.AddedItems[0];
+                    viewModel.SetTask((GoalTask) e.AddedItems[0]);
             }
             catch (Exception ex)
             {

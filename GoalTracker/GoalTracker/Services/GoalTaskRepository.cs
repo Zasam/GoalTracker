@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GoalTracker.Context;
 using GoalTracker.Entities;
+using GoalTracker.Services.Interface;
 
 namespace GoalTracker.Services
 {
@@ -20,6 +21,16 @@ namespace GoalTracker.Services
             return await FindAsync(gt => gt.GoalId == parent.Id);
         }
 
+        public new async Task RemoveRangeAsync(IEnumerable<GoalTask> goalTasks)
+        {
+            await base.RemoveRangeAsync(goalTasks);
+        }
+
+        public new async Task AddAsync(GoalTask goalTask)
+        {
+            await AddAsync(goalTask);
+        }
+
         public new async Task AddRangeAsync(IEnumerable<GoalTask> goalTasks)
         {
             var goalTaskCollection = goalTasks as GoalTask[] ?? goalTasks.ToArray();
@@ -30,6 +41,11 @@ namespace GoalTracker.Services
             }
 
             await base.AddRangeAsync(goalTaskCollection);
+        }
+
+        public async Task<IEnumerable<GoalTask>> GetAllAsync(Goal parentGoal)
+        {
+            return await GetAllAsync(parentGoal);
         }
 
         public new async Task RemoveAsync(GoalTask goalTask)

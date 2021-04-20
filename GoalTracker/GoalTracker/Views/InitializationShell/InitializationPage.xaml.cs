@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using GoalTracker.PlatformServices;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
@@ -33,7 +32,7 @@ namespace GoalTracker.Views.InitializationShell
                 {
                     isLoaded = true;
 
-                    await foreach (var progress in settingViewModel.CreateDefaultUserAsync())
+                    await foreach (var progress in settingViewModel.RegisterDefaultUserAsync())
                     {
                         InitializationMessage.Text = progress.Item1;
                         InitializationProgressBar.SetProgress(progress.Item2, 1000, Easing.Linear);
@@ -46,8 +45,6 @@ namespace GoalTracker.Views.InitializationShell
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                DependencyService.Get<IMessenger>()
-                    .LongMessage("Es ist wohl etwas schief gelaufen. Ein Fehlerbericht wurde gesendet.");
             }
         }
     }
