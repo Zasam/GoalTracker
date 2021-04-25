@@ -5,7 +5,7 @@ using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace GoalTracker.Views.AppShell.Calendar
+namespace GoalTracker.Views.Main.Calendar
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class CalendarPage : ContentPage

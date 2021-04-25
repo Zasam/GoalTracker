@@ -38,29 +38,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="AppConfigurationShell.xaml.cs">
-      <DependentUpon>AppConfigurationShell.xaml</DependentUpon>
-    </Compile>
     <Compile Update="Resources\TranslationResources_DE.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>TranslationResources_DE.resx</DependentUpon>
     </Compile>
-    <Compile Update="Views\RegistrationShell\RegistrationPage.xaml.cs">
+    <Compile Update="Views\Registration\RegistrationPage.xaml.cs">
       <DependentUpon>RegistrationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\AppShell\Home\Goals\GoalsPage.xaml.cs">
+    <Compile Update="Views\Main\Home\Goals\GoalsPage.xaml.cs">
       <DependentUpon>GoalsPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="AppConfigurationShell.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="InitializationShell.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
     <EmbeddedResource Update="Resources\TranslationResources_DE.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>TranslationResources_DE.Designer.cs</LastGenOutput>
@@ -71,31 +62,34 @@
     <EmbeddedResource Update="Themes\LightTheme.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\AppShell\Calendar\CalendarPage.xaml">
+    <EmbeddedResource Update="Views\Main\Calendar\CalendarPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\AppShell\Home\Goals\AddGoalPage.xaml">
+    <EmbeddedResource Update="Views\Main\Home\Goals\AddGoalPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\AppShell\Home\Goals\EditGoalPage.xaml">
+    <EmbeddedResource Update="Views\Main\Home\Goals\EditGoalPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\AppShell\Home\GoalAppointments\GoalAppointmentsPage.xaml">
+    <EmbeddedResource Update="Views\Main\Home\GoalAppointments\GoalAppointmentsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\AppShell\Home\GoalTasks\GoalTasksPage.xaml">
+    <EmbeddedResource Update="Views\Main\Home\GoalTasks\GoalTasksPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\AppShell\Settings\Achievements\AchievementsPage.xaml">
+    <EmbeddedResource Update="Views\Main\Settings\Achievements\AchievementsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\AppShell\Settings\SettingsPage.xaml">
+    <EmbeddedResource Update="Views\Main\Settings\SettingsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\InitializationShell\InitializationPage.xaml">
+    <EmbeddedResource Update="Views\Initialization\InitializationPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\RegistrationShell\RegistrationPage.xaml">
+    <EmbeddedResource Update="Views\Registration\RegistrationPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\Welcome\WelcomePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

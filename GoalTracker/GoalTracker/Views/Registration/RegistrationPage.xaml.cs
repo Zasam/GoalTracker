@@ -6,7 +6,7 @@ using Syncfusion.XForms.ProgressBar;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace GoalTracker.Views.RegistrationShell
+namespace GoalTracker.Views.Registration
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class RegistrationPage : ContentPage
@@ -25,7 +25,6 @@ namespace GoalTracker.Views.RegistrationShell
             try
             {
                 base.OnAppearing();
-
                 AchievementStackLayout.InitializeAchievementAnimation();
             }
             catch (Exception ex)
@@ -38,8 +37,8 @@ namespace GoalTracker.Views.RegistrationShell
         {
             try
             {
+                //TODO: Show validation message to user!
                 if (string.IsNullOrWhiteSpace(settingViewModel.Username))
-                    //TODO: Show validation message to user!
                     return;
 
                 var unlockableAchievement = await settingViewModel.GetAchievementAsync("SIGNUP");
@@ -48,12 +47,12 @@ namespace GoalTracker.Views.RegistrationShell
                 {
                     await settingViewModel.ChangeUsername(settingViewModel.Username);
                     await settingViewModel.UnlockAchievementAsync("SIGNUP");
-                    await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel,
-                        AchievementProgressBar, "Erfolg freigeschaltet: " + unlockableAchievement.Title);
+                    await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel, AchievementProgressBar, "Erfolg freigeschaltet: " + unlockableAchievement.Title);
                 }
                 else
                 {
-                    await App.Instance.ChangeToAppShell();
+                    await settingViewModel.LoadUserAsync();
+                    GoalTracker.AppShell.Instance.SetUIState(settingViewModel.User, UIStates.Configuration, UIStates.Home);
                 }
             }
             catch (Exception ex)
@@ -64,7 +63,8 @@ namespace GoalTracker.Views.RegistrationShell
 
         private async void AchievementProgressBar_OnProgressCompleted(object sender, ProgressValueEventArgs e)
         {
-            await App.Instance.ChangeToAppShell();
+            await settingViewModel.LoadUserAsync();
+            GoalTracker.AppShell.Instance.SetUIState(settingViewModel.User, UIStates.Configuration, UIStates.Home);
         }
     }
 }

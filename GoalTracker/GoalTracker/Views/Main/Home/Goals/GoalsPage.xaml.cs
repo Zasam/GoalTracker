@@ -5,20 +5,19 @@ using GoalTracker.Entities;
 using GoalTracker.PlatformServices;
 using GoalTracker.ViewModels;
 using GoalTracker.ViewModels.Interface;
-using GoalTracker.Views.AppShell.Home.GoalAppointments;
-using GoalTracker.Views.AppShell.Home.GoalTasks;
+using GoalTracker.Views.Main.Home.GoalAppointments;
+using GoalTracker.Views.Main.Home.GoalTasks;
 using Microsoft.AppCenter.Crashes;
-using Syncfusion.ListView.XForms;
 using Xamarin.Forms;
 using SwipeEndedEventArgs = Syncfusion.ListView.XForms.SwipeEndedEventArgs;
 using SwipeStartedEventArgs = Syncfusion.ListView.XForms.SwipeStartedEventArgs;
 
-namespace GoalTracker.Views.AppShell.Home.Goals
+namespace GoalTracker.Views.Main.Home.Goals
 {
     public partial class GoalsPage : ContentPage
     {
         private readonly IGoalViewModel goalViewModel;
-        public ISettingViewModel SettingViewModel { get; set; }
+        public ISettingViewModel SettingViewModel { get; }
 
         private readonly string username;
         private readonly string welcomeMessage;
@@ -46,8 +45,8 @@ namespace GoalTracker.Views.AppShell.Home.Goals
         {
             try
             {
-                await RefreshGoals();
                 UsernameLabel.Text = welcomeMessage;
+                await RefreshGoals();
 
                 base.OnAppearing();
             }
@@ -106,8 +105,7 @@ namespace GoalTracker.Views.AppShell.Home.Goals
 
                     if (deleteSwipeImage?.Parent is View deleteSwipeImageView)
                     {
-                        deleteSwipeImageView.GestureRecognizers.Add(new TapGestureRecognizer
-                            {Command = new Command(DeleteGoal)});
+                        deleteSwipeImageView.GestureRecognizers.Add(new TapGestureRecognizer {Command = new Command(DeleteGoal)});
                         deleteSwipeImage.Source = ImageSource.FromFile("Delete.png");
                     }
                 }
@@ -128,8 +126,7 @@ namespace GoalTracker.Views.AppShell.Home.Goals
 
                     if (editSwipeImage?.Parent is View editSwipeImageView)
                     {
-                        editSwipeImageView.GestureRecognizers.Add(new TapGestureRecognizer
-                            {Command = new Command(EditGoal)});
+                        editSwipeImageView.GestureRecognizers.Add(new TapGestureRecognizer {Command = new Command(EditGoal)});
                         editSwipeImage.Source = ImageSource.FromFile("Edit.png");
                     }
                 }
@@ -151,7 +148,6 @@ namespace GoalTracker.Views.AppShell.Home.Goals
                 {
                     GoalListView.Focus();
                     GoalListView.SelectedItem = swipeSelectedGoal;
-                    goalViewModel.SetGoal(swipeSelectedGoal);
                 }
             }
             catch (Exception ex)
@@ -201,19 +197,6 @@ namespace GoalTracker.Views.AppShell.Home.Goals
                     DependencyService.Get<IMessenger>()
                         .ShortMessage("Es sind keine Aufgaben für das Ziel " + selectedGoal.Title + " vorhanden");
                 }
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
-        }
-
-        private void GoalListView_OnSelectionChanged(object sender, ItemSelectionChangedEventArgs e)
-        {
-            try
-            {
-                if (e.AddedItems.Any())
-                    goalViewModel.SetGoal((Goal) e.AddedItems[0]);
             }
             catch (Exception ex)
             {

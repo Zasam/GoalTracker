@@ -33,7 +33,7 @@ namespace GoalTracker.ViewModels
         public GoalTask SelectedGoalTask
         {
             get => goalTask;
-            private set
+            set
             {
                 goalTask = value;
                 OnPropertyChanged();
@@ -97,11 +97,6 @@ namespace GoalTracker.ViewModels
             {
                 Crashes.TrackError(ex);
             }
-        }
-
-        public void SetTask(GoalTask task)
-        {
-            SelectedGoalTask = task;
         }
     }
 }

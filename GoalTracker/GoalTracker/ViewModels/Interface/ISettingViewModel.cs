@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using GoalTracker.Entities;
@@ -17,7 +16,8 @@ namespace GoalTracker.ViewModels.Interface
         Task<Achievement> GetAchievementAsync(string internalTag);
         Task<bool> UnlockAchievementAsync(string internalTag);
         Task LoadAchievementsAsync();
-        IAsyncEnumerable<Tuple<string, int>> RegisterDefaultUserAsync();
+        Task<User> RegisterDefaultUserAsync();
+        Task CreateAchievementsAsync(User associatedUser);
         Task LoadUserAsync();
         Task ChangeUsername(string name);
     }

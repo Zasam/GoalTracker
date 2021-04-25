@@ -6,7 +6,7 @@
              xmlns:progressbar="clr-namespace:Syncfusion.XForms.ProgressBar;assembly=Syncfusion.SfProgressBar.XForms"
              xmlns:border="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
              xmlns:converter="clr-namespace:GoalTracker.Converter;assembly=GoalTracker"
-             x:Class="GoalTracker.Views.AppShell.Home.Goals.GoalsPage"
+             x:Class="GoalTracker.Views.Main.Home.Goals.GoalsPage"
              x:Name="Root"
              Title="Meine Ziele">
 
@@ -64,7 +64,7 @@
                                                            SwipeStarted="GoalListView_OnSwipeStarted"
                                                            SwipeEnded="GoalListView_OnSwipeEnded"
                                                            ItemSize="100"
-                                                           SelectionChanged="GoalListView_OnSelectionChanged">
+                                                           SelectedItem="{Binding SelectedGoal}">
                                 <!-- Goal listview header template -->
                                 <syncfusionListView:SfListView.HeaderTemplate>
                                     <DataTemplate>

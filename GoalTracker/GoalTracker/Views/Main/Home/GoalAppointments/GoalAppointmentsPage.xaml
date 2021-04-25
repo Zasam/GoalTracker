@@ -6,7 +6,7 @@
              xmlns:resources="clr-namespace:GoalTracker.Resources;assembly=GoalTracker"
              xmlns:converter="clr-namespace:GoalTracker.Converter"
              xmlns:border="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
-             x:Class="GoalTracker.Views.AppShell.Home.GoalAppointments.GoalAppointmentsPage">
+             x:Class="GoalTracker.Views.Main.Home.GoalAppointments.GoalAppointmentsPage">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converter:BoolToStringConverter x:Key="BoolToStringConverter"/>
@@ -39,7 +39,7 @@
                                                         AllowSwiping="True"
                                                         SwipeStarted="GoalAppointmentListView_OnSwipeStarted"
                                                         SwipeEnded="GoalAppointmentListView_OnSwipeEnded"
-                                                        SelectionChanged="GoalAppointmentListView_OnSelectionChanged">
+                                                        SelectedItem="{Binding SelectedGoalAppointment}">
                                     <syncfusionListView:SfListView.HeaderTemplate>
                                         <DataTemplate>
                                             <StackLayout BackgroundColor="{DynamicResource Primary}" Padding="5">

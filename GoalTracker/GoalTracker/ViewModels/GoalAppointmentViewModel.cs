@@ -32,7 +32,7 @@ namespace GoalTracker.ViewModels
         public GoalAppointment SelectedGoalAppointment
         {
             get => goalAppointment;
-            private set
+            set
             {
                 goalAppointment = value;
                 OnPropertyChanged();
@@ -72,11 +72,6 @@ namespace GoalTracker.ViewModels
             dbGoalAppointment.Approve(success);
             await goalAppointmentRepository.SaveChangesAsync();
             SelectedGoalAppointment = dbGoalAppointment;
-        }
-
-        public void SetAppointment(GoalAppointment appointment)
-        {
-            SelectedGoalAppointment = appointment;
         }
     }
 }

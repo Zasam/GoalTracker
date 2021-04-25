@@ -10,7 +10,7 @@ using Syncfusion.XForms.TextInputLayout;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace GoalTracker.Views.AppShell.Home.Goals
+namespace GoalTracker.Views.Main.Home.Goals
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class EditGoalPage : ContentPage
@@ -91,7 +91,6 @@ namespace GoalTracker.Views.AppShell.Home.Goals
                     //TODO: Achievement unlockable for first editing of goal?
                     var messenger = DependencyService.Get<IMessenger>();
                     messenger.LongMessage($"Ziel: {goalToEdit.Title} wurde erfolgreich bearbeitet.");
-
                     await Navigation.PopAsync();
                 }
             }
@@ -253,9 +252,9 @@ namespace GoalTracker.Views.AppShell.Home.Goals
 
         private void GoalImageEntry_OnTextChanged(object sender, TextChangedEventArgs e)
         {
+            // TODO: Implement check if a emoji was selected
             var text = GoalImageEntry.Text;
             if (text.Length != 2)
-                // TODO: Implement check if a emoji was selected
                 GoalImageEntry.Text = string.Empty;
         }
     }

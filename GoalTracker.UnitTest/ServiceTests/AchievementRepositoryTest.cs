@@ -114,7 +114,7 @@ namespace GoalTracker.UnitTest.ServiceTests
 
 
         [TestMethod]
-        public async Task GetAchievementByTitleTest()
+        public async Task GetAchievementByInternalTagTest()
         {
             await using var context = new GoalTrackerContext(ContextOptions);
             var achievementRepository = new AchievementRepository(context);

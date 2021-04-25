@@ -22,7 +22,7 @@ namespace GoalTracker.Services
 
         public async Task<Achievement> GetByInternalTag(string internalTag)
         {
-            var achievements = await FindAsync(a => a.Title == internalTag);
+            var achievements = await FindAsync(a => a.InternalTag == internalTag);
             return achievements.FirstOrDefault();
         }
 

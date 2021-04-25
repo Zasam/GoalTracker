@@ -111,12 +111,12 @@ namespace GoalTracker.Entities
         /// <summary>
         /// Collection of associated goal appointments
         /// </summary>
-        public virtual IEnumerable<GoalAppointment> GoalAppointments { get; set; }
+        public virtual IEnumerable<GoalAppointment> GoalAppointments { get; }
 
         /// <summary>
         /// Collection of associated goal tasks
         /// </summary>
-        public virtual IEnumerable<GoalTask> GoalTasks { get; set; }
+        public virtual IEnumerable<GoalTask> GoalTasks { get; }
 
         /// <summary>
         /// The number of tasks associated with this goal
@@ -138,12 +138,12 @@ namespace GoalTracker.Entities
         /// <summary>
         /// The id to handle notifications associated with this goal
         /// </summary>
-        public int NotificationId { get; set; }
+        public int NotificationId { get; private set; }
 
         /// <summary>
         /// The request codes to use with the notifications associated with this goal
         /// </summary>
-        public int RequestCode { get; set; }
+        public int RequestCode { get; private set; }
 
         #endregion Notification
 

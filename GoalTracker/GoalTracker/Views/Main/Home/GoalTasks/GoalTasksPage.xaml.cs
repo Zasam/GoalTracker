@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Linq;
 using GoalTracker.Entities;
 using GoalTracker.PlatformServices;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
-using Syncfusion.ListView.XForms;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using SwipeEndedEventArgs = Syncfusion.ListView.XForms.SwipeEndedEventArgs;
 using SwipeStartedEventArgs = Syncfusion.ListView.XForms.SwipeStartedEventArgs;
 
-namespace GoalTracker.Views.AppShell.Home.GoalTasks
+namespace GoalTracker.Views.Main.Home.GoalTasks
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class GoalTasksPage : ContentPage
@@ -70,7 +68,6 @@ namespace GoalTracker.Views.AppShell.Home.GoalTasks
                 {
                     GoalTaskListView.Focus();
                     GoalTaskListView.SelectedItem = swipeSelectedGoalTask;
-                    viewModel.SetTask(swipeSelectedGoalTask);
                 }
             }
             catch (Exception ex)
@@ -167,19 +164,6 @@ namespace GoalTracker.Views.AppShell.Home.GoalTasks
             {
                 await viewModel.SetTaskCompletedAsync();
                 GoalTaskListView.ResetSwipe();
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
-        }
-
-        private void GoalTaskListView_OnSelectionChanged(object sender, ItemSelectionChangedEventArgs e)
-        {
-            try
-            {
-                if (e.AddedItems.Any())
-                    viewModel.SetTask((GoalTask) e.AddedItems[0]);
             }
             catch (Exception ex)
             {

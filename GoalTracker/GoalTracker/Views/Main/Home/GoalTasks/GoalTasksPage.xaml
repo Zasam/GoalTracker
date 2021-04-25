@@ -6,7 +6,7 @@
              xmlns:syncfusionBorder="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
              xmlns:resources="clr-namespace:GoalTracker.Resources;assembly=GoalTracker"
              xmlns:converter="clr-namespace:GoalTracker.Converter;assembly=GoalTracker"
-             x:Class="GoalTracker.Views.AppShell.Home.GoalTasks.GoalTasksPage">
+             x:Class="GoalTracker.Views.Main.Home.GoalTasks.GoalTasksPage">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converter:GoalTaskCompletionToImageSourceConverter x:Key="GoalTaskCompletionToImageSourceConverter"/>
@@ -32,7 +32,7 @@
                                                        AllowSwiping="True"
                                                        SwipeStarted="GoalTaskListView_OnSwipeStarted"
                                                        SwipeEnded="GoalTaskListView_OnSwipeEnded"
-                                                       SelectionChanged="GoalTaskListView_OnSelectionChanged">
+                                                       SelectedItem="{Binding SelectedGoalTask}">
                             <syncfusionListView:SfListView.HeaderTemplate>
                                 <DataTemplate>
                                     <StackLayout BackgroundColor="{DynamicResource Primary}" Padding="5">

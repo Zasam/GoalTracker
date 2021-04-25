@@ -71,11 +71,11 @@ namespace GoalTracker.Context
         {
             try
             {
-                // Do not configure database provider when context options are already configured, e.g. in unit test
+                // Do not configure database provider when context options are already configured, e.g. by unit tests
                 if (!optionsBuilder.IsConfigured)
                 {
                     var dbPath = Path.Combine(FileSystem.AppDataDirectory,
-                        $"{nameof(GoalTracker)}-Development_20042021.db3");
+                        $"{nameof(GoalTracker)}-Development_22042021.db3");
 
                     optionsBuilder.UseSqlite($"Filename={dbPath}");
                 }

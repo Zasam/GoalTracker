@@ -10,7 +10,7 @@ using Syncfusion.XForms.TextInputLayout;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace GoalTracker.Views.AppShell.Home.Goals
+namespace GoalTracker.Views.Main.Home.Goals
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AddGoalPage : ContentPage
@@ -57,9 +57,8 @@ namespace GoalTracker.Views.AppShell.Home.Goals
             {
                 saving = true;
 
-                var newGoal = new Goal(goalViewModel.GoalTitle, goalViewModel.GoalNotes, goalViewModel.GoalStartDate,
-                    goalViewModel.GoalHasDueDate, goalViewModel.GoalEndDate, goalViewModel.GoalNotificationInterval,
-                    goalViewModel.GoalNotificationTime, goalViewModel.GoalImage);
+                var newGoal = new Goal(goalViewModel.GoalTitle, goalViewModel.GoalNotes, goalViewModel.GoalStartDate, goalViewModel.GoalHasDueDate, goalViewModel.GoalEndDate, goalViewModel.GoalNotificationInterval, goalViewModel.GoalNotificationTime,
+                    goalViewModel.GoalImage);
 
                 var valid = ValidateInputs(newGoal);
                 if (!valid)

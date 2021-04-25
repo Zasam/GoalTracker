@@ -12,7 +12,7 @@ namespace GoalTracker.ViewModels.Interface
         IGoalAppointmentRepository GoalAppointmentRepository { get; }
 
         List<Goal> Goals { get; }
-        Goal SelectedGoal { get; }
+        Goal SelectedGoal { get; set; }
         List<string> GoalNotificationIntervals { get; }
 
         string GoalTitle { get; set; }
@@ -31,6 +31,5 @@ namespace GoalTracker.ViewModels.Interface
         Task<Goal> EditGoalAsync(Goal goal, GoalTask[] goalTasks, string username);
         Task<GoalTask[]> LoadTasksAsync(Goal parent);
         Task<bool> DeleteGoalAsync(Goal goal);
-        void SetGoal(Goal goal);
     }
 }

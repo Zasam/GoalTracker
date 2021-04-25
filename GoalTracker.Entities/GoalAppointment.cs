@@ -18,10 +18,10 @@ namespace GoalTracker.Entities
             ApprovalDate = null;
         }
 
-        public int? GoalId { get; set; }
-        public virtual Goal Goal { get; set; }
+        public int? GoalId { get; }
+        public virtual Goal Goal { get; }
 
-        public DateTime? ApprovalDate { get; set; }
+        public DateTime? ApprovalDate { get; private set; }
 
         public string ApprovalDateText
         {
@@ -33,7 +33,7 @@ namespace GoalTracker.Entities
             }
         }
 
-        public DateTime AppointmentDate { get; set; }
+        public DateTime AppointmentDate { get; }
 
         public string AppointmentDateText => AppointmentDate.ToString("dd.MM.yyyy - HH:mm");
 

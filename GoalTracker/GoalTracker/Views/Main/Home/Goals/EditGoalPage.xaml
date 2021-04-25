@@ -7,7 +7,7 @@
              xmlns:xForms="clr-namespace:Syncfusion.SfPicker.XForms;assembly=Syncfusion.SfPicker.XForms"
              xmlns:border="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
              xmlns:converters="clr-namespace:GoalTracker.Converter;assembly=GoalTracker"
-             x:Class="GoalTracker.Views.AppShell.Home.Goals.EditGoalPage">
+             x:Class="GoalTracker.Views.Main.Home.Goals.EditGoalPage">
 
     <ContentPage.Resources>
         <ResourceDictionary>

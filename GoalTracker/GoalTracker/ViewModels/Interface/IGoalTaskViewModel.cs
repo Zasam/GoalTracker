@@ -7,10 +7,9 @@ namespace GoalTracker.ViewModels.Interface
     {
         string ParentTitle { get; }
         GoalTask[] GoalTasks { get; }
-        GoalTask SelectedGoalTask { get; }
+        GoalTask SelectedGoalTask { get; set; }
         Task LoadTasksAsync();
         Task<bool> DeleteTaskAsync(GoalTask goalTask);
         Task<bool> SetTaskCompletedAsync();
-        void SetTask(GoalTask task);
     }
 }

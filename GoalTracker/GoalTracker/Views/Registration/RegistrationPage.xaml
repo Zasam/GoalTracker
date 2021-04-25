@@ -2,7 +2,7 @@
 <ContentPage xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:syncfusionButton="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
              xmlns="http://xamarin.com/schemas/2014/forms" xmlns:textinputlayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms" xmlns:progressbar="clr-namespace:Syncfusion.XForms.ProgressBar;assembly=Syncfusion.SfProgressBar.XForms" xmlns:popuplayout="clr-namespace:Syncfusion.XForms.PopupLayout;assembly=Syncfusion.SfPopupLayout.XForms"
-             x:Class="GoalTracker.Views.RegistrationShell.RegistrationPage"
+             x:Class="GoalTracker.Views.Registration.RegistrationPage"
              Title="Einrichtung">
     <ContentPage.Content>
         <Grid Style="{StaticResource DefaultGrid}">

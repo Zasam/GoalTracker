@@ -5,13 +5,12 @@ using GoalTracker.Entities;
 using GoalTracker.PlatformServices;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
-using Syncfusion.ListView.XForms;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using SwipeEndedEventArgs = Syncfusion.ListView.XForms.SwipeEndedEventArgs;
 using SwipeStartedEventArgs = Syncfusion.ListView.XForms.SwipeStartedEventArgs;
 
-namespace GoalTracker.Views.AppShell.Home.GoalAppointments
+namespace GoalTracker.Views.Main.Home.GoalAppointments
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class GoalAppointmentsPage : ContentPage
@@ -158,7 +157,6 @@ namespace GoalTracker.Views.AppShell.Home.GoalAppointments
                 {
                     GoalAppointmentListView.Focus();
                     GoalAppointmentListView.SelectedItem = swipeSelectedGoalAppointment;
-                    viewModel.SetAppointment(swipeSelectedGoalAppointment);
                 }
             }
             catch (Exception ex)
@@ -172,19 +170,6 @@ namespace GoalTracker.Views.AppShell.Home.GoalAppointments
             try
             {
                 itemIndex = e.ItemIndex;
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
-        }
-
-        private void GoalAppointmentListView_OnSelectionChanged(object sender, ItemSelectionChangedEventArgs e)
-        {
-            try
-            {
-                if (e.AddedItems.Any())
-                    viewModel.SetAppointment((GoalAppointment) e.AddedItems[0]);
             }
             catch (Exception ex)
             {

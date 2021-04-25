@@ -17,11 +17,11 @@
             Completed = completed;
         }
 
-        public string Title { get; set; }
-        public int? GoalId { get; set; }
-        public virtual Goal Goal { get; set; }
+        public string Title { get; }
+        public int? GoalId { get; }
+        public virtual Goal Goal { get; }
 
-        public string Notes { get; set; }
+        public string Notes { get; }
 
         public bool Completed
         {

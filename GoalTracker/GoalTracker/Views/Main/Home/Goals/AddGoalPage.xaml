@@ -8,7 +8,7 @@
              xmlns:progressbar="clr-namespace:Syncfusion.XForms.ProgressBar;assembly=Syncfusion.SfProgressBar.XForms" 
              xmlns:border="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
              xmlns:converters="clr-namespace:GoalTracker.Converter;assembly=GoalTracker"
-             x:Class="GoalTracker.Views.AppShell.Home.Goals.AddGoalPage"
+             x:Class="GoalTracker.Views.Main.Home.Goals.AddGoalPage"
              Title="Neues Ziel hinzufügen">
 
     <ContentPage.Resources>

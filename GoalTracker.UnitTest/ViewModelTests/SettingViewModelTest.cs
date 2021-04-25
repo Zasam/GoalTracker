@@ -38,12 +38,34 @@ namespace GoalTracker.UnitTest.ViewModelTests
         }
 
         [TestMethod]
-        public async Task RegisterUser()
+        public async Task RegisterUserTest()
         {
             await using var context = new GoalTrackerContext(ContextOptions);
             var userRepository = new UserRepository(context);
             var achievementRepository = new AchievementRepository(context);
             var settingViewModel = new SettingViewModel(achievementRepository, userRepository);
+
+            var newUser = await settingViewModel.RegisterDefaultUserAsync();
+            Assert.IsNotNull(newUser);
+            Assert.AreEqual(newUser.Id, 1);
+            Assert.AreEqual("Default", newUser.Name);
+            Assert.IsNotNull(newUser.Achievements);
+        }
+
+        [TestMethod]
+        public async Task CreateAchievementsTest()
+        {
+            await using var context = new GoalTrackerContext(ContextOptions);
+            var userRepository = new UserRepository(context);
+            var achievementRepository = new AchievementRepository(context);
+            var settingViewModel = new SettingViewModel(achievementRepository, userRepository);
+
+            var newUser = await settingViewModel.RegisterDefaultUserAsync();
+            await settingViewModel.CreateAchievementsAsync(newUser);
+            await settingViewModel.LoadAchievementsAsync();
+
+            Assert.IsNotNull(settingViewModel.Achievements);
+            Assert.AreEqual(9, settingViewModel.Achievements.Count);
         }
     }
 }

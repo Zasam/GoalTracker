@@ -51,9 +51,9 @@ namespace GoalTracker.ViewModels
             }
         }
 
-        #region ReadOnly Bindings
+        public Goal SelectedGoal { get; set; }
 
-        public Goal SelectedGoal { get; private set; }
+        #region ReadOnly Bindings
 
         public List<Goal> Goals
         {
@@ -219,11 +219,6 @@ namespace GoalTracker.ViewModels
             {
                 Crashes.TrackError(ex);
             }
-        }
-
-        public void SetGoal(Goal goal)
-        {
-            SelectedGoal = goal;
         }
     }
 }
