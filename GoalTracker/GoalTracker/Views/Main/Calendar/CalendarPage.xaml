@@ -5,7 +5,20 @@
              xmlns="http://xamarin.com/schemas/2014/forms"
              x:Class="GoalTracker.Views.Main.Calendar.CalendarPage"
              xmlns:syncTheme="clr-namespace:Syncfusion.XForms.Themes;assembly=Syncfusion.Core.XForms"
+             xmlns:viewModels="clr-namespace:GoalTracker.ViewModels;assembly=GoalTracker"
+             xmlns:infrastructure="clr-namespace:XamarinUniversity.Infrastructure;assembly=XamU.Infrastructure"
              Title="Kalender">
+
+    <!-- Only use to verify bindings through xaml-compilation / intellisense -->
+    <!--<ContentPage.BindingContext>
+        <viewModels:CalendarViewModel/>
+    </ContentPage.BindingContext>-->
+
+    <ContentPage.Behaviors>
+        <!-- TODO: Event name Appearing or OnAppearing? -->
+        <infrastructure:EventToCommandBehavior EventName="Appearing" Command="{Binding LoadEventsAsyncCommand}"/>
+    </ContentPage.Behaviors>
+
     <ContentPage.Resources>
         <ResourceDictionary>
             <converter:SyncfusionCalendarDateToColorConverter x:Key="SyncfusionCalendarDateToColorConverter"/>
@@ -18,6 +31,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </ContentPage.Resources>
+
     <ContentPage.Content>
         <Grid Style="{StaticResource DefaultGrid}">
             <Grid.ColumnDefinitions>

@@ -5,7 +5,6 @@ using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using SwipeEndedEventArgs = Syncfusion.ListView.XForms.SwipeEndedEventArgs;
 using SwipeStartedEventArgs = Syncfusion.ListView.XForms.SwipeStartedEventArgs;
 
 namespace GoalTracker.Views.Main.Home.GoalTasks
@@ -13,31 +12,18 @@ namespace GoalTracker.Views.Main.Home.GoalTasks
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class GoalTasksPage : ContentPage
     {
-        private readonly IGoalTaskViewModel viewModel;
+        private readonly IGoalTaskViewModel goalTaskViewModel;
         private Image deleteSwipeImage;
         private Image editSwipeImage;
-        private int itemIndex;
+        private Image setTaskCompletedImage;
 
-        public GoalTasksPage(IGoalTaskViewModel viewModel, Goal parent)
+        public GoalTasksPage(IGoalTaskViewModel goalTaskViewModel, Goal parent)
         {
             InitializeComponent();
 
-            this.viewModel = viewModel;
-            BindingContext = viewModel;
+            this.goalTaskViewModel = goalTaskViewModel;
+            BindingContext = goalTaskViewModel;
             Title = "Aufgaben für: " + parent.Title;
-        }
-
-        protected override async void OnAppearing()
-        {
-            try
-            {
-                base.OnAppearing();
-                await viewModel.LoadTasksAsync();
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
         }
 
         private void GoalTaskListViewPullToRefresh_OnRefreshing(object sender, EventArgs e)
@@ -45,7 +31,6 @@ namespace GoalTracker.Views.Main.Home.GoalTasks
             try
             {
                 GoalTaskListViewPullToRefresh.IsRefreshing = true;
-                viewModel.LoadTasksAsync();
                 DependencyService.Get<IMessenger>().ShortMessage("Deine Aufgaben wurden erfolgreich aktualisiert.");
                 GoalTaskListViewPullToRefresh.IsRefreshing = false;
             }
@@ -55,52 +40,17 @@ namespace GoalTracker.Views.Main.Home.GoalTasks
             }
         }
 
-        private async void GoalTaskListView_OnSwipeStarted(object sender, SwipeStartedEventArgs e)
+        private void GoalTaskListView_OnSwipeStarted(object sender, SwipeStartedEventArgs e)
         {
             try
             {
-                await viewModel.LoadTasksAsync();
-
                 var listviewSelectedGoalTask = (Goal) GoalTaskListView.SelectedItem;
-                var swipeSelectedGoalTask = viewModel.GoalTasks[e.ItemIndex];
+                var swipeSelectedGoalTask = goalTaskViewModel.GoalTasks[e.ItemIndex];
 
                 if (listviewSelectedGoalTask == null || listviewSelectedGoalTask.Id != swipeSelectedGoalTask.Id)
                 {
                     GoalTaskListView.Focus();
                     GoalTaskListView.SelectedItem = swipeSelectedGoalTask;
-                }
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
-        }
-
-        private void GoalTaskListView_OnSwipeEnded(object sender, SwipeEndedEventArgs e)
-        {
-            try
-            {
-                itemIndex = e.ItemIndex;
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
-        }
-
-        private async void DeleteGoalTask()
-        {
-            try
-            {
-                if (itemIndex >= 0)
-                {
-                    var selectedGoalTask = viewModel.GoalTasks[itemIndex];
-                    await viewModel.DeleteTaskAsync(selectedGoalTask);
-                    DependencyService.Get<IMessenger>()
-                        .LongMessage($"Aufgabe {selectedGoalTask.Title} erfolgreich gelöscht.");
-
-                    GoalTaskListView.ResetSwipe();
-                    await viewModel.LoadTasksAsync();
                 }
             }
             catch (Exception ex)
@@ -147,7 +97,7 @@ namespace GoalTracker.Views.Main.Home.GoalTasks
                     if (deleteSwipeImage?.Parent is View deleteSwipeImageView)
                     {
                         deleteSwipeImageView.GestureRecognizers.Add(new TapGestureRecognizer
-                            {Command = new Command(DeleteGoalTask)});
+                            {Command = goalTaskViewModel.DeleteTaskAsyncCommand, CommandParameter = goalTaskViewModel.SelectedGoalTask});
                         deleteSwipeImage.Source = ImageSource.FromFile("Delete.png");
                     }
                 }
@@ -158,16 +108,14 @@ namespace GoalTracker.Views.Main.Home.GoalTasks
             }
         }
 
-        private async void GoalTaskCompletionCommandTapGestureRecognizer_OnTapped(object sender, EventArgs e)
+        private void SetTaskCompletedLeftSwipeImage_OnBindingContextChanged(object sender, EventArgs e)
         {
-            try
+            if (setTaskCompletedImage == null)
             {
-                await viewModel.SetTaskCompletedAsync();
-                GoalTaskListView.ResetSwipe();
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
+                setTaskCompletedImage = sender as Image;
+
+                if (setTaskCompletedImage?.Parent is View setTaskCompletedImageView)
+                    setTaskCompletedImageView.GestureRecognizers.Add(new TapGestureRecognizer {Command = goalTaskViewModel.SetTaskCompletedAsyncCommand, CommandParameter = goalTaskViewModel.SelectedGoalTask});
             }
         }
     }

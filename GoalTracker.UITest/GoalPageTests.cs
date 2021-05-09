@@ -1,9 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using NUnit.Framework;
 using Xamarin.UITest;
-using Xamarin.UITest.Queries;
 
 namespace GoalTracker.UITest
 {
@@ -11,8 +8,8 @@ namespace GoalTracker.UITest
     [TestFixture(Platform.iOS)]
     public class GoalPageTests
     {
-        IApp app;
-        Platform platform;
+        private IApp app;
+        private readonly Platform platform;
 
         public GoalPageTests(Platform platform)
         {
@@ -28,7 +25,7 @@ namespace GoalTracker.UITest
         [Test]
         public void SplashScreenIsDisplayed()
         {
-            AppResult[] results = app.WaitForElement(c => c.Marked("Welcome to Xamarin.Forms!"));
+            var results = app.WaitForElement(c => c.Marked("Welcome to Xamarin.Forms!"));
             app.Screenshot("Welcome screen.");
 
             Assert.IsTrue(results.Any());

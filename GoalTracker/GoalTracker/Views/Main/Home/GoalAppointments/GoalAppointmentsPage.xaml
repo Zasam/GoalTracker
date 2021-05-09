@@ -6,12 +6,25 @@
              xmlns:resources="clr-namespace:GoalTracker.Resources;assembly=GoalTracker"
              xmlns:converter="clr-namespace:GoalTracker.Converter"
              xmlns:border="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
+             xmlns:viewModels="clr-namespace:GoalTracker.ViewModels;assembly=GoalTracker"
+             xmlns:infrastructure="clr-namespace:XamarinUniversity.Infrastructure;assembly=XamU.Infrastructure"
              x:Class="GoalTracker.Views.Main.Home.GoalAppointments.GoalAppointmentsPage">
+
+    <!-- Only use to verify bindings through xaml-compilation / intellisense -->
+    <!--<ContentPage.BindingContext>
+        <viewModels:GoalAppointmentViewModel/>
+    </ContentPage.BindingContext>-->
+
     <ContentPage.Resources>
         <ResourceDictionary>
             <converter:BoolToStringConverter x:Key="BoolToStringConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
+
+    <ContentPage.Behaviors>
+        <infrastructure:EventToCommandBehavior EventName="Appearing" Command="{Binding LoadAppointmentsAsyncCommand}"/>
+    </ContentPage.Behaviors>
+
     <ContentPage.Content>
         <StackLayout Padding="15">
             <Grid>
@@ -29,16 +42,17 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <syncfusionPullToRefresh:SfPullToRefresh x:Name="GoalAppointmentListViewPullToRefresh"
-                                                             Refreshing="GoalAppointmentListViewPullToRefresh_OnRefreshing"
-                                                             Grid.Row="0"
-                                                             Grid.Column="0">
+                        <syncfusionPullToRefresh:SfPullToRefresh Grid.Row="0"
+                                                                 Grid.Column="0"
+                                                                 IsRefreshing="{Binding IsRefreshing}">
+                            <syncfusionPullToRefresh:SfPullToRefresh.Behaviors>
+                                <infrastructure:EventToCommandBehavior EventName="Refreshing" Command="{Binding LoadAppointmentsAsyncCommand}"/>
+                            </syncfusionPullToRefresh:SfPullToRefresh.Behaviors>
                             <syncfusionPullToRefresh:SfPullToRefresh.PullableContent>
                                 <syncfusionListView:SfListView x:Name="GoalAppointmentListView"
                                                         ItemsSource="{Binding GoalAppointments}"
                                                         AllowSwiping="True"
                                                         SwipeStarted="GoalAppointmentListView_OnSwipeStarted"
-                                                        SwipeEnded="GoalAppointmentListView_OnSwipeEnded"
                                                         SelectedItem="{Binding SelectedGoalAppointment}">
                                     <syncfusionListView:SfListView.HeaderTemplate>
                                         <DataTemplate>
@@ -61,11 +75,11 @@
                                                     <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
                                                         <Grid VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                                                             <Image BackgroundColor="Transparent"
-                                                               HeightRequest="35"
-                                                               WidthRequest="35"
-                                                               Source="Success.png"
-                                                               x:Name="ApproveGoalAppointmentSuccess"
-                                                               BindingContextChanged="ApproveGoalAppointmentSuccess_OnBindingContextChanged">
+                                                                   HeightRequest="35"
+                                                                   WidthRequest="35"
+                                                                   Source="Success.png"
+                                                                   x:Name="ApproveGoalAppointmentSuccess"
+                                                                   BindingContextChanged="ApproveGoalAppointmentSuccess_OnBindingContextChanged">
                                                             </Image>
                                                         </Grid>
                                                     </Grid>
@@ -87,11 +101,11 @@
                                                     <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
                                                         <Grid VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                                                             <Image BackgroundColor="Transparent"
-                                                       HeightRequest="35"
-                                                       WidthRequest="35"
-                                                       Source="Failed.png"
-                                                       x:Name="ApproveGoalAppointmentFailure"
-                                                       BindingContextChanged="ApproveGoalAppointmentFailure_OnBindingContextChanged"/>
+                                                                   HeightRequest="35"
+                                                                   WidthRequest="35"
+                                                                   Source="Failed.png"
+                                                                   x:Name="ApproveGoalAppointmentFailure"
+                                                                   BindingContextChanged="ApproveGoalAppointmentFailure_OnBindingContextChanged"/>
                                                         </Grid>
                                                     </Grid>
                                                 </Grid>
@@ -112,24 +126,24 @@
                                                         <RowDefinition Height="*"/>
                                                         <RowDefinition Height="*"/>
                                                     </Grid.RowDefinitions>
-                                                        <Label Grid.Row="0" Grid.Column="0" Text="{Binding AppointmentDateText, StringFormat='Datum: {0:dd MMMM yyyy}'}"
+                                                    <Label Grid.Row="0" Grid.Column="0" Text="{Binding AppointmentDateText, StringFormat='Datum: {0:dd MMMM yyyy}'}"
                                                                HorizontalTextAlignment="Start"
                                                                HorizontalOptions="StartAndExpand"/>
-                                                        <StackLayout Grid.Row="1" Grid.Column="0" Orientation="Horizontal" HorizontalOptions="StartAndExpand">
-                                                            <Label Text="{x:Static resources:TranslationResources_DE.ApprovedItem}"/>
-                                                            <Label Text="{Binding Approved, Converter={StaticResource BoolToStringConverter}}"
+                                                    <StackLayout Grid.Row="1" Grid.Column="0" Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+                                                        <Label Text="{x:Static resources:TranslationResources_DE.ApprovedItem}"/>
+                                                        <Label Text="{Binding Approved, Converter={StaticResource BoolToStringConverter}}"
                                                                    HorizontalTextAlignment="Start"
                                                                    HorizontalOptions="StartAndExpand"/>
-                                                        </StackLayout>
-                                                        <Label Grid.Row="2" Grid.Column="0" Text="{Binding ApprovalDateText, StringFormat='Bestätigungsdatum: {0:dd MMMM yyyy}'}"
+                                                    </StackLayout>
+                                                    <Label Grid.Row="2" Grid.Column="0" Text="{Binding ApprovalDateText, StringFormat='Bestätigungsdatum: {0:dd MMMM yyyy}'}"
                                                                HorizontalTextAlignment="Start"
                                                                HorizontalOptions="StartAndExpand"/>
-                                                        <StackLayout Grid.Row="3" Grid.Column="0" Orientation="Horizontal" HorizontalOptions="StartAndExpand">
-                                                            <Label Text="{x:Static resources:TranslationResources_DE.SuccessfulItem}"/>
-                                                            <Label Text="{Binding Success, Converter={StaticResource BoolToStringConverter}}"
+                                                    <StackLayout Grid.Row="3" Grid.Column="0" Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+                                                        <Label Text="{x:Static resources:TranslationResources_DE.SuccessfulItem}"/>
+                                                        <Label Text="{Binding Success, Converter={StaticResource BoolToStringConverter}}"
                                                                    HorizontalTextAlignment="Start"
                                                                    HorizontalOptions="StartAndExpand"/>
-                                                        </StackLayout>
+                                                    </StackLayout>
                                                 </Grid>
                                             </border:SfBorder>
                                         </DataTemplate>

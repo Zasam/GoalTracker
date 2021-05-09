@@ -65,6 +65,9 @@ namespace GoalTracker.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("DetailImage")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("TEXT");
 
@@ -96,9 +99,6 @@ namespace GoalTracker.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ViewCellImageString")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

@@ -1,64 +1,100 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using GoalTracker.Extensions;
 using GoalTracker.Models;
 using GoalTracker.Services.Interface;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 using Syncfusion.SfCalendar.XForms;
+using Xamarin.Forms;
 
 namespace GoalTracker.ViewModels
 {
     public class CalendarViewModel : BaseViewModel, ICalendarViewModel
     {
-        private readonly IGoalAppointmentRepository goalAppointmentRepository;
-        private readonly IGoalRepository goalRepository;
+        #region Repositories
 
-        private CalendarEventCollection calendarInlineEvents;
-        private int failureApprovalsWeek;
-        private int successApprovalsWeek;
+        private readonly IGoalRepository goalRepository;
+        private readonly IGoalAppointmentRepository goalAppointmentRepository;
+
+        #endregion // Repositories
 
         #region Properties
 
-        #region ReadOnly Bindings
+        private CalendarEventCollection calendarInlineEvents;
 
+        /// <summary>
+        /// Calendar events with appointments which can be binded to a syncfusion calendar
+        /// </summary>
         public CalendarEventCollection CalendarInlineEvents
         {
             get => calendarInlineEvents;
-            private set
+            set
             {
                 calendarInlineEvents = value;
                 OnPropertyChanged();
             }
         }
 
+
+        private int successApprovalsWeek;
+
+        /// <summary>
+        /// Count of appointments which were approved with success this week
+        /// </summary>
         public int SuccessApprovalsWeek
         {
             get => successApprovalsWeek;
-            private set
+            set
             {
                 successApprovalsWeek = value;
                 OnPropertyChanged();
             }
         }
 
+        private int failureApprovalsWeek;
+
+        /// <summary>
+        /// Count of appointments which were approved with failure this week
+        /// </summary>
         public int FailureApprovalsWeek
         {
             get => failureApprovalsWeek;
-            private set
+            set
             {
                 failureApprovalsWeek = value;
                 OnPropertyChanged();
             }
         }
 
+        /// <summary>
+        /// The minimum date of the calendar to show
+        /// </summary>
         public DateTime CalendarMinDate { get; }
+
+        /// <summary>
+        /// The maximum date of the calendar to show
+        /// </summary>
         public DateTime CalendarMaxDate { get; }
 
         #endregion // ReadOnly Bindings
 
-        #endregion // Properties
+        #region Commands
+
+        /// <summary>
+        /// Command to load all events associated with existing appointments async
+        /// </summary>
+        public ICommand LoadEventsAsyncCommand { get; }
+
+        #endregion // Commands
+
+        // TODO: Only used to check bindings in xaml
+        public CalendarViewModel()
+        {
+            throw new InvalidOperationException("Calendar view model shouldn't be initialized through parameterless constructor");
+        }
 
         public CalendarViewModel(IGoalRepository goalRepository, IGoalAppointmentRepository goalAppointmentRepository)
         {
@@ -68,9 +104,11 @@ namespace GoalTracker.ViewModels
             var now = DateTime.Now;
             CalendarMinDate = new DateTime(now.Year - 1, now.Month, now.Day);
             CalendarMaxDate = new DateTime(now.Year + 1, now.Month, now.Day);
+
+            LoadEventsAsyncCommand = new Command(async () => await LoadEventsAsync());
         }
 
-        public async Task LoadEventsAsync()
+        private async Task LoadEventsAsync()
         {
             try
             {

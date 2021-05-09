@@ -18,6 +18,28 @@ namespace GoalTracker.DI
         {
             try
             {
+                DependencyRegistration();
+
+                var goalViewModel = container.Resolve<IGoalViewModel>();
+                var calendarViewModel = container.Resolve<ICalendarViewModel>();
+                var settingViewModel = container.Resolve<ISettingViewModel>();
+
+                // Check if user has already signed up and user exists
+                var userRepository = container.Resolve<IUserRepository>();
+                var user = await userRepository.GetUserAsync();
+                return new App(user, goalViewModel, calendarViewModel, settingViewModel);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                return null;
+            }
+        }
+
+        private static void DependencyRegistration()
+        {
+            try
+            {
                 // Create builder and default context to use
                 var builder = new ContainerBuilder();
 
@@ -37,29 +59,19 @@ namespace GoalTracker.DI
                 builder.RegisterType<SettingViewModel>().As<ISettingViewModel>().SingleInstance();
 
                 container = builder.Build();
-
-                var goalViewModel = container.Resolve<IGoalViewModel>();
-                var calendarViewModel = container.Resolve<ICalendarViewModel>();
-                var settingViewModel = container.Resolve<ISettingViewModel>();
-
-                // Check if user has already signed up and user exists
-                var userRepository = container.Resolve<IUserRepository>();
-                var user = await userRepository.GetUserAsync();
-                return new App(user, goalViewModel, calendarViewModel, settingViewModel);
             }
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                return null;
             }
         }
 
-        public static async Task<IContainer> GetContainer()
+        public static IContainer GetContainer()
         {
             try
             {
                 if (container == null)
-                    await Run();
+                    DependencyRegistration();
 
                 return container;
             }

@@ -2,11 +2,11 @@
 {
     public class Achievement : BaseEntity
     {
-        public string Title { get; }
-        public string Description { get; }
-        public int Experience { get; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public int Experience { get; set; }
 
-        public string InternalTag { get; }
+        public string InternalTag { get; set; }
 
         private bool unlocked;
 
@@ -29,6 +29,7 @@
             Description = string.Empty;
             Experience = 0;
             Unlocked = false;
+            InternalTag = string.Empty;
         }
 
         public Achievement(User user, string internalTag, string title, string description, int experience)

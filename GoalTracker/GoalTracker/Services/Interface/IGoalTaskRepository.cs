@@ -6,7 +6,6 @@ namespace GoalTracker.Services.Interface
 {
     public interface IGoalTaskRepository : IRepository<GoalTask>
     {
-        Task<IEnumerable<GoalTask>> GetAllAsync(Goal parentGoal);
         Task RemoveAsync(GoalTask goalTask);
         Task RemoveRangeAsync(IEnumerable<GoalTask> goalTasks);
         Task AddAsync(GoalTask goalTask);

@@ -28,7 +28,7 @@ namespace GoalTracker.Services
 
         public new async Task AddAsync(GoalTask goalTask)
         {
-            await AddAsync(goalTask);
+            await base.AddAsync(goalTask);
         }
 
         public new async Task AddRangeAsync(IEnumerable<GoalTask> goalTasks)
@@ -41,11 +41,6 @@ namespace GoalTracker.Services
             }
 
             await base.AddRangeAsync(goalTaskCollection);
-        }
-
-        public async Task<IEnumerable<GoalTask>> GetAllAsync(Goal parentGoal)
-        {
-            return await GetAllAsync(parentGoal);
         }
 
         public new async Task RemoveAsync(GoalTask goalTask)

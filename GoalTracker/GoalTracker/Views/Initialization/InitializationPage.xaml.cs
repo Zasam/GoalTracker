@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using BQFramework.Tasks;
-using GoalTracker.Entities;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 using Syncfusion.XForms.ProgressBar;
@@ -14,8 +12,6 @@ namespace GoalTracker.Views.Initialization
     public partial class InitializationPage : ContentPage
     {
         private readonly ISettingViewModel settingViewModel;
-        private bool isInitialized;
-        private User newUser;
 
         public InitializationPage(ISettingViewModel settingViewModel)
         {
@@ -30,18 +26,15 @@ namespace GoalTracker.Views.Initialization
         {
             try
             {
-                if (!isInitialized)
-                {
-                    isInitialized = true;
+                await SetInitializationUI("Datenbank wird initialisiert...", 33, Easing.Linear);
+                //TODO: How to use commands in here? Or use initialization command in code behind of view?
+                settingViewModel.RegisterDefaultUserAsyncCommand.Execute(null);
 
-                    await SetInitializationUI("Datenbank wird initialisiert...", 33, Easing.Linear);
-                    newUser = AsyncHelper.RunSync(() => settingViewModel.RegisterDefaultUserAsync());
+                await SetInitializationUI("Benutzer wird angelegt...", 66, Easing.Linear);
+                //TODO: How to use commands in here? Or use initialization command in code behind of view?
+                settingViewModel.CreateAchievementsAsyncCommand.Execute(null);
 
-                    await SetInitializationUI("Benutzer wird angelegt...", 66, Easing.Linear);
-                    AsyncHelper.RunSync(() => settingViewModel.CreateAchievementsAsync(newUser));
-
-                    await SetInitializationUI("Erfolge werden erstellt...", 100, Easing.Linear);
-                }
+                await SetInitializationUI("Erfolge werden erstellt...", 100, Easing.Linear);
             }
             catch (Exception ex)
             {
@@ -59,7 +52,7 @@ namespace GoalTracker.Views.Initialization
 
         private void InitializationProgressBar_OnProgressCompleted(object sender, ProgressValueEventArgs e)
         {
-            GoalTracker.AppShell.Instance.SetUIState(newUser, UIStates.Initialization, UIStates.Configuration);
+            AppShell.Instance.SetUIState(UIStates.Initialization, UIStates.Configuration);
         }
     }
 }

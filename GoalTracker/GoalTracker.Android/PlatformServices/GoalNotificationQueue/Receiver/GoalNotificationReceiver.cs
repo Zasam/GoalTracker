@@ -54,7 +54,7 @@ namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver
                         var alarmManager = (AlarmManager) Application.Context.GetSystemService(Android.Content.Context.AlarmService);
                         alarmManager?.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, notificationDateTimeInMilliseconds, pendingNotificationIntent);
 
-                        var container = await Bootstrapper.GetContainer();
+                        var container = Bootstrapper.GetContainer();
                         var repository = container.Resolve<IGoalRepository>();
 
                         // Push the notification which was received by the alarm

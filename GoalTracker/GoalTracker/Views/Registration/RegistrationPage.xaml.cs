@@ -1,5 +1,6 @@
 ﻿using System;
 using GoalTracker.Extensions;
+using GoalTracker.PlatformServices;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 using Syncfusion.XForms.ProgressBar;
@@ -39,21 +40,13 @@ namespace GoalTracker.Views.Registration
             {
                 //TODO: Show validation message to user!
                 if (string.IsNullOrWhiteSpace(settingViewModel.Username))
+                {
+                    DependencyService.Get<IMessenger>().ShortMessage("Bitte gib deinen Vornamen ein um fortzufahren");
                     return;
-
-                var unlockableAchievement = await settingViewModel.GetAchievementAsync("SIGNUP");
-
-                if (unlockableAchievement != null)
-                {
-                    await settingViewModel.ChangeUsername(settingViewModel.Username);
-                    await settingViewModel.UnlockAchievementAsync("SIGNUP");
-                    await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel, AchievementProgressBar, "Erfolg freigeschaltet: " + unlockableAchievement.Title);
                 }
-                else
-                {
-                    await settingViewModel.LoadUserAsync();
-                    GoalTracker.AppShell.Instance.SetUIState(settingViewModel.User, UIStates.Configuration, UIStates.Home);
-                }
+
+                //TODO: How to get title of the unlocked achievement?
+                await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel, AchievementProgressBar, "Erfolg freigeschaltet: " + "SIGNUP");
             }
             catch (Exception ex)
             {
@@ -61,10 +54,9 @@ namespace GoalTracker.Views.Registration
             }
         }
 
-        private async void AchievementProgressBar_OnProgressCompleted(object sender, ProgressValueEventArgs e)
+        private void AchievementProgressBar_OnProgressCompleted(object sender, ProgressValueEventArgs e)
         {
-            await settingViewModel.LoadUserAsync();
-            GoalTracker.AppShell.Instance.SetUIState(settingViewModel.User, UIStates.Configuration, UIStates.Home);
+            AppShell.Instance.SetUIState(UIStates.Configuration, UIStates.Home);
         }
     }
 }

@@ -97,5 +97,14 @@ namespace GoalTracker.UnitTest.ServiceTests
             await userRepository.AddUserAsync(testUser);
             await userRepository.AddUserAsync(testUser2);
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public async Task ChangeUsernameAsyncWithNoRegisteredUserThrowsExceptionTest()
+        {
+            await using var context = new GoalTrackerContext(ContextOptions);
+            var userRepository = new UserRepository(context);
+            await userRepository.ChangeUsernameAsync("Test");
+        }
     }
 }

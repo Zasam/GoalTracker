@@ -21,7 +21,7 @@ namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver
                 if (intent?.Action != null && (intent.Action.Equals(Intent.ActionBootCompleted) ||
                                                intent.Action.Equals(Intent.ActionLockedBootCompleted)))
                 {
-                    var container = await Bootstrapper.GetContainer();
+                    var container = Bootstrapper.GetContainer();
 
                     if (container != null)
                     {

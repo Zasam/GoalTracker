@@ -1,15 +1,16 @@
-﻿using System.Threading.Tasks;
+﻿using System.Windows.Input;
 using GoalTracker.Entities;
 
 namespace GoalTracker.ViewModels.Interface
 {
     public interface IGoalTaskViewModel
     {
-        string ParentTitle { get; }
-        GoalTask[] GoalTasks { get; }
+        GoalTask[] GoalTasks { get; set; }
         GoalTask SelectedGoalTask { get; set; }
-        Task LoadTasksAsync();
-        Task<bool> DeleteTaskAsync(GoalTask goalTask);
-        Task<bool> SetTaskCompletedAsync();
+        Goal ParentGoal { get; }
+
+        ICommand DeleteTaskAsyncCommand { get; }
+        ICommand SetTaskCompletedAsyncCommand { get; }
+        ICommand LoadTasksAsyncCommand { get; }
     }
 }

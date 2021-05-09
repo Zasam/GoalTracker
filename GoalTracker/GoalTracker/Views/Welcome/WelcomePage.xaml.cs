@@ -17,8 +17,7 @@ namespace GoalTracker.Views.Welcome
             base.OnAppearing();
 
             await Task.Delay(5000);
-
-            GoalTracker.AppShell.Instance.SetUIState(null, UIStates.Welcome, UIStates.Initialization);
+            AppShell.Instance.SetUIState(UIStates.Welcome, UIStates.Initialization);
         }
     }
 }

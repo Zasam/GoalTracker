@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using GoalTracker.Entities;
 using GoalTracker.PlatformServices;
 using GoalTracker.ViewModels;
@@ -9,86 +8,57 @@ using GoalTracker.Views.Main.Home.GoalAppointments;
 using GoalTracker.Views.Main.Home.GoalTasks;
 using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
-using SwipeEndedEventArgs = Syncfusion.ListView.XForms.SwipeEndedEventArgs;
 using SwipeStartedEventArgs = Syncfusion.ListView.XForms.SwipeStartedEventArgs;
 
 namespace GoalTracker.Views.Main.Home.Goals
 {
     public partial class GoalsPage : ContentPage
+
     {
         private readonly IGoalViewModel goalViewModel;
-        public ISettingViewModel SettingViewModel { get; }
 
-        private readonly string username;
-        private readonly string welcomeMessage;
+        private ISettingViewModel settingViewModel;
+
+        public ISettingViewModel SettingViewModel
+        {
+            get => settingViewModel;
+            private set
+            {
+                settingViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+
         private Image deleteSwipeImage;
         private Image editSwipeImage;
-        private int itemIndex;
 
-        public GoalsPage(IGoalViewModel goalViewModel, ISettingViewModel settingViewModel, string username)
+        public GoalsPage(IGoalViewModel goalViewModel, ISettingViewModel settingViewModel)
         {
             InitializeComponent();
 
             SettingViewModel = settingViewModel;
             this.goalViewModel = goalViewModel;
-            this.username = username;
 
             BindingContext = goalViewModel;
-            welcomeMessage = GetRandomWelcomeMessage(username);
         }
 
         #region Events
 
         #region Page Events
 
-        protected override async void OnAppearing()
-        {
-            try
-            {
-                UsernameLabel.Text = welcomeMessage;
-                await RefreshGoals();
-
-                base.OnAppearing();
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
-        }
-
         protected override void OnDisappearing()
         {
             GoalListView.ResetSwipe();
-
             base.OnDisappearing();
         }
 
         #endregion Page Events
 
-        #region PullToRefresh Events
-
-        private async void GoalListViewPullToRefresh_OnRefreshing(object sender, EventArgs e)
-        {
-            try
-            {
-                GoalListViewPullToRefresh.IsRefreshing = true;
-                await RefreshGoals();
-                DependencyService.Get<IMessenger>().ShortMessage("Deine Ziele wurden erfolgreich aktualisiert.");
-                GoalListViewPullToRefresh.IsRefreshing = false;
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
-        }
-
-        #endregion // PullToRefresh Events
-
         #region ToolbarItem Events
 
         private async void AddGoalToolbarItem_OnClicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new AddGoalPage(goalViewModel, SettingViewModel, username));
+            await Navigation.PushAsync(new AddGoalPage(goalViewModel));
         }
 
         #endregion // ToolbarItem Events
@@ -104,10 +74,7 @@ namespace GoalTracker.Views.Main.Home.Goals
                     deleteSwipeImage = sender as Image;
 
                     if (deleteSwipeImage?.Parent is View deleteSwipeImageView)
-                    {
-                        deleteSwipeImageView.GestureRecognizers.Add(new TapGestureRecognizer {Command = new Command(DeleteGoal)});
-                        deleteSwipeImage.Source = ImageSource.FromFile("Delete.png");
-                    }
+                        deleteSwipeImageView.GestureRecognizers.Add(new TapGestureRecognizer {Command = goalViewModel.DeleteGoalAsyncCommand, CommandParameter = goalViewModel.SelectedGoal});
                 }
             }
             catch (Exception ex)
@@ -126,8 +93,9 @@ namespace GoalTracker.Views.Main.Home.Goals
 
                     if (editSwipeImage?.Parent is View editSwipeImageView)
                     {
-                        editSwipeImageView.GestureRecognizers.Add(new TapGestureRecognizer {Command = new Command(EditGoal)});
-                        editSwipeImage.Source = ImageSource.FromFile("Edit.png");
+                        var tapGestureRecognizer = new TapGestureRecognizer();
+                        tapGestureRecognizer.Tapped += delegate { Navigation.PushAsync(new EditGoalPage(goalViewModel, goalViewModel.SelectedGoal, goalViewModel.SelectedGoal.GoalTasks.ToArray())); };
+                        editSwipeImageView.GestureRecognizers.Add(tapGestureRecognizer);
                     }
                 }
             }
@@ -154,11 +122,6 @@ namespace GoalTracker.Views.Main.Home.Goals
             {
                 Crashes.TrackError(ex);
             }
-        }
-
-        private void GoalListView_OnSwipeEnded(object sender, SwipeEndedEventArgs e)
-        {
-            itemIndex = e.ItemIndex;
         }
 
         private void ShowGoalAppointmentsTapGestureRecognizer_OnTapped(object sender, EventArgs e)
@@ -207,80 +170,5 @@ namespace GoalTracker.Views.Main.Home.Goals
         #endregion ListView Events
 
         #endregion // Events
-
-        #region Methods
-
-        private string GetRandomWelcomeMessage(string username)
-        {
-            var random = new Random().Next(0, 3);
-
-            return random switch
-            {
-                0 => $"Na {username}, wie geht's? 😄",
-                1 => $"Hey {username}, schöner Tag oder? 😍",
-                2 => $"Schön das du wieder an deinen Zielen dran bist {username} 🎯",
-                3 => $"Ich hoffe dir gefällt {nameof(GoalTracker)}, {username} ♥️",
-                _ => $"Irgendwas ist schief gelaufen {username}, wenn was schief geht, starte die App neu 😰 "
-            };
-        }
-
-        private async Task RefreshGoals()
-        {
-            try
-            {
-                GoalListViewPullToRefresh.IsRefreshing = true;
-                await goalViewModel.LoadGoalsAsync();
-                await SettingViewModel.LoadAchievementsAsync();
-                GoalListViewPullToRefresh.IsRefreshing = false;
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
-        }
-
-        private async void DeleteGoal()
-        {
-            try
-            {
-                if (itemIndex >= 0)
-                {
-                    var selectedGoal = goalViewModel.Goals[itemIndex];
-                    var delete = await goalViewModel.DeleteGoalAsync(selectedGoal);
-                    if (delete)
-                    {
-                        DependencyService.Get<IMessenger>().LongMessage($"Ziel {selectedGoal.Title} erfolgreich gelöscht.");
-                        DependencyService.Get<INotificationQueueManager>().CancelAlarms(selectedGoal);
-                    }
-
-                    GoalListView.ResetSwipe();
-                    await RefreshGoals();
-                }
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
-        }
-
-        private async void EditGoal()
-        {
-            try
-            {
-                if (itemIndex >= 0)
-                {
-                    var selectedGoal = goalViewModel.Goals[itemIndex];
-                    var goalTasks = await goalViewModel.LoadTasksAsync(selectedGoal);
-                    GoalListView.ResetSwipe();
-                    await Navigation.PushAsync(new EditGoalPage(goalViewModel, selectedGoal, goalTasks, username));
-                }
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
-        }
-
-        #endregion // Methods
     }
 }

@@ -1,8 +1,7 @@
 ﻿using System;
-using GoalTracker.Entities;
+using System.Linq;
 using GoalTracker.Extensions;
 using GoalTracker.PlatformServices;
-using GoalTracker.Utilities;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 using Syncfusion.XForms.Pickers;
@@ -15,18 +14,15 @@ namespace GoalTracker.Views.Main.Home.Goals
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AddGoalPage : ContentPage
     {
-        private readonly string username;
         private readonly IGoalViewModel goalViewModel;
-        private readonly ISettingViewModel settingViewModel;
         private bool contentLoaded;
         private int goalTaskCounter;
         private bool saving;
+        private string[] goalTaskTitles;
 
-        public AddGoalPage(IGoalViewModel goalViewModel, ISettingViewModel settingViewModel, string username)
+        public AddGoalPage(IGoalViewModel goalViewModel)
         {
-            this.username = username;
             this.goalViewModel = goalViewModel;
-            this.settingViewModel = settingViewModel;
 
             contentLoaded = false;
             goalViewModel.GoalHasDueDate = false;
@@ -55,36 +51,17 @@ namespace GoalTracker.Views.Main.Home.Goals
         {
             try
             {
-                saving = true;
+                //TODO: Move validation to command in viewmodel!
+                //var valid = ValidateInputs(newGoal);
 
-                var newGoal = new Goal(goalViewModel.GoalTitle, goalViewModel.GoalNotes, goalViewModel.GoalStartDate, goalViewModel.GoalHasDueDate, goalViewModel.GoalEndDate, goalViewModel.GoalNotificationInterval, goalViewModel.GoalNotificationTime,
-                    goalViewModel.GoalImage);
+                DependencyService.Get<IMessenger>()
+                    .LongMessage("Neues Ziel erfolgreich hinzugefügt.");
 
-                var valid = ValidateInputs(newGoal);
-                if (!valid)
-                    return;
+                //TODO: how to identify if new achievement was unlocked? or is already unlocked?
+                await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel,
+                    AchievementProgressBar, "ADDGOAL???");
 
-                var goalTasks = GetTasks(newGoal);
-                var goal = await goalViewModel.AddGoalAsync(newGoal, goalTasks, username);
-
-                if (goal != null)
-                {
-                    DependencyService.Get<IMessenger>()
-                        .LongMessage($"Neues Ziel erfolgreich hinzugefügt: {newGoal.Title}.");
-
-                    var unlockableAchievement = await settingViewModel.GetAchievementAsync("GOALADD");
-
-                    if (unlockableAchievement != null)
-                    {
-                        var unlocked = await settingViewModel.UnlockAchievementAsync("GOALADD");
-
-                        if (unlocked)
-                            await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel,
-                                AchievementProgressBar, unlockableAchievement.Title);
-                    }
-
-                    await Navigation.PopAsync(true);
-                }
+                await Navigation.PopAsync(true);
             }
             catch (Exception ex)
             {
@@ -92,25 +69,16 @@ namespace GoalTracker.Views.Main.Home.Goals
             }
         }
 
-        private bool ValidateInputs(Goal input)
-        {
-            var valid = Validator.ValidateGoalInputs(input);
-            GoalTitleTextInputLayout.HasError = !valid;
-            ErrorTextLabel.IsVisible = !valid;
-            return valid;
-        }
-
         private void ResetInputs()
         {
             try
             {
-                GoalTitleEntry.Text = string.Empty;
-                GoalNotesEditor.Text = string.Empty;
-                GoalStartDatePicker.Date = goalViewModel.GoalMinimumStartDate;
-                GoalHasDueDateCheckBox.IsChecked = false;
-                GoalEndDatePicker.Date = goalViewModel.GoalMinimumEndDate;
-                GoalNotificationTimePicker.Time = TimeSpan.FromHours(DateTime.Now.Hour);
-                GoalNotificationIntervalPicker.SelectedIndex = 3;
+                goalViewModel.GoalTitle = string.Empty;
+                goalViewModel.GoalNotes = string.Empty;
+                goalViewModel.GoalHasDueDate = false;
+                goalViewModel.GoalNotificationTime = TimeSpan.FromHours(DateTime.Now.Hour);
+                goalViewModel.GoalNotificationIntervalIndex = 3;
+                goalViewModel.GoalImage = string.Empty;
             }
             catch (Exception ex)
             {
@@ -137,6 +105,18 @@ namespace GoalTracker.Views.Main.Home.Goals
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
+            }
+        }
+
+        private void GoalImageEntry_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            var text = GoalImageEntry.Text;
+
+            // TODO: Implement check if a emoji was selected | All emojis equal to string.Length => 2?
+            if (text.Length != 0 && text.Length != 2)
+            {
+                goalViewModel.GoalImage = string.Empty;
+                DependencyService.Get<IMessenger>().ShortMessage("Bitte hinterlege ein Emoji als beschreibendes Bild für dein Ziel");
             }
         }
 
@@ -169,6 +149,7 @@ namespace GoalTracker.Views.Main.Home.Goals
                 syncfusionTextInputLayout.InputView = taskTitleEntry;
                 childLayout.Children.Add(syncfusionTextInputLayout);
                 GoalTaskStackLayout.Children.Add(childLayout);
+                taskTitleEntry.TextChanged += TaskTitleEntry_TextChanged;
 
                 RemoveGoalTaskButton.IsVisible = true;
             }
@@ -190,40 +171,33 @@ namespace GoalTracker.Views.Main.Home.Goals
                 RemoveGoalTaskButton.IsVisible = false;
         }
 
-        private void GoalImageEntry_OnTextChanged(object sender, TextChangedEventArgs e)
+        private void TaskTitleEntry_TextChanged(object sender, TextChangedEventArgs e)
         {
-            var text = GoalImageEntry.Text;
-            if (text.Length != 2)
-            {
-                // TODO: Implement check if a emoji was selected
-                GoalImageEntry.Text = string.Empty;
-                DependencyService.Get<IMessenger>()
-                    .ShortMessage("Bitte hinterlege nur ein Emoji als beschreibendes Bild");
-            }
+            GetTasks();
         }
 
-        private GoalTask[] GetTasks(Goal parent)
+        // TODO: Implement tasks in viewmodel!
+        private void GetTasks()
         {
             try
             {
-                var goalTasks = new GoalTask[goalTaskCounter];
+                // TODO: Where to exactly call this method?
+                goalTaskTitles = new string[goalTaskCounter];
 
-                if (goalTaskCounter > 0)
-                    for (var i = 0; i <= goalTaskCounter - 1; i++)
-                    {
-                        var taskChildLayout = GoalTaskStackLayout.Children[i] as StackLayout;
-                        var taskTitleTextInputLayout = taskChildLayout?.Children[0] as SfTextInputLayout;
-                        var taskTitleEntry = taskTitleTextInputLayout?.InputView as Entry;
-                        var title = taskTitleEntry == null ? string.Empty : taskTitleEntry.Text;
-                        goalTasks[i] = new GoalTask(parent, title, string.Empty, false);
-                    }
+                if (goalTaskCounter <= 0) return;
+                for (var i = 0; i <= goalTaskCounter - 1; i++)
+                {
+                    var taskChildLayout = GoalTaskStackLayout.Children[i] as StackLayout;
+                    var taskTitleTextInputLayout = taskChildLayout?.Children[0] as SfTextInputLayout;
+                    var title = !(taskTitleTextInputLayout?.InputView is Entry taskTitleEntry) ? string.Empty : taskTitleEntry.Text;
+                    goalTaskTitles[i] = title;
+                }
 
-                return goalTasks;
+                goalViewModel.GoalTaskTitles = goalTaskTitles.ToList();
             }
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                return null;
             }
         }
     }

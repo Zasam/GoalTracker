@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using GoalTracker.Entities;
 using GoalTracker.PlatformServices;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using SwipeEndedEventArgs = Syncfusion.ListView.XForms.SwipeEndedEventArgs;
 using SwipeStartedEventArgs = Syncfusion.ListView.XForms.SwipeStartedEventArgs;
 
 namespace GoalTracker.Views.Main.Home.GoalAppointments
@@ -18,7 +16,6 @@ namespace GoalTracker.Views.Main.Home.GoalAppointments
         private readonly IGoalAppointmentViewModel viewModel;
         private Image approveGoalAppointmentFailureImage;
         private Image approveGoalAppointmentSuccessImage;
-        private int itemIndex;
 
         public GoalAppointmentsPage(IGoalAppointmentViewModel viewModel, Goal parent)
         {
@@ -27,62 +24,20 @@ namespace GoalTracker.Views.Main.Home.GoalAppointments
             this.viewModel = viewModel;
             BindingContext = viewModel;
 
+            this.viewModel.OnApproved += ViewModelOnOnApproved;
+
             Title = "Benachrichtigungen für: " + parent.Title;
         }
 
-        protected override void OnAppearing()
+        private void ViewModelOnOnApproved(object sender, EventArgs e)
         {
-            try
-            {
-                RefreshGoalAppointments();
-                base.OnAppearing();
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
+            GoalAppointmentListView.ResetSwipe();
         }
 
         protected override void OnDisappearing()
         {
             GoalAppointmentListView.ResetSwipe();
-
             base.OnDisappearing();
-        }
-
-        private void GoalAppointmentListViewPullToRefresh_OnRefreshing(object sender, EventArgs e)
-        {
-            RefreshGoalAppointments();
-        }
-
-        private async void RefreshGoalAppointments()
-        {
-            GoalAppointmentListViewPullToRefresh.IsRefreshing = true;
-            await viewModel.LoadAppointmentsAsync();
-            GoalAppointmentListViewPullToRefresh.IsRefreshing = false;
-        }
-
-        private async void ApproveGoalAppointmentSuccess()
-        {
-            await ApproveGoalAppointment(true);
-        }
-
-        private async void ApproveGoalAppointmentFailure()
-        {
-            await ApproveGoalAppointment(false);
-        }
-
-        private async Task ApproveGoalAppointment(bool success)
-        {
-            try
-            {
-                await viewModel.ApproveAppointmentAsync(success);
-                RefreshGoalAppointments();
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
         }
 
         private void ApproveGoalAppointmentSuccess_OnBindingContextChanged(object sender, EventArgs e)
@@ -94,13 +49,7 @@ namespace GoalTracker.Views.Main.Home.GoalAppointments
                     approveGoalAppointmentSuccessImage = sender as Image;
 
                     if (approveGoalAppointmentSuccessImage?.Parent is View approveGoalAppointmentSuccessImageView)
-                    {
-                        approveGoalAppointmentSuccessImageView.GestureRecognizers.Add(new TapGestureRecognizer
-                        {
-                            Command = new Command(ApproveGoalAppointmentSuccess)
-                        });
-                        approveGoalAppointmentSuccessImage.Source = ImageSource.FromFile("Success.png");
-                    }
+                        approveGoalAppointmentSuccessImageView.GestureRecognizers.Add(new TapGestureRecognizer {Command = viewModel.ApproveAppointmentAsyncCommand, CommandParameter = viewModel.SelectedGoalAppointment});
                 }
             }
             catch (Exception ex)
@@ -118,13 +67,7 @@ namespace GoalTracker.Views.Main.Home.GoalAppointments
                     approveGoalAppointmentFailureImage = sender as Image;
 
                     if (approveGoalAppointmentFailureImage?.Parent is View approveGoalAppointmentFailureImageView)
-                    {
-                        approveGoalAppointmentFailureImageView.GestureRecognizers.Add(new TapGestureRecognizer
-                        {
-                            Command = new Command(ApproveGoalAppointmentFailure)
-                        });
-                        approveGoalAppointmentFailureImage.Source = ImageSource.FromFile("Failed.png");
-                    }
+                        approveGoalAppointmentFailureImageView.GestureRecognizers.Add(new TapGestureRecognizer {Command = viewModel.DisapproveAppointmentAsyncCommand, CommandParameter = viewModel.SelectedGoalAppointment});
                 }
             }
             catch (Exception ex)
@@ -133,11 +76,10 @@ namespace GoalTracker.Views.Main.Home.GoalAppointments
             }
         }
 
-        private async void GoalAppointmentListView_OnSwipeStarted(object sender, SwipeStartedEventArgs e)
+        private void GoalAppointmentListView_OnSwipeStarted(object sender, SwipeStartedEventArgs e)
         {
             try
             {
-                await viewModel.LoadAppointmentsAsync();
                 var goalAppointments = viewModel.GoalAppointments.OrderBy(ga => ga.AppointmentDate).ToArray();
 
                 var listviewSelectedGoalAppointment = (GoalAppointment) GoalAppointmentListView.SelectedItem;
@@ -145,31 +87,17 @@ namespace GoalTracker.Views.Main.Home.GoalAppointments
 
                 if (swipeSelectedGoalAppointment != null && swipeSelectedGoalAppointment.AppointmentDate > DateTime.Now)
                 {
-                    DependencyService.Get<IMessenger>()
-                        .ShortMessage("Der Termin kann noch nicht bestätigt werden, da er noch in der Zukunft liegt.");
+                    //TODO: No message shown???
+                    DependencyService.Get<IMessenger>().ShortMessage("Der Termin kann noch nicht bestätigt werden, da er noch in der Zukunft liegt.");
                     e.Cancel = true;
-                    return;
+                    //GoalAppointmentListView.ResetSwipe();
                 }
 
-                if (listviewSelectedGoalAppointment == null ||
-                    listviewSelectedGoalAppointment.Id != swipeSelectedGoalAppointment.Id &&
-                    swipeSelectedGoalAppointment.AppointmentDate <= DateTime.Now)
+                if (listviewSelectedGoalAppointment == null || listviewSelectedGoalAppointment.Id != swipeSelectedGoalAppointment?.Id)
                 {
                     GoalAppointmentListView.Focus();
                     GoalAppointmentListView.SelectedItem = swipeSelectedGoalAppointment;
                 }
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
-        }
-
-        private void GoalAppointmentListView_OnSwipeEnded(object sender, SwipeEndedEventArgs e)
-        {
-            try
-            {
-                itemIndex = e.ItemIndex;
             }
             catch (Exception ex)
             {

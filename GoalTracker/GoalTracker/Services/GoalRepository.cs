@@ -29,10 +29,9 @@ namespace GoalTracker.Services
             return await context.Goals.Include(g => g.GoalAppointments).Include(g => g.GoalTasks).ToListAsync();
         }
 
-        public async Task<IEnumerable<Goal>> GetAllInDateAsync(DateTime date)
+        public async Task<IEnumerable<Goal>> GetAllStartedAsync(DateTime startDate)
         {
-            return await FindAsync(g =>
-                !g.HasDueDate && g.StartDate <= date || g.StartDate <= date && g.EndDate >= date);
+            return await FindAsync(g => g.StartDate <= startDate);
         }
 
         public new async Task RemoveAsync(Goal goal)

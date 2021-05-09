@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using GoalTracker.Entities;
 using GoalTracker.Extensions;
 using GoalTracker.PlatformServices;
@@ -16,31 +17,149 @@ namespace GoalTracker.ViewModels
     {
         #region Repositories
 
-        private readonly IGoalRepository goalRepository;
         public IGoalTaskRepository GoalTaskRepository { get; }
         public IGoalAppointmentRepository GoalAppointmentRepository { get; }
 
-        #endregion // Repositories
+        private readonly IGoalRepository goalRepository;
+        private readonly IUserRepository userRepository;
 
-        private List<Goal> goals;
-        private bool goalHasDueDate;
+        #endregion // Repositories
 
         #region Properties
 
-        public string GoalTitle { get; set; }
-        public string GoalNotes { get; set; }
-        public DateTime GoalMinimumStartDate { get; set; }
-        public DateTime GoalMinimumEndDate { get; set; }
-        public DateTime GoalStartDate { get; set; }
-        public DateTime GoalEndDate { get; set; }
-        public int GoalNotificationIntervalIndex { get; set; }
-        public TimeSpan GoalNotificationTime { get; set; }
+        private string goalTitle;
 
+        /// <summary>
+        /// Title of the goal that is added or should be created
+        /// </summary>
+        public string GoalTitle
+        {
+            get => goalTitle;
+            set
+            {
+                goalTitle = value;
+                OnPropertyChanged();
+                BindedGoal = new Goal(GoalTitle, GoalNotes, GoalStartDate, GoalHasDueDate, GoalEndDate, GoalNotificationInterval, GoalNotificationTime, GoalImage);
+            }
+        }
+
+        private string goalNotes;
+
+        /// <summary>
+        /// Notes of the goal that is added or should be created
+        /// </summary>
+        public string GoalNotes
+        {
+            get => goalNotes;
+            set
+            {
+                goalNotes = value;
+                OnPropertyChanged();
+                BindedGoal = new Goal(GoalTitle, GoalNotes, GoalStartDate, GoalHasDueDate, GoalEndDate, GoalNotificationInterval, GoalNotificationTime, GoalImage);
+            }
+        }
+
+        /// <summary>
+        /// Minimum start date of the goal that is added or should be created
+        /// </summary>
+        public DateTime GoalMinimumStartDate { get; set; }
+
+        /// <summary>
+        /// Minimum end date of the goal that is added or should be created
+        /// </summary>
+        public DateTime GoalMinimumEndDate { get; set; }
+
+        private DateTime goalStartDate;
+
+        /// <summary>
+        /// Start date of the goal that is added or should be created
+        /// </summary>
+        public DateTime GoalStartDate
+        {
+            get => goalStartDate;
+            set
+            {
+                goalStartDate = value;
+                OnPropertyChanged();
+                BindedGoal = new Goal(GoalTitle, GoalNotes, GoalStartDate, GoalHasDueDate, GoalEndDate, GoalNotificationInterval, GoalNotificationTime, GoalImage);
+            }
+        }
+
+        private DateTime goalEndDate;
+
+        /// <summary>
+        /// End date of the goal that is added or should be created
+        /// </summary>
+        public DateTime GoalEndDate
+        {
+            get => goalEndDate;
+            set
+            {
+                goalEndDate = value;
+                OnPropertyChanged();
+                BindedGoal = new Goal(GoalTitle, GoalNotes, GoalStartDate, GoalHasDueDate, GoalEndDate, GoalNotificationInterval, GoalNotificationTime, GoalImage);
+            }
+        }
+
+        private TimeSpan goalNotificationTime;
+
+        /// <summary>
+        /// Notification time of the goal that is added or should be created
+        /// </summary>
+        public TimeSpan GoalNotificationTime
+        {
+            get => goalNotificationTime;
+            set
+            {
+                goalNotificationTime = value;
+                OnPropertyChanged();
+                BindedGoal = new Goal(GoalTitle, GoalNotes, GoalStartDate, GoalHasDueDate, GoalEndDate, GoalNotificationInterval, GoalNotificationTime, GoalImage);
+            }
+        }
+
+        private int goalNotificationIntervalIndex;
+
+        /// <summary>
+        /// Notification interval index of the goal that is added or should be created
+        /// </summary>
+        public int GoalNotificationIntervalIndex
+        {
+            get => goalNotificationIntervalIndex;
+            set
+            {
+                goalNotificationIntervalIndex = value;
+                OnPropertyChanged();
+                BindedGoal = new Goal(GoalTitle, GoalNotes, GoalStartDate, GoalHasDueDate, GoalEndDate, GoalNotificationInterval, GoalNotificationTime, GoalImage);
+            }
+        }
+
+        /// <summary>
+        /// Notification interval of the goal that is added or should be created
+        /// </summary>
         public GoalAppointmentInterval GoalNotificationInterval =>
             (GoalAppointmentInterval) GoalNotificationIntervalIndex;
 
-        public string GoalImage { get; set; }
+        private string goalImage;
 
+        /// <summary>
+        /// Image of the goal that is added or should be created
+        /// </summary>
+        public string GoalImage
+        {
+            get => goalImage;
+            set
+            {
+                goalImage = value;
+                OnPropertyChanged();
+                BindedGoal = new Goal(GoalTitle, GoalNotes, GoalStartDate, GoalHasDueDate, GoalEndDate, GoalNotificationInterval, GoalNotificationTime, GoalImage);
+            }
+        }
+
+        private bool goalHasDueDate;
+
+        /// <summary>
+        /// Indication if a due date is specified of the goal that is added or should be created
+        /// </summary>
         public bool GoalHasDueDate
         {
             get => goalHasDueDate;
@@ -48,48 +167,163 @@ namespace GoalTracker.ViewModels
             {
                 goalHasDueDate = value;
                 OnPropertyChanged();
+                BindedGoal = new Goal(GoalTitle, GoalNotes, GoalStartDate, GoalHasDueDate, GoalEndDate, GoalNotificationInterval, GoalNotificationTime, GoalImage);
             }
         }
 
+        /// <summary>
+        /// The currently selected goal
+        /// </summary>
         public Goal SelectedGoal { get; set; }
 
-        #region ReadOnly Bindings
+        private List<Goal> goals;
 
+        /// <summary>
+        /// Collection of all loaded goals
+        /// </summary>
         public List<Goal> Goals
         {
             get => goals;
-            private set
+            set
             {
                 goals = value;
                 OnPropertyChanged();
             }
         }
 
+        /// <summary>
+        /// Enumeration of possible notification intervals
+        /// </summary>
         public List<string> GoalNotificationIntervals { get; }
 
-        #endregion // ReadOnly Bindings
+        private List<string> goalTaskTitles;
+
+        public List<string> GoalTaskTitles
+        {
+            get => goalTaskTitles;
+            set
+            {
+                goalTaskTitles = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private List<GoalTask> goalTasks;
+
+        /// <summary>
+        /// Collection of all loaded tasks associated with the specified parent
+        /// </summary>
+        public List<GoalTask> GoalTasks
+        {
+            get => goalTasks;
+            set
+            {
+                goalTasks = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool isRefreshing;
+
+        public bool IsRefreshing
+        {
+            get => isRefreshing;
+            set
+            {
+                isRefreshing = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private ISettingViewModel settingViewModel;
+
+        public ISettingViewModel SettingViewModel
+        {
+            get => settingViewModel;
+            set
+            {
+                settingViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Goal bindedGoal;
+
+        public Goal BindedGoal
+        {
+            get => bindedGoal;
+            private set
+            {
+                bindedGoal = value;
+                OnPropertyChanged();
+            }
+        }
+
+        #region Commands
+
+        /// <summary>
+        /// Async command to load all goals into the collection
+        /// </summary>
+        public ICommand LoadGoalsAsyncCommand { get; }
+
+        /// <summary>
+        /// Async command to add a new goal with the binded values
+        /// </summary>
+        public ICommand AddGoalAsyncCommand { get; }
+
+        /// <summary>
+        /// Async command to edit the specified goal with the binded values
+        /// </summary>
+        public ICommand EditGoalAsyncCommand { get; }
+
+        /// <summary>
+        /// Async command to delete the specified goal
+        /// </summary>
+        public ICommand DeleteGoalAsyncCommand { get; }
+
+        /// <summary>
+        /// Async command to load all tasks into the collection associated with the parent
+        /// </summary>
+        public ICommand LoadTasksAsyncCommand { get; }
+
+        #endregion // Commands
 
         #endregion // Properties
 
-        public GoalViewModel(IGoalRepository goalRepository, IGoalAppointmentRepository goalAppointmentRepository, IGoalTaskRepository goalTaskRepository)
+        // TODO: Only used to check bindings in xaml
+        public GoalViewModel()
+        {
+            throw new InvalidOperationException("Goal view model shouldn't be initialized through parameterless constructor");
+        }
+
+        public GoalViewModel(IGoalRepository goalRepository, IGoalAppointmentRepository goalAppointmentRepository, IGoalTaskRepository goalTaskRepository, IUserRepository userRepository, ISettingViewModel settingViewModel)
         {
             this.goalRepository = goalRepository;
+            this.userRepository = userRepository;
+
             GoalTaskRepository = goalTaskRepository;
             GoalAppointmentRepository = goalAppointmentRepository;
+            SettingViewModel = settingViewModel;
 
-            GoalMinimumStartDate = DateTime.Now.AddHours(1);
+            GoalMinimumStartDate = DateTime.Now;
+            GoalStartDate = DateTime.Now.AddHours(1);
             GoalMinimumEndDate = DateTime.Now.AddDays(1);
-            GoalStartDate = GoalMinimumStartDate;
-            GoalEndDate = GoalMinimumEndDate;
+            GoalEndDate = DateTime.Now.AddDays(1);
             GoalNotificationIntervalIndex = 3;
             GoalNotificationTime = TimeSpan.FromHours(DateTime.Now.Hour + 1);
 
             GoalNotificationIntervals = new List<string>();
             foreach (var notificationInterval in Enum.GetValues(typeof(GoalAppointmentInterval)))
                 GoalNotificationIntervals.Add(Enum.GetName(typeof(GoalAppointmentInterval), notificationInterval));
+
+            LoadGoalsAsyncCommand = new Command(async () => await LoadGoalsAsync());
+            AddGoalAsyncCommand = new Command<Goal>(async goal => await AddGoalAsync(goal));
+            EditGoalAsyncCommand = new Command<Goal>(async goal => await EditGoalAsync(goal));
+            DeleteGoalAsyncCommand = new Command<Goal>(async goal => await DeleteGoalAsync(goal));
+            LoadTasksAsyncCommand = new Command<Goal>(async goal => await LoadTasksAsync(goal));
         }
 
-        public async Task<Goal> EditGoalAsync(Goal goal, GoalTask[] goalTasks, string username)
+        private async Task EditGoalAsync(Goal goal)
         {
             try
             {
@@ -117,50 +351,49 @@ namespace GoalTracker.ViewModels
 
                 await GoalTaskRepository.SaveChangesAsync();
 
+                var user = await userRepository.GetUserAsync();
+
                 var notificationQueueManager = DependencyService.Get<INotificationQueueManager>();
                 //TODO: Alarms canceled properly?
                 notificationQueueManager.CancelAlarms(goal);
                 notificationQueueManager.QueueGoalNotificationBroadcast(goalRepository, goal,
                     new[] {goal.RequestCode, goal.RequestCode - 1, goal.RequestCode - 2},
-                    username);
-                return goal;
+                    user.Name);
             }
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                return null;
             }
         }
 
-        public async Task<bool> DeleteGoalAsync(Goal goal)
+        private async Task DeleteGoalAsync(Goal goal)
         {
             try
             {
                 await goalRepository.RemoveAsync(goal);
-                return true;
+
+                await LoadGoalsAsync();
             }
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                return false;
             }
         }
 
-        public async Task<GoalTask[]> LoadTasksAsync(Goal parent)
+        private async Task LoadTasksAsync(Goal parent)
         {
             try
             {
-                var goalTasks = await GoalTaskRepository.GetAllByParentAsync(parent);
-                return goalTasks.ToArray();
+                var loadedGoalTasks = await GoalTaskRepository.GetAllByParentAsync(parent);
+                GoalTasks = loadedGoalTasks.ToList();
             }
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                return null;
             }
         }
 
-        public async Task<Goal> AddGoalAsync(Goal goal, GoalTask[] goalTasks, string username)
+        private async Task AddGoalAsync(Goal goal)
         {
             try
             {
@@ -172,48 +405,48 @@ namespace GoalTracker.ViewModels
                 var goalAppointments = goal.GetAppointments();
                 await GoalAppointmentRepository.AddRangeAsync(goalAppointments);
 
-                if (goalTasks != null && goalTasks.Any())
+                var tasks = new List<GoalTask>();
+                foreach (var goalTaskTitle in GoalTaskTitles)
                 {
-                    foreach (var goalTask in goalTasks)
-                        await GoalTaskRepository.AddAsync(goalTask);
-
-                    //goalTaskRepository.AddRange(goalTasks);
-                    goal.GoalTaskCount = goalTasks.Count();
+                    var task = new GoalTask(goal, goalTaskTitle, string.Empty, false);
+                    tasks.Add(task);
                 }
 
+                if (tasks.Any())
+                    await GoalTaskRepository.AddRangeAsync(tasks);
+
+                goal.GoalTaskCount = goalTasks.Count;
                 await goalRepository.SaveChangesAsync();
+
+                var user = await userRepository.GetUserAsync();
 
                 var notificationQueueManager = DependencyService.Get<INotificationQueueManager>();
                 notificationQueueManager.QueueGoalNotificationBroadcast(goalRepository, goal, goalRequestCodes,
-                    username);
-
-                return goal;
+                    user.Name);
             }
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                return null;
             }
         }
 
-        public async Task LoadGoalsAsync()
+        private async Task LoadGoalsAsync()
         {
             try
             {
+                IsRefreshing = true;
+
                 var goalCollection = await goalRepository.GetAllAsync();
                 Goals = goalCollection.ToList();
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
-        }
 
-        public async Task DeleteGoal(int itemIndex)
-        {
-            try
-            {
-                await goalRepository.RemoveAsync(Goals[itemIndex]);
+                //TODO: Any option to move this to xaml?
+                if (settingViewModel.LoadUserAsyncCommand.CanExecute(null))
+                    settingViewModel.LoadUserAsyncCommand.Execute(null);
+
+                if (settingViewModel.LoadAchievementsAsyncCommand.CanExecute(null))
+                    settingViewModel.LoadAchievementsAsyncCommand.Execute(null);
+
+                IsRefreshing = false;
             }
             catch (Exception ex)
             {

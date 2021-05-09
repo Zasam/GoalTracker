@@ -9,7 +9,7 @@ namespace GoalTracker.Services.Interface
     {
         Task AddAsync(Goal goal);
         Task<IEnumerable<Goal>> GetAllAsync();
-        Task<IEnumerable<Goal>> GetAllInDateAsync(DateTime date);
+        Task<IEnumerable<Goal>> GetAllStartedAsync(DateTime startDate);
         Task<Goal> GetByTitleAsync(string title);
         Task RemoveAsync(Goal goal);
         Task RemoveRangeAsync(IEnumerable<Goal> goals);

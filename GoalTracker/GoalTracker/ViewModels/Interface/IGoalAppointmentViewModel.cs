@@ -1,15 +1,19 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Windows.Input;
 using GoalTracker.Entities;
 
 namespace GoalTracker.ViewModels.Interface
 {
     public interface IGoalAppointmentViewModel
     {
-        public Goal Parent { get; }
-        public string ParentTitle { get; }
-        public GoalAppointment[] GoalAppointments { get; }
-        public GoalAppointment SelectedGoalAppointment { get; set; }
-        public Task LoadAppointmentsAsync();
-        public Task ApproveAppointmentAsync(bool success);
+        GoalAppointment[] GoalAppointments { get; set; }
+        GoalAppointment SelectedGoalAppointment { get; set; }
+        Goal Parent { get; }
+        bool IsRefreshing { get; set; }
+
+        public ICommand LoadAppointmentsAsyncCommand { get; }
+        public ICommand ApproveAppointmentAsyncCommand { get; }
+        public ICommand DisapproveAppointmentAsyncCommand { get; }
+        event EventHandler OnApproved;
     }
 }

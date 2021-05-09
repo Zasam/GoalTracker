@@ -1,10 +1,10 @@
 ﻿using System;
 using GoalTracker.Entities;
 using GoalTracker.ViewModels.Interface;
-using GoalTracker.Views.AppShell.Settings;
 using GoalTracker.Views.Initialization;
 using GoalTracker.Views.Main.Calendar;
 using GoalTracker.Views.Main.Home.Goals;
+using GoalTracker.Views.Main.Settings;
 using GoalTracker.Views.Registration;
 using GoalTracker.Views.Welcome;
 using Microsoft.AppCenter.Crashes;
@@ -14,7 +14,6 @@ namespace GoalTracker
 {
     public partial class AppShell : Shell
     {
-        private User user;
         private readonly IGoalViewModel goalViewModel;
         private readonly ICalendarViewModel calendarViewModel;
         private readonly ISettingViewModel settingViewModel;
@@ -26,7 +25,6 @@ namespace GoalTracker
             {
                 InitializeComponent();
 
-                this.user = user;
                 this.goalViewModel = goalViewModel;
                 this.calendarViewModel = calendarViewModel;
                 this.settingViewModel = settingViewModel;
@@ -40,7 +38,7 @@ namespace GoalTracker
                 else
                     currentUIState = UIStates.Home;
 
-                SetUIState(user, UIStates.None, currentUIState);
+                SetUIState(UIStates.None, currentUIState);
 
                 Instance = this;
             }
@@ -50,23 +48,9 @@ namespace GoalTracker
             }
         }
 
-        public void SetUIState(User registeredUser, UIStates currentState, UIStates newState)
+        public void SetUIState(UIStates currentState, UIStates newState)
         {
-            user = registeredUser;
-
-            switch (currentState)
-            {
-                case UIStates.Welcome:
-                case UIStates.Initialization:
-                case UIStates.Configuration:
-                    Tabbar.Items.RemoveAt(0);
-                    break;
-                case UIStates.Home:
-                    Tabbar.Items.RemoveAt(0);
-                    Tabbar.Items.RemoveAt(1);
-                    Tabbar.Items.RemoveAt(2);
-                    break;
-            }
+            var user = settingViewModel.User;
 
             switch (newState)
             {
@@ -96,7 +80,7 @@ namespace GoalTracker
                     {
                         Title = "Ziele",
                         Icon = "Goal.png",
-                        Content = new GoalsPage(goalViewModel, settingViewModel, user.Name),
+                        Content = new GoalsPage(goalViewModel, settingViewModel),
                         Route = "GoalsPage"
                     });
 
@@ -115,6 +99,20 @@ namespace GoalTracker
                         Content = new SettingsPage(settingViewModel),
                         Route = "SettingsPage"
                     });
+                    break;
+            }
+
+            switch (currentState)
+            {
+                case UIStates.Welcome:
+                case UIStates.Initialization:
+                case UIStates.Configuration:
+                    Tabbar.Items.RemoveAt(0);
+                    break;
+                case UIStates.Home:
+                    Tabbar.Items.RemoveAt(0);
+                    Tabbar.Items.RemoveAt(1);
+                    Tabbar.Items.RemoveAt(2);
                     break;
             }
         }

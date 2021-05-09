@@ -34,15 +34,15 @@ namespace GoalTracker.Services
             return await FindAsync(ga => ga.GoalId == goal.Id);
         }
 
-        public async Task<IEnumerable<GoalAppointment>> GetAllByDayAsync(DateTime day)
+        public async Task<IEnumerable<GoalAppointment>> GetAllByApprovalDayAsync(DateTime day)
         {
-            return await FindAsync(ga => ga.ApprovalDate.HasValue && ga.ApprovalDate.Value == day.Date);
+            return await FindAsync(ga => ga.ApprovalDate.HasValue && ga.ApprovalDate.Value.Day == day.Day && ga.ApprovalDate.Value.Month == day.Month && ga.ApprovalDate.Value.Year == day.Year);
         }
 
-        public async Task<GoalAppointment> GetByParentAndDayAsync(Goal goal, DateTime day)
+        public async Task<GoalAppointment> GetByParentAndApprovalDayAsync(Goal goal, DateTime day)
         {
             var goalAppointments = await FindAsync(ga =>
-                ga.GoalId == goal.Id && ga.ApprovalDate.HasValue && ga.ApprovalDate == day.Date);
+                ga.GoalId == goal.Id && ga.ApprovalDate.HasValue && ga.ApprovalDate.Value.Day == day.Day && ga.ApprovalDate.Value.Month == day.Month && ga.ApprovalDate.Value.Year == day.Year);
             return goalAppointments.FirstOrDefault();
         }
 

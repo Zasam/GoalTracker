@@ -19,7 +19,7 @@ namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver
                 if (context == null || intent == null)
                     return;
 
-                var container = await Bootstrapper.GetContainer();
+                var container = Bootstrapper.GetContainer();
                 var goalRepository = container.Resolve<IGoalRepository>();
                 var goalAppointmentRepository = container.Resolve<IGoalAppointmentRepository>();
 
@@ -40,7 +40,7 @@ namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver
                     return;
 
                 //TODO: Really get only one appointment with this method? Inspect further!!!
-                var goalAppointment = await goalAppointmentRepository.GetByParentAndDayAsync(savedGoal, DateTime.Now);
+                var goalAppointment = await goalAppointmentRepository.GetByParentAndApprovalDayAsync(savedGoal, DateTime.Now);
                 goalAppointment.Approved = true;
                 goalAppointment.Success = false;
                 await goalAppointmentRepository.SaveChangesAsync();

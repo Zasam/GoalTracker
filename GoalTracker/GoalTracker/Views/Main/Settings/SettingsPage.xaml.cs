@@ -1,10 +1,10 @@
 ﻿using System;
 using GoalTracker.ViewModels.Interface;
-using GoalTracker.Views.AppShell.Settings.Achievements;
+using GoalTracker.Views.Main.Settings.Achievements;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace GoalTracker.Views.AppShell.Settings
+namespace GoalTracker.Views.Main.Settings
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SettingsPage : ContentPage

@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Windows.Input;
 using Syncfusion.SfCalendar.XForms;
 
 namespace GoalTracker.ViewModels.Interface
 {
     public interface ICalendarViewModel
     {
-        public CalendarEventCollection CalendarInlineEvents { get; }
-        public int SuccessApprovalsWeek { get; }
-        public int FailureApprovalsWeek { get; }
-        public DateTime CalendarMinDate { get; }
-        public DateTime CalendarMaxDate { get; }
-        public Task LoadEventsAsync();
+        CalendarEventCollection CalendarInlineEvents { get; set; }
+        int SuccessApprovalsWeek { get; set; }
+        int FailureApprovalsWeek { get; set; }
+        DateTime CalendarMinDate { get; }
+        DateTime CalendarMaxDate { get; }
+
+        public ICommand LoadEventsAsyncCommand { get; }
     }
 }

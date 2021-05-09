@@ -6,10 +6,16 @@
              xmlns:progressbar="clr-namespace:Syncfusion.XForms.ProgressBar;assembly=Syncfusion.SfProgressBar.XForms"
              xmlns:border="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
              xmlns:converter="clr-namespace:GoalTracker.Converter;assembly=GoalTracker"
+             xmlns:viewModels="clr-namespace:GoalTracker.ViewModels;assembly=GoalTracker"
+             xmlns:infrastructure="clr-namespace:XamarinUniversity.Infrastructure;assembly=XamU.Infrastructure"
              x:Class="GoalTracker.Views.Main.Home.Goals.GoalsPage"
-             x:Name="Root"
              Title="Meine Ziele">
 
+    <!-- Only use to verify bindings through xaml-compilation / intellisense -->
+    <!--<ContentPage.BindingContext>
+        <viewModels:GoalViewModel/>
+    </ContentPage.BindingContext>-->
+    
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Neues Ziel" Clicked="AddGoalToolbarItem_OnClicked"/>
     </ContentPage.ToolbarItems>
@@ -20,6 +26,10 @@
             <converter:BoolToStringConverter x:Key="BoolToStringConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
+
+    <ContentPage.Behaviors>
+        <infrastructure:EventToCommandBehavior EventName="Appearing" Command="{Binding LoadGoalsAsyncCommand}"/>
+    </ContentPage.Behaviors>
 
     <ContentPage.Content>
         <Grid Style="{StaticResource DefaultGrid}">
@@ -38,11 +48,11 @@
                     <ColumnDefinition Width="55*"/>
                     <ColumnDefinition Width="45*"/>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Row="0" Grid.Column="0" x:Name="UsernameLabel" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontSize="12" LineBreakMode="WordWrap" Margin="20, 0, 0, 0"/>
+                <Label Grid.Row="0" Grid.Column="0" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontSize="12" LineBreakMode="WordWrap" Margin="20, 0, 0, 0" Text="{Binding SettingViewModel.WelcomeMessage}"/>
                 <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="1" HorizontalOptions="Center">
-                    <Label Text="{Binding SettingViewModel.AchievementProgressPoints, Source={x:Reference Root}}" FontSize="12" VerticalTextAlignment="Center"/>
+                    <Label Text="{Binding SettingViewModel.AchievementProgressPoints}" FontSize="12" VerticalTextAlignment="Center"/>
                     <Label Text="XP gesammelt" FontSize="12" VerticalTextAlignment="Center"/>
-                    <progressbar:SfCircularProgressBar Progress="{Binding SettingViewModel.AchievementProgress, Source={x:Reference Root}}" WidthRequest="50" HeightRequest="50" ProgressColor="{StaticResource PrimaryVariant}" TrackColor="{StaticResource Primary}"/>
+                    <progressbar:SfCircularProgressBar Progress="{Binding SettingViewModel.AchievementProgress}" WidthRequest="50" HeightRequest="50" ProgressColor="{StaticResource PrimaryVariant}" TrackColor="{StaticResource Primary}"/>
                 </StackLayout>
             </Grid>
             <StackLayout Grid.Column="0" Grid.Row="1">
@@ -54,15 +64,17 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <syncfusionPullToRefresh:SfPullToRefresh x:Name="GoalListViewPullToRefresh"
-                                                             Refreshing="GoalListViewPullToRefresh_OnRefreshing"
                                                              Grid.Row="0"
-                                                             Grid.Column="0">
+                                                             Grid.Column="0"
+                                                             IsRefreshing="{Binding IsRefreshing}">
+                        <syncfusionPullToRefresh:SfPullToRefresh.Behaviors>
+                            <infrastructure:EventToCommandBehavior EventName="Refreshing" Command="{Binding LoadGoalsAsyncCommand}"/>
+                        </syncfusionPullToRefresh:SfPullToRefresh.Behaviors>
                         <syncfusionPullToRefresh:SfPullToRefresh.PullableContent>
                             <syncfusionListView:SfListView x:Name="GoalListView"
                                                            ItemsSource="{Binding Goals}"
                                                            AllowSwiping="True"
                                                            SwipeStarted="GoalListView_OnSwipeStarted"
-                                                           SwipeEnded="GoalListView_OnSwipeEnded"
                                                            ItemSize="100"
                                                            SelectedItem="{Binding SelectedGoal}">
                                 <!-- Goal listview header template -->
@@ -204,10 +216,12 @@
                                                     <Image Source="TaskCompleted.png" Style="{StaticResource ListViewItemImage}"/>
                                                     <Label Text="{Binding AllTasksCompleted, Converter={StaticResource BoolToStringConverter}}" Style="{StaticResource ItemLabel}"/>
                                                 </StackLayout>
+
                                                 <BoxView Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3" HeightRequest="5" BackgroundColor="{DynamicResource SurfaceVariant}"/>
 
                                                 <StackLayout Grid.Column="0" Grid.Row="4" Orientation="Horizontal" HorizontalOptions="End" Margin="5, 0, 0, 0">
                                                     <Image Source="TaskList.png" Style="{StaticResource ListViewDetailItemImage}"/>
+                                                    <!-- TODO: Change to: ApprovedGoalTaskCount / GoalTaskCount (eg. 3 von 4 Aufgaben erledigt) -->
                                                     <Label Text="{Binding GoalTaskCount, StringFormat='{0} Aufgaben hinterlegt'}" Style="{StaticResource DetailItemLabel}"/>
                                                 </StackLayout>
                                                 <StackLayout Grid.Column="1" Grid.Row="4" Orientation="Horizontal" Grid.ColumnSpan="2" HorizontalOptions="EndAndExpand">

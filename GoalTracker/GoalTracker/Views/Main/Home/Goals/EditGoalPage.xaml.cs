@@ -16,27 +16,22 @@ namespace GoalTracker.Views.Main.Home.Goals
     public partial class EditGoalPage : ContentPage
     {
         private readonly GoalTask[] goalTasks;
+        private readonly IGoalViewModel goalViewModel;
         private readonly Goal goalToEdit;
-        private readonly string username;
-        private readonly IGoalViewModel viewModel;
         private bool contentLoaded;
         private int goalTaskCounter;
         private bool saving;
 
-        public EditGoalPage(IGoalViewModel viewModel, Goal goal, GoalTask[] goalTasks, string username)
+        public EditGoalPage(IGoalViewModel goalViewModel, Goal goal, GoalTask[] goalTasks)
         {
             goalToEdit = goal;
-            this.goalTasks = goalTasks;
-            this.username = username;
-            this.viewModel = viewModel;
-
             contentLoaded = false;
-
-            BindingContext = viewModel;
+            this.goalTasks = goalTasks;
+            this.goalViewModel = goalViewModel;
+            BindingContext = goalViewModel;
+            Title = $"Ziel: {goal.Title} bearbeiten";
 
             InitializeComponent();
-
-            Title = $"Ziel: {goal.Title} bearbeiten";
         }
 
         protected override void OnAppearing()
@@ -55,18 +50,18 @@ namespace GoalTracker.Views.Main.Home.Goals
             }
         }
 
-        private void InitializeComponentValues(Goal goal, GoalTask[] goalTasks)
+        private void InitializeComponentValues(Goal goal, GoalTask[] tasks)
         {
             try
             {
-                GoalTitleEntry.Text = goal.Title;
-                GoalNotesEditor.Text = goal.Notes;
-                GoalStartDatePicker.Date = goal.StartDate;
-                GoalEndDatePicker.Date = goal.EndDate;
-                GoalHasDueDateCheckBox.IsChecked = goal.HasDueDate;
-                GoalNotificationTimePicker.Time = goal.NotificationTime;
-                GoalNotificationIntervalPicker.SelectedIndex = (int) goal.GoalAppointmentInterval;
-                InitializeGoalTasksComponent(goalTasks);
+                goalViewModel.GoalTitle = goal.Title;
+                goalViewModel.GoalNotes = goal.Notes;
+                goalViewModel.GoalStartDate = goal.StartDate;
+                goalViewModel.GoalHasDueDate = goal.HasDueDate;
+                goalViewModel.GoalEndDate = goal.EndDate;
+                goalViewModel.GoalNotificationTime = goal.NotificationTime;
+                goalViewModel.GoalNotificationIntervalIndex = (int) goal.GoalAppointmentInterval;
+                InitializeGoalTasksComponent(tasks);
             }
             catch (Exception ex)
             {
@@ -78,21 +73,12 @@ namespace GoalTracker.Views.Main.Home.Goals
         {
             try
             {
+                //TODO: Validate in command EditGoalAsyncCommand in viewmodel!
                 var valid = ValidateInputs(goalToEdit);
-                if (!valid)
-                    return;
 
-                saving = true;
-
-                var goal = await viewModel.EditGoalAsync(goalToEdit, GetTasks(goalToEdit), username);
-
-                if (goal != null)
-                {
-                    //TODO: Achievement unlockable for first editing of goal?
-                    var messenger = DependencyService.Get<IMessenger>();
-                    messenger.LongMessage($"Ziel: {goalToEdit.Title} wurde erfolgreich bearbeitet.");
-                    await Navigation.PopAsync();
-                }
+                var messenger = DependencyService.Get<IMessenger>();
+                messenger.LongMessage($"Ziel: {goalToEdit.Title} wurde erfolgreich bearbeitet.");
+                await Navigation.PopAsync();
             }
             catch (Exception ex)
             {
@@ -184,15 +170,14 @@ namespace GoalTracker.Views.Main.Home.Goals
         {
             try
             {
-                var goalTasks = new GoalTask[goalTaskCounter];
+                var tasks = new GoalTask[goalTaskCounter];
 
                 if (goalTaskCounter > 0)
                     for (var i = 0; i <= goalTaskCounter - 1; i++)
                     {
                         var taskChildLayout = GoalTaskStackLayout.Children[i] as StackLayout;
                         var taskTitleTextInputLayout = taskChildLayout?.Children[0] as SfTextInputLayout;
-                        var taskTitleEntry = taskTitleTextInputLayout?.InputView as Entry;
-                        var title = taskTitleEntry == null ? string.Empty : taskTitleEntry.Text;
+                        var title = !(taskTitleTextInputLayout?.InputView is Entry taskTitleEntry) ? string.Empty : taskTitleEntry.Text;
                         goalTasks[i] = new GoalTask(parent, title, string.Empty, false);
                     }
 
@@ -234,8 +219,7 @@ namespace GoalTracker.Views.Main.Home.Goals
                             FocusedColor = Color.FromHex("86B5FC")
                         };
 
-                        var taskTitleEntry = new Entry();
-                        taskTitleEntry.Text = goalTask.Title;
+                        var taskTitleEntry = new Entry {Text = goalTask.Title};
                         syncfusionTextInputLayout.InputView = taskTitleEntry;
                         childLayout.Children.Add(syncfusionTextInputLayout);
                         GoalTaskStackLayout.Children.Add(childLayout);

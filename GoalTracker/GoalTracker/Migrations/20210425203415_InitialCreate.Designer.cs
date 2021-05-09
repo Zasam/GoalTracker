@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GoalTracker.Migrations
 {
     [DbContext(typeof(GoalTrackerContext))]
-    [Migration("20210313145038_GoalTaskComplectedMigration")]
-    partial class GoalTaskComplectedMigration
+    [Migration("20210425203415_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -61,10 +61,13 @@ namespace GoalTracker.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("AllGoalsCompleted")
+                    b.Property<bool>("AllTasksCompleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreateDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DetailImage")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("EndDate")

@@ -10,25 +10,19 @@ namespace GoalTracker.Views.Main.Calendar
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class CalendarPage : ContentPage
     {
-        private readonly ICalendarViewModel calendarViewModel;
-
         public CalendarPage(ICalendarViewModel calendarViewModel)
         {
             InitializeComponent();
 
-            this.calendarViewModel = calendarViewModel;
-
             GoalReminderCalendar.Locale = new CultureInfo("de-DE");
-            BindingContext = this.calendarViewModel;
+            BindingContext = calendarViewModel;
         }
 
-        protected override async void OnAppearing()
+        protected override void OnAppearing()
         {
             try
             {
-                await calendarViewModel.LoadEventsAsync();
                 GoalReminderCalendar.Refresh();
-
                 base.OnAppearing();
             }
             catch (Exception ex)

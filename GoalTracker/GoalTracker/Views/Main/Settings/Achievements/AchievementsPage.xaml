@@ -3,13 +3,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              xmlns:syncfusionListView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms" xmlns:converter="clr-namespace:GoalTracker.Converter"
              xmlns:border="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
-             x:Class="GoalTracker.Views.AppShell.Settings.Achievements.AchievementsPage"
+             xmlns:viewModels="clr-namespace:GoalTracker.ViewModels;assembly=GoalTracker"
+             xmlns:infrastructure="clr-namespace:XamarinUniversity.Infrastructure;assembly=XamU.Infrastructure"
+             x:Class="GoalTracker.Views.Main.Settings.Achievements.AchievementsPage"
              Title="Erfolge">
+
+    <!-- Only use to verify bindings through xaml-compilation / intellisense -->
+    <!--<ContentPage.BindingContext>
+        <viewModels:SettingViewModel/>
+    </ContentPage.BindingContext>-->
+
     <ContentPage.Resources>
         <ResourceDictionary>
             <converter:BoolToImageConverter x:Key="boolToImageConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
+
+    <ContentPage.Behaviors>
+        <infrastructure:EventToCommandBehavior EventName="Appearing" Command="{Binding LoadAchievementsAsyncCommand}"/>
+    </ContentPage.Behaviors>
+
     <ContentPage.Content>
         <Grid Style="{StaticResource DefaultGrid}">
             <syncfusionListView:SfListView ItemsSource="{Binding Achievements}">

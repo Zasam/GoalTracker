@@ -10,12 +10,9 @@ namespace GoalTracker.Services
 {
     public class UserRepository : Repository<User>, IUserRepository
     {
-        private readonly IGoalTrackerContext context;
-
         public UserRepository(IGoalTrackerContext context)
             : base(context)
         {
-            this.context = context;
         }
 
         public async Task<User> GetUserAsync()
@@ -25,11 +22,7 @@ namespace GoalTracker.Services
                 var users = await GetAllAsync();
 
                 if (users != null)
-                {
-                    var userCollection = users as User[] ?? users.ToArray();
-                    if (userCollection.Any())
-                        return userCollection.FirstOrDefault();
-                }
+                    return users.FirstOrDefault();
             }
             catch (Exception ex)
             {
@@ -51,26 +44,13 @@ namespace GoalTracker.Services
 
         public async Task ChangeUsernameAsync(string name)
         {
-            try
-            {
-                var users = await GetAllAsync();
+            var user = await GetUserAsync();
 
-                var userCollection = users as User[] ?? users.ToArray();
-                if (userCollection.Any())
-                {
-                    var user = userCollection.FirstOrDefault();
+            if (user == null)
+                throw new InvalidOperationException("WARNING: You are trying to change the username of a user, but no registered user could be found.");
 
-                    if (user != null)
-                    {
-                        user.Name = name;
-                        await SaveChangesAsync();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
+            user.Name = name;
+            await SaveChangesAsync();
         }
     }
 }
