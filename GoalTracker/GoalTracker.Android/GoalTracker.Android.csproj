@@ -129,6 +129,9 @@
     <PackageReference Include="Syncfusion.Xamarin.SfPullToRefresh">
       <Version>18.4.0.48</Version>
     </PackageReference>
+    <PackageReference Include="Xam.Plugins.Notifier">
+      <Version>3.0.1</Version>
+    </PackageReference>
     <PackageReference Include="Xam.Plugins.Settings">
       <Version>3.1.1</Version>
     </PackageReference>
@@ -564,7 +567,7 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties XamarinHotReloadDebuggerTimeoutExceptionGoalTrackerAndroidHideInfoBar="True" XamarinHotReloadUnhandledDeviceExceptionGoalTrackerAndroidHideInfoBar="True" TriggeredFromHotReload="False" />
+      <UserProperties TriggeredFromHotReload="False" XamarinHotReloadUnhandledDeviceExceptionGoalTrackerAndroidHideInfoBar="True" XamarinHotReloadDebuggerTimeoutExceptionGoalTrackerAndroidHideInfoBar="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

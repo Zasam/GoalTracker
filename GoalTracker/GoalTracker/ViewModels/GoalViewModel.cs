@@ -415,7 +415,7 @@ namespace GoalTracker.ViewModels
                 if (tasks.Any())
                     await GoalTaskRepository.AddRangeAsync(tasks);
 
-                goal.GoalTaskCount = goalTasks.Count;
+                goal.GoalTaskCount = tasks.Count;
                 await goalRepository.SaveChangesAsync();
 
                 var user = await userRepository.GetUserAsync();

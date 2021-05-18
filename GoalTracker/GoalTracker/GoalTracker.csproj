@@ -32,6 +32,7 @@
     <PackageReference Include="Syncfusion.Xamarin.SfPopupLayout" Version="18.4.0.48" />
     <PackageReference Include="Syncfusion.Xamarin.SfProgressBar" Version="18.4.0.48" />
     <PackageReference Include="Syncfusion.Xamarin.SfPullToRefresh" Version="18.4.0.48" />
+    <PackageReference Include="Xam.Plugins.Notifier" Version="3.0.1" />
     <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />  
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />  
