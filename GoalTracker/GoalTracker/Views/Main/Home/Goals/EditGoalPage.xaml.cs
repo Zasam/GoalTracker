@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
 using GoalTracker.Entities;
+using GoalTracker.Extensions;
 using GoalTracker.PlatformServices;
 using GoalTracker.Utilities;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
+using Syncfusion.XForms.ProgressBar;
 using Syncfusion.XForms.TextInputLayout;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -81,7 +83,7 @@ namespace GoalTracker.Views.Main.Home.Goals
 
                 var messenger = DependencyService.Get<IMessenger>();
                 messenger.LongMessage($"Ziel: {goalToEdit.Title} wurde erfolgreich bearbeitet.");
-                await Navigation.PopAsync();
+                await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel, AchievementProgressBar, SettingViewModel.LoadedAchievement.Title);
             }
             catch (Exception ex)
             {
@@ -221,6 +223,11 @@ namespace GoalTracker.Views.Main.Home.Goals
             var text = GoalImageEntry.Text;
             if (text.Length != 2)
                 GoalImageEntry.Text = string.Empty;
+        }
+
+        private async void AchievementProgressBar_OnProgressCompleted(object sender, ProgressValueEventArgs e)
+        {
+            await Navigation.PopAsync();
         }
     }
 }

@@ -123,7 +123,7 @@
 
                 <StackLayout x:Name="AchievementStackLayout" Margin="0, 15, 0, 0" Grid.Row="11" Grid.Column="0">
                     <Label x:Name="AchievementLabel" Text="Erfolg freigeschaltet" HorizontalTextAlignment="Center" HorizontalOptions="FillAndExpand"/>
-                    <progressbar:SfCircularProgressBar x:Name="AchievementProgressBar" Progress="0" AnimationDuration="1000" IndeterminateAnimationDuration="1000" EasingEffect="Linear" IndicatorOuterRadius="0.7" IndicatorInnerRadius="0.65">
+                    <progressbar:SfCircularProgressBar x:Name="AchievementProgressBar" Progress="0" AnimationDuration="1000" IndeterminateAnimationDuration="1000" EasingEffect="Linear" IndicatorOuterRadius="0.7" IndicatorInnerRadius="0.65" ProgressCompleted="AchievementProgressBar_OnProgressCompleted">
                         <progressbar:SfCircularProgressBar.RangeColors>
                             <progressbar:RangeColorCollection>
                                 <progressbar:RangeColor IsGradient="True" Color="#88A0D9EF" Start="0" End="25"/>

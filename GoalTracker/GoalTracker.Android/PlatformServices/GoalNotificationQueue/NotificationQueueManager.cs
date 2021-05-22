@@ -21,15 +21,26 @@ namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue
 
         private List<NotificationQueueItem> NotificationQueue { get; }
 
-        public void QueueGoalNotificationBroadcast(Goal goal, int[] requestCodes, string username)
+        public void QueueGoalNotificationBroadcast(Goal goal, int[] requestCodes, string username, bool bootup)
         {
             try
             {
-                // Calculate notification datetime in milliseconds since 1970
-                var notificationDateTime = new DateTime(goal.StartDate.Year, goal.StartDate.Month, goal.StartDate.Day, goal.NotificationTime.Hours, goal.NotificationTime.Minutes, 00);
-                var notificationDateTimeInMilliseconds = notificationDateTime.GetMillisecondsSince1970();
+                DateTime notificationDateTime;
 
-                // Convert supplied goal to json
+                if (bootup)
+                {
+                    //TODO: Test in depth if this is working
+                    // Get the next appointment which is not approved and has the nearest appointment date in the feature (relative to the current datetime)
+                    var nextUnapprovedAppointmentInFuture = goal.GoalAppointments.Aggregate((currentNearestAppointment, nextNearestAppointment) =>
+                        currentNearestAppointment.AppointmentDate <= DateTime.Now || currentNearestAppointment.Approved ? nextNearestAppointment : currentNearestAppointment);
+                    notificationDateTime = nextUnapprovedAppointmentInFuture.AppointmentDate;
+                }
+                else
+                {
+                    notificationDateTime = new DateTime(goal.StartDate.Year, goal.StartDate.Month, goal.StartDate.Day, goal.NotificationTime.Hours, goal.NotificationTime.Minutes, 00);
+                }
+
+                var notificationDateTimeInMilliseconds = notificationDateTime.GetMillisecondsSince1970();
                 var goalJson = JsonConvert.SerializeObject(goal, Formatting.None, new JsonSerializerSettings {ReferenceLoopHandling = ReferenceLoopHandling.Ignore});
 
                 // Create a new intent and pending intent, which should be used to pend a new alarm for the notification
@@ -37,14 +48,11 @@ namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue
                 notificationAlarmIntent.AddFlags(ActivityFlags.ReceiverForeground);
                 notificationAlarmIntent.PutExtra("Goal", goalJson);
                 notificationAlarmIntent.PutExtra("Username", username);
-
-                // Create a pending intent as broadcast
                 var pendingNotificationAlarmIntent = PendingIntent.GetBroadcast(Application.Context, goal.RequestCode, notificationAlarmIntent, PendingIntentFlags.UpdateCurrent); //TODO: Does this need Flag CancelCurrent instead of UpdateCurrent?
 
                 // Create a new notificationQueueItem and add it to the notification queue, to cancel pending intents later
                 NotificationQueue.Add(new NotificationQueueItem(goal, pendingNotificationAlarmIntent));
 
-                // Get the alarm manager instance from the supplied context
                 var alarmManager = (AlarmManager) Application.Context.GetSystemService(Android.Content.Context.AlarmService);
                 alarmManager?.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, notificationDateTimeInMilliseconds, pendingNotificationAlarmIntent);
             }

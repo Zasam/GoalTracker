@@ -4,6 +4,7 @@ using GoalTracker.Extensions;
 using GoalTracker.PlatformServices;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
+using Syncfusion.XForms.ProgressBar;
 using Syncfusion.XForms.TextInputLayout;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -62,8 +63,6 @@ namespace GoalTracker.Views.Main.Home.Goals
                 //TODO: how to identify if new achievement was unlocked? or is already unlocked?
                 await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel,
                     AchievementProgressBar, "Erfolg freigeschaltet: " + SettingViewModel.LoadedAchievement.Title);
-
-                await Navigation.PopAsync(true);
             }
             catch (Exception ex)
             {
@@ -179,6 +178,11 @@ namespace GoalTracker.Views.Main.Home.Goals
             {
                 Crashes.TrackError(ex);
             }
+        }
+
+        private async void AchievementProgressBar_OnProgressCompleted(object sender, ProgressValueEventArgs e)
+        {
+            await Navigation.PopAsync(true);
         }
     }
 }
