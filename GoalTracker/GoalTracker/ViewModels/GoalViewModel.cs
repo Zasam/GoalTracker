@@ -356,7 +356,7 @@ namespace GoalTracker.ViewModels
                 var notificationQueueManager = DependencyService.Get<INotificationQueueManager>();
                 //TODO: Alarms canceled properly?
                 notificationQueueManager.CancelAlarms(goal);
-                notificationQueueManager.QueueGoalNotificationBroadcast(goal, new[] {goal.RequestCode, goal.RequestCode - 1, goal.RequestCode - 2}, user.Name);
+                notificationQueueManager.QueueGoalNotificationBroadcast(goal, new[] {goal.RequestCode, goal.RequestCode - 1, goal.RequestCode - 2}, user.Name, false);
             }
             catch (Exception ex)
             {
@@ -421,7 +421,7 @@ namespace GoalTracker.ViewModels
 
                 var user = await userRepository.GetUserAsync();
                 var notificationQueueManager = DependencyService.Get<INotificationQueueManager>();
-                notificationQueueManager.QueueGoalNotificationBroadcast(goal, goalRequestCodes, user.Name);
+                notificationQueueManager.QueueGoalNotificationBroadcast(goal, goalRequestCodes, user.Name, false);
             }
             catch (Exception ex)
             {

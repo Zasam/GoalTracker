@@ -9,6 +9,7 @@
              xmlns:converters="clr-namespace:GoalTracker.Converter;assembly=GoalTracker"
              xmlns:viewModels="clr-namespace:GoalTracker.ViewModels;assembly=GoalTracker"
              xmlns:infrastructure="clr-namespace:XamarinUniversity.Infrastructure;assembly=XamU.Infrastructure"
+             xmlns:progressBar="clr-namespace:Syncfusion.XForms.ProgressBar;assembly=Syncfusion.SfProgressBar.XForms"
              x:Name="EditGoalPageInstance"
              x:Class="GoalTracker.Views.Main.Home.Goals.EditGoalPage">
 
@@ -116,6 +117,20 @@
                             <infrastructure:EventToCommandBehavior EventName="Clicked" Command="{Binding SettingViewModel.UnlockAchievementAsyncCommand, Source={x:Reference EditGoalPageInstance}}" CommandParameter="EDITGOAL"/>
                         </buttons:SfButton.Behaviors>
                     </buttons:SfButton>
+                </StackLayout>
+
+                <StackLayout x:Name="AchievementStackLayout" Margin="0, 15, 0, 0" Grid.Row="11" Grid.Column="0">
+                    <Label x:Name="AchievementLabel" Text="Erfolg freigeschaltet" HorizontalTextAlignment="Center" HorizontalOptions="FillAndExpand"/>
+                    <progressBar:SfCircularProgressBar x:Name="AchievementProgressBar" Progress="0" AnimationDuration="1000" IndeterminateAnimationDuration="1000" EasingEffect="Linear" IndicatorOuterRadius="0.7" IndicatorInnerRadius="0.65" ProgressCompleted="AchievementProgressBar_OnProgressCompleted">
+                        <progressBar:SfCircularProgressBar.RangeColors>
+                            <progressBar:RangeColorCollection>
+                                <progressBar:RangeColor IsGradient="True" Color="#88A0D9EF" Start="0" End="25"/>
+                                <progressBar:RangeColor IsGradient="True" Color="#AA62C1E5" Start="25" End="50"/>
+                                <progressBar:RangeColor IsGradient="True" Color="#DD20A7DB" Start="50" End="75"/>
+                                <progressBar:RangeColor IsGradient="True" Color="#FF1C96C5" Start="75" End="100"/>
+                            </progressBar:RangeColorCollection>
+                        </progressBar:SfCircularProgressBar.RangeColors>
+                    </progressBar:SfCircularProgressBar>
                 </StackLayout>
             </Grid>
         </ScrollView>
