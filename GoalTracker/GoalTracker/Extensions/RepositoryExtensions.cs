@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using GoalTracker.Entities;
-using GoalTracker.Services;
+using GoalTracker.Services.Interface;
 using Microsoft.AppCenter.Crashes;
 
 namespace GoalTracker.Extensions
 {
     public static class RepositoryExtensions
     {
-        public static async Task<int> GetNextNotificationId(this IRepository<Goal> goalRepository)
+        public static async Task<int> GetNextNotificationId(this IGoalRepository goalRepository)
         {
             try
             {
@@ -29,7 +28,7 @@ namespace GoalTracker.Extensions
         }
 
         public static async Task<int[]> GetNextRequestCodesForNotificationWithOptions(
-            this IRepository<Goal> goalRepository)
+            this IGoalRepository goalRepository)
         {
             try
             {

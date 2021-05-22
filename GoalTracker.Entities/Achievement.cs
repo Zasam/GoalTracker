@@ -9,18 +9,19 @@
         public string InternalTag { get; set; }
 
         private bool unlocked;
+
         public bool Unlocked
         {
             get => unlocked;
-            set
+            private set
             {
                 unlocked = value;
                 OnPropertyChanged();
             }
         }
 
-        public int? UserId { get; set; }
-        public virtual User User { get; set; }
+        public int? UserId { get; }
+        public virtual User User { get; }
 
         public Achievement()
         {
@@ -28,12 +29,17 @@
             Description = string.Empty;
             Experience = 0;
             Unlocked = false;
+            InternalTag = string.Empty;
         }
 
         public Achievement(User user, string internalTag, string title, string description, int experience)
         {
-            User = user;
-            UserId = user.Id;
+            if (user != null)
+            {
+                User = user;
+                UserId = user.Id;
+            }
+
             InternalTag = internalTag;
             Title = title;
             Description = description;

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:progressBar="clr-namespace:Syncfusion.XForms.ProgressBar;assembly=Syncfusion.SfProgressBar.XForms"
+             xmlns:viewModels="clr-namespace:GoalTracker.ViewModels;assembly=GoalTracker"
+             xmlns:infrastructure="clr-namespace:XamarinUniversity.Infrastructure;assembly=XamU.Infrastructure"
+             x:Class="GoalTracker.Views.Initialization.InitializationPage"
+             Title="Initialisierung">
+
+    <!-- Only use to verify bindings through xaml-compilation / intellisense -->
+    <!--<ContentPage.BindingContext>
+        <viewModels:SettingViewModel/>
+    </ContentPage.BindingContext>-->
+
+    <ContentPage.Content>
+        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="25">
+            <Image Source="icon.png" Margin="0, 0, 0, 15"/>
+            <progressBar:SfLinearProgressBar x:Name="InitializationProgressBar" ProgressCompleted="InitializationProgressBar_OnProgressCompleted" Progress="0">
+                <progressBar:SfLinearProgressBar.Behaviors>
+                    <infrastructure:EventToCommandBehavior EventName="ProgressCompleted" Command="{Binding LoadUserAsyncCommand}"/>
+                </progressBar:SfLinearProgressBar.Behaviors>
+            </progressBar:SfLinearProgressBar>
+            <Label x:Name="InitializationMessage" Text="Datenbank wird eingerichtet. Einen kleinen Moment noch..." HorizontalTextAlignment="Center"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

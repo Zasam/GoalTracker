@@ -7,7 +7,7 @@ namespace GoalTracker.Utilities
         //TODO: Expand validator?
         public static bool ValidateGoalInputs(Goal goal)
         {
-            bool valid = !string.IsNullOrWhiteSpace(goal.Title);
+            var valid = !string.IsNullOrWhiteSpace(goal.Title);
             return valid;
         }
     }

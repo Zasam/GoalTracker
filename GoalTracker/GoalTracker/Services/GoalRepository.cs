@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GoalTracker.Context;
 using GoalTracker.Entities;
+using GoalTracker.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 
 namespace GoalTracker.Services
@@ -18,15 +19,19 @@ namespace GoalTracker.Services
             this.context = context;
         }
 
-        public new async Task<IEnumerable<Goal>> GetAllAsync()
+        public new async Task AddAsync(Goal goal)
         {
-            return await context.Goals.Include(g => g.GoalAppointments).ToListAsync();
+            await base.AddAsync(goal);
         }
 
-        public async Task<IEnumerable<Goal>> GetAllInDateAsync(DateTime date)
+        public new async Task<IEnumerable<Goal>> GetAllAsync()
         {
-            return await FindAsync(g =>
-                !g.HasDueDate && g.StartDate <= date || g.StartDate <= date && g.EndDate >= date);
+            return await context.Goals.Include(g => g.GoalAppointments).Include(g => g.GoalTasks).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Goal>> GetAllStartedAsync(DateTime startDate)
+        {
+            return await FindAsync(g => g.StartDate <= startDate);
         }
 
         public new async Task RemoveAsync(Goal goal)
@@ -52,7 +57,7 @@ namespace GoalTracker.Services
             await base.RemoveRangeAsync(goalCollection);
         }
 
-        public async Task<Goal> GetByTitleAsnyc(string title)
+        public async Task<Goal> GetByTitleAsync(string title)
         {
             var goals = await FindAsync(g => g.Title == title);
             return goals.FirstOrDefault();

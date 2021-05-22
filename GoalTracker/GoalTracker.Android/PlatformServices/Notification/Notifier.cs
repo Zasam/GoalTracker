@@ -5,9 +5,7 @@ using Android.Graphics;
 using AndroidX.Core.App;
 using GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver;
 using GoalTracker.Droid.PlatformServices.Notification;
-using GoalTracker.Entities;
 using GoalTracker.PlatformServices;
-using GoalTracker.Services;
 using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 using Application = Android.App.Application;
@@ -18,7 +16,7 @@ namespace GoalTracker.Droid.PlatformServices.Notification
 {
     public class Notifier : INotifier
     {
-        public void PushNotification(IRepository<Goal> repository, string goalTitle, int goalNotificationId,
+        public void PushNotification(string goalTitle, int goalNotificationId,
             int goalRequestCode, string username)
         {
             try
@@ -34,8 +32,7 @@ namespace GoalTracker.Droid.PlatformServices.Notification
                 successIntent.PutExtra("GoalNotificationId", goalNotificationId);
 
                 // Get the pending intent as broadcast
-                var successPendingIntent = PendingIntent.GetBroadcast(Application.Context, goalRequestCode - 1,
-                    successIntent, PendingIntentFlags.UpdateCurrent);
+                var successPendingIntent = PendingIntent.GetBroadcast(Application.Context, goalRequestCode - 1, successIntent, PendingIntentFlags.UpdateCurrent);
 
                 // Create the failure notification option for the notification
                 var failureIntent = new Intent(Application.Context, typeof(GoalFailureUserInputReceiver));
@@ -50,7 +47,7 @@ namespace GoalTracker.Droid.PlatformServices.Notification
 
                 // Large icon resource bitmap conversion
                 var imagefileName = "Icon.png";
-                // Remove the file extention from the image filename
+                // Remove the file extension from the image filename
                 imagefileName = imagefileName.Replace(".jpg", "").Replace(".png", "");
 
                 // Retrieving the local Resource ID from the name

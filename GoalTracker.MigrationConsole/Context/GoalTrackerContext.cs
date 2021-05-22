@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using GoalTracker.Entities;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +10,12 @@ namespace GoalTracker.Context
 {
     public sealed class GoalTrackerContext : DbContext, IGoalTrackerContext
     {
+        public DbSet<Goal> Goals { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<GoalTask> GoalTasks { get; set; }
+        public DbSet<Achievement> Achievements { get; set; }
+        public DbSet<GoalAppointment> GoalAppointments { get; set; }
+
         public GoalTrackerContext()
         {
             // iOS Requirement: SQLitePCL.Batteries_V2.Init();
@@ -19,24 +28,37 @@ namespace GoalTracker.Context
             Database.Migrate();
         }
 
-        public DbSet<Goal> Goals { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Achievement> Achievements { get; set; }
-        public DbSet<GoalAppointment> GoalAppointments { get; set; }
-        public DbSet<GoalTask> GoalTasks { get; set; }
-
-        public void Commit()
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            SaveChanges();
+            try
+            {
+                var entries = ChangeTracker.Entries().Where(e => e.Entity is BaseEntity && (
+                    e.State == EntityState.Added || e.State == EntityState.Modified));
+
+                foreach (var entityEntry in entries)
+                {
+                    ((BaseEntity) entityEntry.Entity).UpdateDate = DateTime.Now;
+
+                    if (entityEntry.State == EntityState.Added)
+                        ((BaseEntity) entityEntry.Entity).CreateDate = DateTime.Now;
+                }
+
+                return await base.SaveChangesAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                return -1;
+            }
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             try
             {
-                //string dbPath = Path.Combine(FileSystem.AppDataDirectory, $"{nameof(GoalTracker)}.db3");
                 var dbPath = "GoalTracker.db3";
                 optionsBuilder.UseSqlite($"Filename={dbPath}");
+
                 base.OnConfiguring(optionsBuilder);
             }
             catch (Exception ex)

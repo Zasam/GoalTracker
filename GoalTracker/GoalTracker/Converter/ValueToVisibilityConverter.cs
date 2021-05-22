@@ -11,6 +11,9 @@ namespace GoalTracker.Converter
             if (value == null)
                 return false;
 
+            if (value is bool boolValue)
+                return boolValue;
+
             if (value is string stringValue)
             {
                 if (string.IsNullOrWhiteSpace(stringValue))

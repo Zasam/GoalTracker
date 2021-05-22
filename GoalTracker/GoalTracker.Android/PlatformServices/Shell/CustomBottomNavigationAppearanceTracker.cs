@@ -1,6 +1,6 @@
 ﻿using Google.Android.Material.BottomNavigation;
-using Xamarin.Forms.Platform.Android;
 using Xamarin.Forms;
+using Xamarin.Forms.Platform.Android;
 
 namespace GoalTracker.Droid.PlatformServices.Shell
 {
@@ -8,7 +8,6 @@ namespace GoalTracker.Droid.PlatformServices.Shell
     {
         public CustomBottomNavigationAppearanceTracker(IShellContext shellContext, ShellItem shellItem) : base(shellContext, shellItem)
         {
-            
         }
 
         public override void SetAppearance(BottomNavigationView bottomView, IShellAppearanceElement appearance)

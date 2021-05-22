@@ -1,18 +1,18 @@
 ﻿using System;
+using System.Reflection;
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
-using Autofac;
-using GoalTracker.Context;
+using BQFramework.IO;
+using GoalTracker.DI;
 using GoalTracker.Droid.PlatformServices.GoalNotificationQueue;
 using GoalTracker.Droid.PlatformServices.Notification;
 using GoalTracker.PlatformServices;
-using GoalTracker.Services;
-using GoalTracker.ViewModels;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Syncfusion.Licensing;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using Color = Android.Graphics.Color;
@@ -23,13 +23,8 @@ using Platform = Xamarin.Essentials.Platform;
 
 namespace GoalTracker.Droid
 {
-    [Activity(
-        Label = "GoalTracker",
-        Icon = "@mipmap/icon",
-        Theme = "@style/MainTheme",
-        MainLauncher = true,
-        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode
-                               | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize)]
+    [Activity(Label = "GoalTracker", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true,
+        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize)]
     public class MainActivity : FormsAppCompatActivity
     {
         public static readonly string ChannelId = "goaltracker_notifications";
@@ -38,25 +33,8 @@ namespace GoalTracker.Droid
             Environment.GetFolderPath(Environment.SpecialFolder.Personal),
             $"{nameof(GoalTracker)}.db");
 
-        private static IContainer container;
-
         private NotificationManager NotificationManager =>
             (NotificationManager) GetSystemService(NotificationService);
-
-        public static IContainer GetContainer()
-        {
-            try
-            {
-                if (container != null) return container;
-
-                DependencyRegistration();
-                return container;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
 
         public override void OnRequestPermissionsResult(
             int requestCode,
@@ -68,8 +46,9 @@ namespace GoalTracker.Droid
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override async void OnCreate(Bundle savedInstanceState)
         {
+            // First try block, where exception is just thrown, later on the app center is used to track errors, after it is correctly initialized
             try
             {
                 TabLayoutResource = Resource.Layout.Tabbar;
@@ -77,9 +56,34 @@ namespace GoalTracker.Droid
 
                 base.OnCreate(savedInstanceState);
 
-                AppCenter.Start("AppCenter-Secrets",
-                    typeof(Analytics), typeof(Crashes));
+                var assembly = typeof(MainActivity).GetTypeInfo().Assembly;
 
+                var syncfusionLicense =
+                    FileHelper.GetTextFromFile("GoalTracker.Droid.SyncfusionLicense.txt", assembly);
+                var appCenterSecrets =
+                    FileHelper.GetTextFromFile("GoalTracker.Droid.AppCenterSecrets.txt", assembly);
+
+                if (!string.IsNullOrWhiteSpace(syncfusionLicense) && !string.IsNullOrWhiteSpace(appCenterSecrets))
+                {
+                    SyncfusionLicenseProvider.RegisterLicense(syncfusionLicense);
+                    AppCenter.Start(appCenterSecrets,
+                        typeof(Analytics), typeof(Crashes));
+                }
+                else
+                {
+                    //TODO: Other method to inform the user than through toast message? This needs to be tested!
+                    var messenger = new Messenger();
+                    messenger.LongMessage(
+                        "One or more external services weren't correctly authorized. Purchase a licensed copy of this app to get all features.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            try
+            {
                 Window?.SetNavigationBarColor(Color.Rgb(196, 196, 196));
                 Window?.SetStatusBarColor(Color.Rgb(196, 196, 196));
 
@@ -95,42 +99,15 @@ namespace GoalTracker.Droid
                 DependencyService.Register<INotificationQueueManager, NotificationQueueManager>();
 
                 // Register all needed services by autofac
-                DependencyRegistration();
+                var app = await Bootstrapper.Run();
 
-                LoadApplication(new App(container));
+                LoadApplication(app);
             }
-            catch (Exception)
+
+            catch (Exception ex)
             {
-                //TODO: App center isn't initialized here!
-                //Crashes.TrackError(ex, LoggingHelpers.GetCrashProperties(nameof(MainActivity), nameof(OnCreate)));
+                Crashes.TrackError(ex);
             }
-        }
-
-        private static void DependencyRegistration()
-        {
-            // Create builder and default context to use
-            var builder = new ContainerBuilder();
-
-            // Register the custom database context
-            builder.RegisterType<GoalTrackerContext>().As<IGoalTrackerContext>().SingleInstance();
-
-            // Register the generic repository *NOT NEEDED: IMPLEMENTED SPECIFIC REPOSITORIES*
-            // builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>));
-
-            // Register all repositories
-            builder.RegisterType<GoalRepository>().As<IGoalRepository>().SingleInstance();
-            builder.RegisterType<AchievementRepository>().As<IAchievementRepository>().SingleInstance();
-            builder.RegisterType<UserRepository>().As<IUserRepository>().SingleInstance();
-            builder.RegisterType<GoalAppointmentRepository>().As<IGoalAppointmentRepository>().SingleInstance();
-            builder.RegisterType<GoalTaskRepository>().As<IGoalTaskRepository>().SingleInstance();
-
-            // Register all viewmodels
-            builder.RegisterType<GoalViewModel>().As<IGoalViewModel>().SingleInstance();
-            builder.RegisterType<CalendarViewModel>().As<ICalendarViewModel>().SingleInstance();
-            builder.RegisterType<SettingsViewModel>().As<ISettingsViewModel>().SingleInstance();
-            builder.RegisterType<RegistrationViewModel>().As<IRegistrationViewModel>().SingleInstance();
-
-            container = builder.Build();
         }
 
         private void CreateNotificationChannel(string channelName, string channelDescription)

@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:syncfusionButton="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
+             xmlns="http://xamarin.com/schemas/2014/forms" xmlns:textinputlayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms" xmlns:progressbar="clr-namespace:Syncfusion.XForms.ProgressBar;assembly=Syncfusion.SfProgressBar.XForms" xmlns:popuplayout="clr-namespace:Syncfusion.XForms.PopupLayout;assembly=Syncfusion.SfPopupLayout.XForms"
+             xmlns:infrastructure="clr-namespace:XamarinUniversity.Infrastructure;assembly=XamU.Infrastructure"
+             xmlns:viewModels="clr-namespace:GoalTracker.ViewModels;assembly=GoalTracker"
+             x:Class="GoalTracker.Views.Registration.RegistrationPage"
+             Title="Einrichtung">
+
+    <!-- Only use to verify bindings through xaml-compilation / intellisense -->
+    <!--<ContentPage.BindingContext>
+        <viewModels:SettingViewModel/>
+    </ContentPage.BindingContext>-->
+
+    <ContentPage.Content>
+        <Grid Style="{StaticResource DefaultGrid}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100"/>
+                <RowDefinition Height="85"/>
+                <RowDefinition Height="75"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!-- TODO: Replace shitty icon! *OMEGALUL* -->
+            <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+                <Label Text="GoalTracker" VerticalOptions="Center" Style="{StaticResource HeaderLabel}" Margin="0, 0, 0, 10"/>
+                <Image Source="icon" WidthRequest="60" HeightRequest="60"/>
+            </StackLayout>
+
+            <textinputlayout:SfTextInputLayout Grid.Row="1" Hint="Vorname" HelperText="Gib deinen Vornamen ein">
+                <Entry Text="{Binding Username}"/>
+            </textinputlayout:SfTextInputLayout>
+            <Label Grid.Row="2" HorizontalTextAlignment="Start" FontSize="14" Text="Hinweis: Erinnerungen an aktive Ziele werden bei einem Neustart des Geräts entfernt. Öffne die App nach dem Neustart, damit alles reibungslos läuft."/>
+            <syncfusionButton:SfButton Grid.Row="3" Margin="0, 5, 0, 0" Text="Weiter" Clicked="FinishAppConfigurationButton_OnClicked">
+                <syncfusionButton:SfButton.Behaviors>
+                    <infrastructure:EventToCommandBehavior EventName="Clicked" Command="{Binding UnlockAchievementAsyncCommand}" CommandParameter="SIGNUP"/>
+                </syncfusionButton:SfButton.Behaviors>
+            </syncfusionButton:SfButton>
+            <Label Grid.Row="4" Margin="0, 15, 0, 0" HorizontalTextAlignment="Center" FontSize="12" Text="Vielen Dank das du GoalTracker heruntergeladen hast ❤️"/>
+            <StackLayout Grid.Row="5" x:Name="AchievementStackLayout" Margin="0, 15, 0, 0">
+                <Label x:Name="AchievementLabel" Text="Erfolg freigeschaltet" HorizontalTextAlignment="Center" HorizontalOptions="FillAndExpand"/>
+                <progressbar:SfCircularProgressBar x:Name="AchievementProgressBar" Progress="0" AnimationDuration="1000" IndeterminateAnimationDuration="1000" EasingEffect="Linear" IndicatorOuterRadius="0.7" IndicatorInnerRadius="0.65" ProgressCompleted="AchievementProgressBar_OnProgressCompleted">
+                    <progressbar:SfCircularProgressBar.RangeColors>
+                        <progressbar:RangeColorCollection>
+                            <progressbar:RangeColor IsGradient="True" Color="#88A0D9EF" Start="0" End="25"/>
+                            <progressbar:RangeColor IsGradient="True" Color="#AA62C1E5" Start="25" End="50"/>
+                            <progressbar:RangeColor IsGradient="True" Color="#DD20A7DB" Start="50" End="75"/>
+                            <progressbar:RangeColor IsGradient="True" Color="#FF1C96C5" Start="75" End="100"/>
+                        </progressbar:RangeColorCollection>
+                    </progressbar:SfCircularProgressBar.RangeColors>
+                    <progressbar:SfCircularProgressBar.Behaviors>
+                        <infrastructure:EventToCommandBehavior EventName="ProgressCompleted" Command="{Binding ChangeUsernameAsyncCommand}" CommandParameter="{Binding Username}"/>
+                    </progressbar:SfCircularProgressBar.Behaviors>
+                </progressbar:SfCircularProgressBar>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

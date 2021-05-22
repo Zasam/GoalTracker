@@ -1,55 +1,46 @@
 ﻿using System;
-using GoalTracker.Services;
-using GoalTracker.ViewModels;
-using GoalTracker.Views.AppShell.Calendar;
-using GoalTracker.Views.AppShell.Goals;
-using GoalTracker.Views.AppShell.Settings;
+using GoalTracker.Entities;
+using GoalTracker.ViewModels.Interface;
+using GoalTracker.Views.Initialization;
+using GoalTracker.Views.Main.Calendar;
+using GoalTracker.Views.Main.Home.Goals;
+using GoalTracker.Views.Main.Settings;
+using GoalTracker.Views.Registration;
+using GoalTracker.Views.Welcome;
 using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 
 namespace GoalTracker
 {
-    /// <summary>
-    ///     TODO: Add system so earn XP when leveling up goals (multiple wins)
-    /// </summary>
     public partial class AppShell : Shell
     {
-        public AppShell(IGoalRepository goalRepository, IGoalAppointmentRepository goalDateRepository,
-            IUserRepository userRepository, IAchievementRepository achievementRepository,
-            IGoalTaskRepository goalTaskRepository, IGoalViewModel goalViewModel,
-            IRegistrationViewModel registrationViewModel, ICalendarViewModel calendarViewModel,
-            ISettingsViewModel settingsViewModel)
+        private readonly IGoalViewModel goalViewModel;
+        private readonly ICalendarViewModel calendarViewModel;
+        private readonly ISettingViewModel settingViewModel;
+        public static AppShell Instance;
+
+        public AppShell(User user, IGoalViewModel goalViewModel, ICalendarViewModel calendarViewModel, ISettingViewModel settingViewModel)
         {
             try
             {
                 InitializeComponent();
 
-                var username = userRepository.GetUsernameAsync().Result;
+                this.goalViewModel = goalViewModel;
+                this.calendarViewModel = calendarViewModel;
+                this.settingViewModel = settingViewModel;
 
-                Tabbar.Items.Add(new ShellContent
-                {
-                    Title = "Ziele",
-                    Icon = "Goal.png",
-                    Content = new GoalsPage(goalRepository, goalDateRepository, achievementRepository, goalViewModel,
-                        goalTaskRepository, username),
-                    Route = "GoalsPage"
-                });
+                UIStates currentUIState;
 
-                Tabbar.Items.Add(new ShellContent
-                {
-                    Title = "Kalender",
-                    Icon = "Calendar.png",
-                    Content = new CalendarPage(calendarViewModel, goalDateRepository),
-                    Route = "CalendarPage"
-                });
+                if (user == null)
+                    currentUIState = UIStates.Welcome;
+                else if (user.Name == "Default")
+                    currentUIState = UIStates.Configuration;
+                else
+                    currentUIState = UIStates.Home;
 
-                Tabbar.Items.Add(new ShellContent
-                {
-                    Title = "Einstellungen",
-                    Icon = "Settings.png",
-                    Content = new SettingsPage(userRepository, achievementRepository, settingsViewModel),
-                    Route = "SettingsPage"
-                });
+                SetUIState(UIStates.None, currentUIState);
+
+                Instance = this;
             }
             catch (Exception ex)
             {
@@ -57,9 +48,82 @@ namespace GoalTracker
             }
         }
 
-        private async void OnMenuItemClicked(object sender, EventArgs e)
+        public void SetUIState(UIStates currentState, UIStates newState)
         {
-            await Current.GoToAsync("//GoalsPage");
+            var user = settingViewModel.User;
+
+            switch (newState)
+            {
+                case UIStates.Welcome:
+                    Tabbar.Items.Add(new ShellContent
+                    {
+                        Title = "Willkommen",
+                        Content = new WelcomePage()
+                    });
+                    break;
+                case UIStates.Initialization:
+                    Tabbar.Items.Add(new ShellContent
+                    {
+                        Title = "Initialisierung",
+                        Content = new InitializationPage(settingViewModel)
+                    });
+                    break;
+                case UIStates.Configuration:
+                    Tabbar.Items.Add(new ShellContent
+                    {
+                        Title = "Einrichtung",
+                        Content = new RegistrationPage(settingViewModel)
+                    });
+                    break;
+                case UIStates.Home:
+                    Tabbar.Items.Add(new ShellContent
+                    {
+                        Title = "Ziele",
+                        Icon = "Goal.png",
+                        Content = new GoalsPage(goalViewModel, settingViewModel),
+                        Route = "GoalsPage"
+                    });
+
+                    Tabbar.Items.Add(new ShellContent
+                    {
+                        Title = "Kalender",
+                        Icon = "Calendar.png",
+                        Content = new CalendarPage(calendarViewModel),
+                        Route = "CalendarPage"
+                    });
+
+                    Tabbar.Items.Add(new ShellContent
+                    {
+                        Title = "Einstellungen",
+                        Icon = "Settings.png",
+                        Content = new SettingsPage(settingViewModel),
+                        Route = "SettingsPage"
+                    });
+                    break;
+            }
+
+            switch (currentState)
+            {
+                case UIStates.Welcome:
+                case UIStates.Initialization:
+                case UIStates.Configuration:
+                    Tabbar.Items.RemoveAt(0);
+                    break;
+                case UIStates.Home:
+                    Tabbar.Items.RemoveAt(0);
+                    Tabbar.Items.RemoveAt(1);
+                    Tabbar.Items.RemoveAt(2);
+                    break;
+            }
         }
+    }
+
+    public enum UIStates
+    {
+        None,
+        Welcome,
+        Initialization,
+        Configuration,
+        Home
     }
 }

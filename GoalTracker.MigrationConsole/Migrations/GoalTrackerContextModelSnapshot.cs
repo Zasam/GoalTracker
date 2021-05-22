@@ -59,10 +59,13 @@ namespace GoalTracker.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("AllGoalsCompleted")
+                    b.Property<bool>("AllTasksCompleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreateDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DetailImage")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("EndDate")

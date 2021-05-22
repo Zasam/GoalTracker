@@ -5,25 +5,26 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using GoalTracker.Context;
+using GoalTracker.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 
 namespace GoalTracker.Services
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+    public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         protected readonly IGoalTrackerContext Context;
 
-        public Repository(IGoalTrackerContext context)
+        protected Repository(IGoalTrackerContext context)
         {
             Context = context;
         }
 
-        public async Task<TEntity> GetAsync(int id)
+        protected async Task<TEntity> GetAsync(int id)
         {
             return await Context.Set<TEntity>().FindAsync(id);
         }
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync()
+        protected async Task<IEnumerable<TEntity>> GetAllAsync()
         {
             return await Context.Set<TEntity>().ToListAsync();
         }
@@ -33,25 +34,25 @@ namespace GoalTracker.Services
             return await Context.Set<TEntity>().Where(predicate).ToListAsync();
         }
 
-        public async Task AddAsync(TEntity entity)
+        protected async Task AddAsync(TEntity entity)
         {
             await Context.Set<TEntity>().AddAsync(entity);
             await Context.SaveChangesAsync();
         }
 
-        public async Task AddRangeAsync(IEnumerable<TEntity> entities)
+        protected async Task AddRangeAsync(IEnumerable<TEntity> entities)
         {
             await Context.Set<TEntity>().AddRangeAsync(entities);
             await Context.SaveChangesAsync();
         }
 
-        public async Task RemoveAsync(TEntity entity)
+        protected async Task RemoveAsync(TEntity entity)
         {
             Context.Set<TEntity>().Remove(entity);
             await Context.SaveChangesAsync();
         }
 
-        public async Task RemoveRangeAsync(IEnumerable<TEntity> entities)
+        protected async Task RemoveRangeAsync(IEnumerable<TEntity> entities)
         {
             Context.Set<TEntity>().RemoveRange(entities);
             await Context.SaveChangesAsync();

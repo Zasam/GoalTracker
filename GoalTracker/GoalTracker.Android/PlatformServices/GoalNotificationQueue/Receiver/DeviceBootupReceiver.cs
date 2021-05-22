@@ -1,9 +1,12 @@
-﻿using Android.App;
+﻿using System;
+using Android.App;
 using Android.Content;
 using Autofac;
+using GoalTracker.DI;
 using GoalTracker.Extensions;
 using GoalTracker.PlatformServices;
-using GoalTracker.Services;
+using GoalTracker.Services.Interface;
+using Microsoft.AppCenter.Crashes;
 
 namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver
 {
@@ -13,32 +16,37 @@ namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver
     {
         public override async void OnReceive(Android.Content.Context context, Intent intent)
         {
-            if (intent.Action.Equals(Intent.ActionBootCompleted) ||
-                intent.Action.Equals(Intent.ActionLockedBootCompleted))
+            try
             {
-                var container = MainActivity.GetContainer();
-
-                if (container != null)
+                if (intent?.Action != null && (intent.Action.Equals(Intent.ActionBootCompleted) ||
+                                               intent.Action.Equals(Intent.ActionLockedBootCompleted)))
                 {
-                    var goalRepository = container.Resolve<IGoalRepository>();
-                    var userRepository = container.Resolve<IUserRepository>();
-                    var goals = await goalRepository.GetAllAsync();
-                    var username = await userRepository.GetUsernameAsync();
+                    var container = Bootstrapper.GetContainer();
 
-                    if (goals != null)
+                    if (container != null)
                     {
-                        INotificationQueueManager notificationQueueManager = new NotificationQueueManager();
+                        var goalRepository = container.Resolve<IGoalRepository>();
+                        var userRepository = container.Resolve<IUserRepository>();
+                        var goals = await goalRepository.GetAllAsync();
+                        var user = await userRepository.GetUserAsync();
+                        var username = user.Name;
 
-                        var goalCount = 0;
-                        foreach (var goal in goals)
+                        if (goals != null)
                         {
-                            var goalRequestCodes = await goalRepository.GetNextRequestCodesForNotificationWithOptions();
-                            notificationQueueManager.QueueGoalNotificationBroadcast(goalRepository, goal,
-                                goalRequestCodes, username);
-                            goalCount++;
+                            INotificationQueueManager notificationQueueManager = new NotificationQueueManager();
+
+                            foreach (var goal in goals)
+                            {
+                                var goalRequestCodes = await goalRepository.GetNextRequestCodesForNotificationWithOptions();
+                                notificationQueueManager.QueueGoalNotificationBroadcast(goal, goalRequestCodes, username);
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
             }
         }
     }

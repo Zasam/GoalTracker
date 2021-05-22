@@ -4,10 +4,10 @@ using Xamarin.Forms;
 
 namespace GoalTracker
 {
-    public class ThemeManager
+    public static class ThemeManager
     {
         /// <summary>
-        ///     Defines the supported themes for the sample app
+        /// Defines the supported themes for the sample app
         /// </summary>
         public enum Themes
         {
@@ -16,9 +16,9 @@ namespace GoalTracker
         }
 
         /// <summary>
-        ///     Changes the theme of the app.
-        ///     Add additional switch cases for more themes you add to the app.
-        ///     This also updates the local key storage value for the selected theme.
+        /// Changes the theme of the app.
+        /// Add additional switch cases for more themes you add to the app.
+        /// This also updates the local key storage value for the selected theme.
         /// </summary>
         /// <param name="theme"></param>
         public static void ChangeTheme(Themes theme)
@@ -51,7 +51,7 @@ namespace GoalTracker
         }
 
         /// <summary>
-        ///     Reads current theme id from the local storage and loads it.
+        /// Reads current theme id from the local storage and loads it.
         /// </summary>
         public static void LoadTheme()
         {
@@ -60,10 +60,10 @@ namespace GoalTracker
         }
 
         /// <summary>
-        ///     Gives current/last selected theme from the local storage.
+        /// Gives current/last selected theme from the local storage.
         /// </summary>
         /// <returns></returns>
-        public static Themes CurrentTheme()
+        private static Themes CurrentTheme()
         {
             return (Themes) CrossSettings.Current.GetValueOrDefault("SelectedTheme", (int) Themes.Light);
         }

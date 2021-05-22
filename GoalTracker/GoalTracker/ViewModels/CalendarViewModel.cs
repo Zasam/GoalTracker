@@ -1,32 +1,33 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using GoalTracker.Extensions;
 using GoalTracker.Models;
-using GoalTracker.Services;
+using GoalTracker.Services.Interface;
+using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
 using Syncfusion.SfCalendar.XForms;
+using Xamarin.Forms;
 
 namespace GoalTracker.ViewModels
 {
     public class CalendarViewModel : BaseViewModel, ICalendarViewModel
     {
-        private readonly IGoalAppointmentRepository goalAppointmentRepository;
+        #region Repositories
+
         private readonly IGoalRepository goalRepository;
+        private readonly IGoalAppointmentRepository goalAppointmentRepository;
+
+        #endregion // Repositories
+
+        #region Properties
+
         private CalendarEventCollection calendarInlineEvents;
 
-        private int failureApprovalsWeek;
-        private int successApprovalsWeek;
-
-        public CalendarViewModel(IGoalRepository goalRepository, IGoalAppointmentRepository goalAppointmentRepository)
-        {
-            this.goalRepository = goalRepository;
-            this.goalAppointmentRepository = goalAppointmentRepository;
-            var now = DateTime.Now;
-            CalendarMinDate = new DateTime(now.Year - 1, now.Month, now.Day);
-            CalendarMaxDate = new DateTime(now.Year + 1, now.Month, now.Day);
-        }
-
+        /// <summary>
+        /// Calendar events with appointments which can be binded to a syncfusion calendar
+        /// </summary>
         public CalendarEventCollection CalendarInlineEvents
         {
             get => calendarInlineEvents;
@@ -37,6 +38,12 @@ namespace GoalTracker.ViewModels
             }
         }
 
+
+        private int successApprovalsWeek;
+
+        /// <summary>
+        /// Count of appointments which were approved with success this week
+        /// </summary>
         public int SuccessApprovalsWeek
         {
             get => successApprovalsWeek;
@@ -47,6 +54,11 @@ namespace GoalTracker.ViewModels
             }
         }
 
+        private int failureApprovalsWeek;
+
+        /// <summary>
+        /// Count of appointments which were approved with failure this week
+        /// </summary>
         public int FailureApprovalsWeek
         {
             get => failureApprovalsWeek;
@@ -57,10 +69,46 @@ namespace GoalTracker.ViewModels
             }
         }
 
-        public DateTime CalendarMinDate { get; set; }
-        public DateTime CalendarMaxDate { get; set; }
+        /// <summary>
+        /// The minimum date of the calendar to show
+        /// </summary>
+        public DateTime CalendarMinDate { get; }
 
-        public async Task GenerateCalendarEvents()
+        /// <summary>
+        /// The maximum date of the calendar to show
+        /// </summary>
+        public DateTime CalendarMaxDate { get; }
+
+        #endregion // ReadOnly Bindings
+
+        #region Commands
+
+        /// <summary>
+        /// Command to load all events associated with existing appointments async
+        /// </summary>
+        public ICommand LoadEventsAsyncCommand { get; }
+
+        #endregion // Commands
+
+        // TODO: Only used to check bindings in xaml
+        public CalendarViewModel()
+        {
+            throw new InvalidOperationException("Calendar view model shouldn't be initialized through parameterless constructor");
+        }
+
+        public CalendarViewModel(IGoalRepository goalRepository, IGoalAppointmentRepository goalAppointmentRepository)
+        {
+            this.goalRepository = goalRepository;
+            this.goalAppointmentRepository = goalAppointmentRepository;
+
+            var now = DateTime.Now;
+            CalendarMinDate = new DateTime(now.Year - 1, now.Month, now.Day);
+            CalendarMaxDate = new DateTime(now.Year + 1, now.Month, now.Day);
+
+            LoadEventsAsyncCommand = new Command(async () => await LoadEventsAsync());
+        }
+
+        private async Task LoadEventsAsync()
         {
             try
             {

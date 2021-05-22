@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:syncfusionPullToRefresh="clr-namespace:Syncfusion.SfPullToRefresh.XForms;assembly=Syncfusion.SfPullToRefresh.XForms"
+             xmlns:syncfusionListView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+             xmlns:syncfusionBorder="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
+             xmlns:converter="clr-namespace:GoalTracker.Converter;assembly=GoalTracker"
+             xmlns:viewModels="clr-namespace:GoalTracker.ViewModels;assembly=GoalTracker"
+             xmlns:infrastructure="clr-namespace:XamarinUniversity.Infrastructure;assembly=XamU.Infrastructure"
+             x:Class="GoalTracker.Views.Main.Home.GoalTasks.GoalTasksPage">
+
+    <!-- Only use to verify bindings through xaml-compilation / intellisense -->
+    <!--<ContentPage.BindingContext>
+        <viewModels:GoalTaskViewModel/>
+    </ContentPage.BindingContext>-->
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:GoalTaskCompletionToImageSourceConverter x:Key="GoalTaskCompletionToImageSourceConverter"/>
+            <converter:BoolToStringConverter x:Key="BoolToStringConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Behaviors>
+        <infrastructure:EventToCommandBehavior EventName="Appearing" Command="{Binding LoadTasksAsyncCommand}" CommandParameter="{Binding ParentGoal}"/>
+    </ContentPage.Behaviors>
+    <ContentPage.Content>
+        <Grid Style="{StaticResource DefaultGrid}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <syncfusionPullToRefresh:SfPullToRefresh x:Name="GoalTaskListViewPullToRefresh"
+                                                         Refreshing="GoalTaskListViewPullToRefresh_OnRefreshing"
+                                                         Grid.Column="0"
+                                                         Grid.Row="0">
+                <syncfusionPullToRefresh:SfPullToRefresh.Behaviors>
+                    <infrastructure:EventToCommandBehavior EventName="Refreshing" Command="{Binding LoadTasksAsyncCommand}" CommandParameter="{Binding ParentGoal}"/>
+                </syncfusionPullToRefresh:SfPullToRefresh.Behaviors>
+                <syncfusionPullToRefresh:SfPullToRefresh.PullableContent>
+                    <syncfusionListView:SfListView x:Name="GoalTaskListView"
+                                                   ItemsSource="{Binding GoalTasks}"
+                                                   AllowSwiping="True"
+                                                   SwipeStarted="GoalTaskListView_OnSwipeStarted"
+                                                   SelectedItem="{Binding SelectedGoalTask}">
+                        <syncfusionListView:SfListView.HeaderTemplate>
+                            <DataTemplate>
+                                <StackLayout BackgroundColor="{DynamicResource Primary}" Padding="5">
+                                    <Label Style="{StaticResource HeaderLabel}" Text="Aufgaben"/>
+                                </StackLayout>
+                            </DataTemplate>
+                        </syncfusionListView:SfListView.HeaderTemplate>
+
+                        <syncfusionListView:SfListView.LeftSwipeTemplate>
+                            <DataTemplate>
+                                <syncfusionBorder:SfBorder Style="{StaticResource SelectedViewcellBorderContainer}">
+                                    <Grid>
+                                        <Grid HorizontalOptions="Fill" VerticalOptions="Fill" Grid.Column="0">
+                                            <Grid VerticalOptions="Center" HorizontalOptions="Center">
+                                                <Image Grid.Column="0"
+                                                           Grid.Row="0"
+                                                           BackgroundColor="Transparent"
+                                                           HeightRequest="35"
+                                                           WidthRequest="35"
+                                                           Source="{Binding Completed, Converter={StaticResource GoalTaskCompletionToImageSourceConverter}}"
+                                                           x:Name="SetTaskCompletedLeftSwipeImage"
+                                                           BindingContextChanged="SetTaskCompletedLeftSwipeImage_OnBindingContextChanged"/>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </syncfusionBorder:SfBorder>
+                            </DataTemplate>
+                        </syncfusionListView:SfListView.LeftSwipeTemplate>
+
+                        <syncfusionListView:SfListView.RightSwipeTemplate>
+                            <DataTemplate>
+                                <syncfusionBorder:SfBorder Style="{StaticResource SelectedViewcellBorderContainer}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid HorizontalOptions="Fill" VerticalOptions="Fill" Grid.Column="0">
+                                            <Grid VerticalOptions="Center" HorizontalOptions="Center">
+                                                <Image Grid.Column="0"
+                                                           Grid.Row="0"
+                                                           BackgroundColor="Transparent"
+                                                           HeightRequest="35"
+                                                           WidthRequest="35"
+                                                           Source="Edit.png"
+                                                           x:Name="EditGoalTaskRightSwipe"
+                                                           BindingContextChanged="EditGoalTaskRightSwipe_OnBindingContextChanged"/>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid HorizontalOptions="Fill" VerticalOptions="Fill" Grid.Column="1">
+                                            <Grid VerticalOptions="Center" HorizontalOptions="Center">
+                                                <Image Grid.Column="0"
+                                                           Grid.Row="0"
+                                                           BackgroundColor="Transparent"
+                                                           HeightRequest="35"
+                                                           WidthRequest="35"
+                                                           Source="Delete.png"
+                                                           x:Name="DeleteGoalTaskRightSwipe"
+                                                           BindingContextChanged="DeleteGoalTaskRightSwipe_OnBindingContextChanged"/>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </syncfusionBorder:SfBorder>
+                            </DataTemplate>
+                        </syncfusionListView:SfListView.RightSwipeTemplate>
+
+                        <syncfusionListView:SfListView.ItemTemplate>
+                            <DataTemplate>
+                                <syncfusionBorder:SfBorder Style="{StaticResource ViewcellBorderContainer}">
+                                    <Grid Padding="15">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="150"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                        </Grid.RowDefinitions>
+                                        <Label Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Text="{Binding Id, StringFormat='Aufgabe Nr. {0}'}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                        <Label Grid.Column="1" Grid.Row="0" Text="{Binding Title, StringFormat='Titel: {0}'}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                        <Label Grid.Column="1" Grid.Row="1" Text="{Binding Completed, StringFormat='Erledigt: {0}', Converter={StaticResource BoolToStringConverter}}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                    </Grid>
+                                </syncfusionBorder:SfBorder>
+                            </DataTemplate>
+                        </syncfusionListView:SfListView.ItemTemplate>
+                        <syncfusionListView:SfListView.SelectedItemTemplate>
+                            <DataTemplate>
+                                <syncfusionBorder:SfBorder Style="{StaticResource SelectedViewcellBorderContainer}">
+                                    <Grid Padding="15">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="150"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                        </Grid.RowDefinitions>
+                                        <Label Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Text="{Binding Id, StringFormat='Aufgabe Nr. {0}'}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                        <Label Grid.Column="1" Grid.Row="0" Text="{Binding Title, StringFormat='Titel: {0}'}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                        <Label Grid.Column="1" Grid.Row="1" Text="{Binding Completed, StringFormat='Erledigt: {0}', Converter={StaticResource BoolToStringConverter}}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                    </Grid>
+                                </syncfusionBorder:SfBorder>
+                            </DataTemplate>
+                        </syncfusionListView:SfListView.SelectedItemTemplate>
+                    </syncfusionListView:SfListView>
+                </syncfusionPullToRefresh:SfPullToRefresh.PullableContent>
+            </syncfusionPullToRefresh:SfPullToRefresh>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

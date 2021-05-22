@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GoalTracker.Context;
 using GoalTracker.Entities;
+using GoalTracker.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 
 namespace GoalTracker.Services
@@ -18,6 +19,11 @@ namespace GoalTracker.Services
             this.context = context;
         }
 
+        public async Task<GoalAppointment> GetByIdAsync(int id)
+        {
+            return await GetAsync(id);
+        }
+
         public new async Task<IEnumerable<GoalAppointment>> GetAllAsync()
         {
             return await context.GoalAppointments.Include(ga => ga.Goal).ToListAsync();
@@ -28,16 +34,29 @@ namespace GoalTracker.Services
             return await FindAsync(ga => ga.GoalId == goal.Id);
         }
 
-        public async Task<IEnumerable<GoalAppointment>> GetAllByDayAsync(DateTime day)
+        public async Task<IEnumerable<GoalAppointment>> GetAllByApprovalDayAsync(DateTime day)
         {
-            return await FindAsync(ga => ga.ApprovalDate.HasValue && ga.ApprovalDate.Value == day.Date);
+            return await FindAsync(ga => ga.ApprovalDate.HasValue && ga.ApprovalDate.Value.Day == day.Day && ga.ApprovalDate.Value.Month == day.Month && ga.ApprovalDate.Value.Year == day.Year);
         }
 
-        public async Task<GoalAppointment> GetByParentAndDayAsync(Goal goal, DateTime day)
+        public async Task<GoalAppointment> GetByParentAndAppointmentDateAsync(Goal goal, DateTime? date)
+        {
+            date ??= DateTime.Now;
+            var goalAppointments = await FindAsync(ga => ga.GoalId == goal.Id && ga.AppointmentDate <= date.Value);
+            var goalAppointmentWithClosestDate = goalAppointments.Aggregate((ga1, ga2) => ga1.AppointmentDate > ga2.AppointmentDate ? ga1 : ga2);
+            return goalAppointmentWithClosestDate;
+        }
+
+        public async Task<GoalAppointment> GetByParentAndApprovalDayAsync(Goal goal, DateTime day)
         {
             var goalAppointments = await FindAsync(ga =>
-                ga.GoalId == goal.Id && ga.ApprovalDate.HasValue && ga.ApprovalDate == day.Date);
+                ga.GoalId == goal.Id && ga.ApprovalDate.HasValue && ga.ApprovalDate.Value.Day == day.Day && ga.ApprovalDate.Value.Month == day.Month && ga.ApprovalDate.Value.Year == day.Year);
             return goalAppointments.FirstOrDefault();
+        }
+
+        public new async Task AddRangeAsync(IEnumerable<GoalAppointment> goalAppointments)
+        {
+            await base.AddRangeAsync(goalAppointments);
         }
     }
 }

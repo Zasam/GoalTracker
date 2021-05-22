@@ -19,4 +19,8 @@
     <ProjectReference Include="..\GoalTracker\GoalTracker\GoalTracker.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

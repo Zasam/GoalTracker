@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="GoalTracker.Views.Main.Settings.SettingsPage"
+             Title="Einstellungen">
+    <ContentPage.Content>
+        <Grid Style="{StaticResource DefaultGrid}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="150"/>
+            </Grid.RowDefinitions>
+                <Label Grid.Column="0" Grid.Row="0" Text="Credits" Style="{StaticResource HeaderLabel}"/>
+                <Label Grid.Column="0" Grid.Row="1" HorizontalTextAlignment="Center">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Alle icons stammen von"/>
+                            <Span Text=" icons8.de" TextColor="{StaticResource Primary}">
+                                <Span.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenLinkCommand}"
+                                                          CommandParameter="https://icons8.de"/>
+                                </Span.GestureRecognizers>
+                            </Span>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                
+                <StackLayout Grid.Column="0" Grid.Row="2">
+                    <Label Style="{StaticResource HeaderLabel}" Text="Erfolge"/>
+                    <Button Text="Erfolge anzeigen" Clicked="ShowAchievementsButton_Clicked"/>
+                </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

@@ -11,9 +11,13 @@ namespace GoalTracker.Extensions
             try
             {
                 if (isLocalTime)
-                    return (long) (value - new DateTime(1970, 1, 1, 0, 0, 0).ToLocalTime()).TotalMilliseconds;
+                {
+                    var date1970 = new DateTime(1970, 1, 1, 0, 0, 0);
+                    return (long) (value - date1970).TotalMilliseconds - 1000 * 60 * 60 * 2; //TODO: Why do I have to remove 2 hours to get the correct local time (DE-de)?
+                }
 
-                return (long) (value.ToLocalTime() - new DateTime(1970, 1, 1, 0, 0, 0).ToLocalTime()).TotalMilliseconds;
+                var date1970Local = new DateTime(1970, 1, 1, 0, 0, 0).ToLocalTime();
+                return (long) (value.ToLocalTime() - date1970Local).TotalMilliseconds;
             }
             catch (Exception ex)
             {
@@ -23,7 +27,7 @@ namespace GoalTracker.Extensions
         }
 
         /// <summary>
-        ///     Returns the specified date added by one hour, and minutes and seconds are flatten by 0
+        /// Returns the specified date added by one hour, and minutes and seconds are flatten by 0
         /// </summary>
         /// <param name="value">The passed datetime value</param>
         /// <returns>The new datetime with flatten values for minutes/seconds</returns>
