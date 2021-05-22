@@ -4,7 +4,6 @@ using GoalTracker.Extensions;
 using GoalTracker.PlatformServices;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
-using Syncfusion.XForms.Pickers;
 using Syncfusion.XForms.TextInputLayout;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -14,15 +13,18 @@ namespace GoalTracker.Views.Main.Home.Goals
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AddGoalPage : ContentPage
     {
+        public ISettingViewModel SettingViewModel { get; }
+
         private readonly IGoalViewModel goalViewModel;
         private bool contentLoaded;
         private int goalTaskCounter;
         private bool saving;
         private string[] goalTaskTitles;
 
-        public AddGoalPage(IGoalViewModel goalViewModel)
+        public AddGoalPage(IGoalViewModel goalViewModel, ISettingViewModel settingViewModel)
         {
             this.goalViewModel = goalViewModel;
+            SettingViewModel = settingViewModel;
 
             contentLoaded = false;
             goalViewModel.GoalHasDueDate = false;
@@ -59,7 +61,7 @@ namespace GoalTracker.Views.Main.Home.Goals
 
                 //TODO: how to identify if new achievement was unlocked? or is already unlocked?
                 await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel,
-                    AchievementProgressBar, "ADDGOAL???");
+                    AchievementProgressBar, "Erfolg freigeschaltet: " + SettingViewModel.LoadedAchievement.Title);
 
                 await Navigation.PopAsync(true);
             }
@@ -79,28 +81,6 @@ namespace GoalTracker.Views.Main.Home.Goals
                 goalViewModel.GoalNotificationTime = TimeSpan.FromHours(DateTime.Now.Hour);
                 goalViewModel.GoalNotificationIntervalIndex = 3;
                 goalViewModel.GoalImage = string.Empty;
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
-        }
-
-        private void GoalNotificationTimePicker_TimeSelected(object sender, TimeChangedEventArgs e)
-        {
-            try
-            {
-                var newValue = (TimeSpan) e.NewValue;
-
-                var hour = DateTime.Now.Hour;
-                var minute = DateTime.Now.Minute;
-                if ((newValue < TimeSpan.FromHours(hour) || newValue.Hours == hour && newValue.Minutes <= minute) &&
-                    GoalStartDatePicker.Date.Day <= DateTime.Now.Day &&
-                    GoalStartDatePicker.Date.Month <= DateTime.Now.Month && !saving && contentLoaded)
-                {
-                    GoalNotificationTimePicker.Time = new TimeSpan(hour + 1, 00, 00);
-                    DependencyService.Get<IMessenger>().ShortMessage("Bitte wähle einen Zeitpunkt in der Zukunft aus.");
-                }
             }
             catch (Exception ex)
             {

@@ -11,6 +11,7 @@ namespace GoalTracker.Services.Interface
         Task<IEnumerable<GoalAppointment>> GetAllAsync();
         Task<IEnumerable<GoalAppointment>> GetAllByParentAsync(Goal goal);
         Task<IEnumerable<GoalAppointment>> GetAllByApprovalDayAsync(DateTime day);
+        Task<GoalAppointment> GetByParentAndAppointmentDateAsync(Goal goal, DateTime? date);
         Task<GoalAppointment> GetByParentAndApprovalDayAsync(Goal goal, DateTime date);
         Task AddRangeAsync(IEnumerable<GoalAppointment> goalAppointments);
     }

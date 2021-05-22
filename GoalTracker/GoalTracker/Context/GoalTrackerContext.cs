@@ -75,7 +75,7 @@ namespace GoalTracker.Context
                 if (!optionsBuilder.IsConfigured)
                 {
                     var dbPath = Path.Combine(FileSystem.AppDataDirectory,
-                        $"{nameof(GoalTracker)}-Testing_16052021.db3");
+                        $"{nameof(GoalTracker)}-Testing_19052021.db3");
 
                     optionsBuilder.UseSqlite($"Filename={dbPath}");
                 }

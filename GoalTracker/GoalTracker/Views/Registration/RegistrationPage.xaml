@@ -50,7 +50,6 @@
                         </progressbar:RangeColorCollection>
                     </progressbar:SfCircularProgressBar.RangeColors>
                     <progressbar:SfCircularProgressBar.Behaviors>
-                        <infrastructure:EventToCommandBehavior EventName="ProgressCompleted" Command="{Binding LoadUserAsyncCommand}"/>
                         <infrastructure:EventToCommandBehavior EventName="ProgressCompleted" Command="{Binding ChangeUsernameAsyncCommand}" CommandParameter="{Binding Username}"/>
                     </progressbar:SfCircularProgressBar.Behaviors>
                 </progressbar:SfCircularProgressBar>

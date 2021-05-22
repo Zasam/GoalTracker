@@ -6,7 +6,6 @@ using AndroidX.Core.App;
 using GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver;
 using GoalTracker.Droid.PlatformServices.Notification;
 using GoalTracker.PlatformServices;
-using GoalTracker.Services.Interface;
 using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 using Application = Android.App.Application;
@@ -17,7 +16,7 @@ namespace GoalTracker.Droid.PlatformServices.Notification
 {
     public class Notifier : INotifier
     {
-        public void PushNotification(IGoalRepository repository, string goalTitle, int goalNotificationId,
+        public void PushNotification(string goalTitle, int goalNotificationId,
             int goalRequestCode, string username)
         {
             try
@@ -33,8 +32,7 @@ namespace GoalTracker.Droid.PlatformServices.Notification
                 successIntent.PutExtra("GoalNotificationId", goalNotificationId);
 
                 // Get the pending intent as broadcast
-                var successPendingIntent = PendingIntent.GetBroadcast(Application.Context, goalRequestCode - 1,
-                    successIntent, PendingIntentFlags.UpdateCurrent);
+                var successPendingIntent = PendingIntent.GetBroadcast(Application.Context, goalRequestCode - 1, successIntent, PendingIntentFlags.UpdateCurrent);
 
                 // Create the failure notification option for the notification
                 var failureIntent = new Intent(Application.Context, typeof(GoalFailureUserInputReceiver));

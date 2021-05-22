@@ -73,7 +73,7 @@ namespace GoalTracker.Extensions
             var interval = parent.GoalAppointmentInterval;
             //TODO: How to set end date correctly? Regenerate goalAppointments after some time?
             var endDate = parent.HasDueDate ? parent.EndDate : parent.StartDate.AddMonths(1);
-            for (var intervalDate = parent.StartDate;
+            for (var intervalDate = new DateTime(parent.StartDate.Year, parent.StartDate.Month, parent.StartDate.Day, parent.NotificationTime.Hours, parent.NotificationTime.Minutes, 00);
                 intervalDate <= endDate;
                 intervalDate = intervalDate.AddMilliseconds(interval.GetMilliseconds()))
             {

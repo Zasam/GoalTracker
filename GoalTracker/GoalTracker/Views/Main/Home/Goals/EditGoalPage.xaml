@@ -8,6 +8,8 @@
              xmlns:border="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
              xmlns:converters="clr-namespace:GoalTracker.Converter;assembly=GoalTracker"
              xmlns:viewModels="clr-namespace:GoalTracker.ViewModels;assembly=GoalTracker"
+             xmlns:infrastructure="clr-namespace:XamarinUniversity.Infrastructure;assembly=XamU.Infrastructure"
+             x:Name="EditGoalPageInstance"
              x:Class="GoalTracker.Views.Main.Home.Goals.EditGoalPage">
 
     <!-- Only use to verify bindings through xaml-compilation / intellisense -->
@@ -84,7 +86,6 @@
                                       HeaderText="&#x23F0; Erste Benachrichtigung"
                                       EnableLooping="True"
                                       Time="{Binding GoalNotificationTime}"
-                                      TimeSelected="GoalNotificationTimePicker_TimeSelected"
                                       Margin="{Binding GoalHasDueDate, Converter={StaticResource BoolToMarginConverter}}"/>
 
                 <xForms:SfPicker Grid.Row="7"
@@ -110,7 +111,11 @@
                 <Label x:Name="ErrorTextLabel" IsVisible="False" TextColor="{StaticResource Error}" Text="Du hast leider nicht alle benötigten Felder ausgefüllt." Grid.Row="9"/>
 
                 <StackLayout Grid.Row="10" Padding="50, 0, 50, 0">
-                    <buttons:SfButton Text="Speichern" Clicked="SaveGoalButton_OnClicked" Command="{Binding EditGoalAsyncCommand}" CommandParameter="{Binding BindedGoal}"/>
+                    <buttons:SfButton Text="Speichern" Clicked="SaveGoalButton_OnClicked" Command="{Binding EditGoalAsyncCommand}" CommandParameter="{Binding BindedGoal}">
+                        <buttons:SfButton.Behaviors>
+                            <infrastructure:EventToCommandBehavior EventName="Clicked" Command="{Binding SettingViewModel.UnlockAchievementAsyncCommand, Source={x:Reference EditGoalPageInstance}}" CommandParameter="EDITGOAL"/>
+                        </buttons:SfButton.Behaviors>
+                    </buttons:SfButton>
                 </StackLayout>
             </Grid>
         </ScrollView>

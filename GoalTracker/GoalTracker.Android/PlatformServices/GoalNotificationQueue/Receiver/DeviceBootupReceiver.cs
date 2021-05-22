@@ -38,7 +38,7 @@ namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver
                             foreach (var goal in goals)
                             {
                                 var goalRequestCodes = await goalRepository.GetNextRequestCodesForNotificationWithOptions();
-                                notificationQueueManager.QueueGoalNotificationBroadcast(goalRepository, goal, goalRequestCodes, username);
+                                notificationQueueManager.QueueGoalNotificationBroadcast(goal, goalRequestCodes, username);
                             }
                         }
                     }

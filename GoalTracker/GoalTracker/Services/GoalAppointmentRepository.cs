@@ -39,6 +39,14 @@ namespace GoalTracker.Services
             return await FindAsync(ga => ga.ApprovalDate.HasValue && ga.ApprovalDate.Value.Day == day.Day && ga.ApprovalDate.Value.Month == day.Month && ga.ApprovalDate.Value.Year == day.Year);
         }
 
+        public async Task<GoalAppointment> GetByParentAndAppointmentDateAsync(Goal goal, DateTime? date)
+        {
+            date ??= DateTime.Now;
+            var goalAppointments = await FindAsync(ga => ga.GoalId == goal.Id && ga.AppointmentDate <= date.Value);
+            var goalAppointmentWithClosestDate = goalAppointments.Aggregate((ga1, ga2) => ga1.AppointmentDate > ga2.AppointmentDate ? ga1 : ga2);
+            return goalAppointmentWithClosestDate;
+        }
+
         public async Task<GoalAppointment> GetByParentAndApprovalDayAsync(Goal goal, DateTime day)
         {
             var goalAppointments = await FindAsync(ga =>

@@ -204,7 +204,7 @@
 
                                                 <StackLayout Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
                                                     <Image Source="NotificationTime.png" Style="{StaticResource ListViewItemImage}"/>
-                                                    <Label Text="{Binding NotificationTime}" Style="{StaticResource ItemLabel}"/>
+                                                    <Label Text="{Binding NotificationTime, StringFormat='\{0:h\\:mm\}'}" Style="{StaticResource ItemLabel}"/>
                                                 </StackLayout>
 
                                                 <StackLayout Grid.Column="2" Grid.Row="1" Orientation="Horizontal">
@@ -224,12 +224,12 @@
                                                     <!-- TODO: Change to: ApprovedGoalTaskCount / GoalTaskCount (eg. 3 von 4 Aufgaben erledigt) -->
                                                     <Label Text="{Binding GoalTaskCount, StringFormat='{0} Aufgaben hinterlegt'}" Style="{StaticResource DetailItemLabel}"/>
                                                 </StackLayout>
-                                                <StackLayout Grid.Column="1" Grid.Row="4" Orientation="Horizontal" Grid.ColumnSpan="2" HorizontalOptions="EndAndExpand">
+                                                <StackLayout Grid.Column="1" Grid.Row="4" Orientation="Horizontal" Grid.ColumnSpan="2" HorizontalOptions="EndAndExpand" Margin="0, 0, 10, 0">
                                                     <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand">
                                                         <Image Source="FromDate.png" Style="{StaticResource ListViewDetailItemImage}"/>
                                                         <Label Text="{Binding StartDate, StringFormat='{0:dd.MM.yy}'}" Style="{StaticResource DetailItemLabel}"/>
                                                     </StackLayout>
-                                                    <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand" Margin="0, 0, 10, 0">
+                                                    <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand" IsVisible="{Binding HasDueDate}">
                                                         <Image Source="ToDate.png" Style="{StaticResource ListViewDetailItemImage}"/>
                                                         <Label Text="{Binding EndDate, StringFormat='{0:dd.MM.yy}'}" Style="{StaticResource DetailItemLabel}"/>
                                                     </StackLayout>
@@ -271,7 +271,7 @@
 
                                                 <StackLayout Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
                                                     <Image Source="NotificationTime.png" Style="{StaticResource ListViewItemImage}"/>
-                                                    <Label Text="{Binding NotificationTime}" Style="{StaticResource ItemLabel}"/>
+                                                    <Label Text="{Binding NotificationTime, StringFormat='\{0:h\\:mm\}'}" Style="{StaticResource ItemLabel}"/>
                                                 </StackLayout>
                                                 <StackLayout Grid.Column="2" Grid.Row="1" Orientation="Horizontal">
                                                     <Image Source="PushNotificationInterval.png" Style="{StaticResource ListViewItemImage}"/>
@@ -287,12 +287,12 @@
                                                     <Image Source="TaskList.png" Style="{StaticResource ListViewDetailItemImage}"/>
                                                     <Label Text="{Binding GoalTaskCount, StringFormat='{0} Aufgaben hinterlegt'}" Style="{StaticResource DetailItemLabel}"/>
                                                 </StackLayout>
-                                                <StackLayout Grid.Column="1" Grid.Row="4" Orientation="Horizontal" Grid.ColumnSpan="2" HorizontalOptions="EndAndExpand">
+                                                <StackLayout Grid.Column="1" Grid.Row="4" Orientation="Horizontal" Grid.ColumnSpan="2" HorizontalOptions="EndAndExpand" Margin="0, 0, 10, 0">
                                                     <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand">
                                                         <Image Source="FromDate.png" Style="{StaticResource ListViewDetailItemImage}"/>
                                                         <Label Text="{Binding StartDate, StringFormat='{0:dd.MM.yy}'}" Style="{StaticResource DetailItemLabel}"/>
                                                     </StackLayout>
-                                                    <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand" Margin="0, 0, 10, 0">
+                                                    <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand" IsVisible="{Binding HasDueDate}">
                                                         <Image Source="ToDate.png" Style="{StaticResource ListViewDetailItemImage}"/>
                                                         <Label Text="{Binding EndDate, StringFormat='{0:dd.MM.yy}'}" Style="{StaticResource DetailItemLabel}"/>
                                                     </StackLayout>

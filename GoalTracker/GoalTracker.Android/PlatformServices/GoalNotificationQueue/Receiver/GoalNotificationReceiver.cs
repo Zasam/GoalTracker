@@ -1,13 +1,10 @@
 ﻿using System;
 using Android.App;
 using Android.Content;
-using Autofac;
-using GoalTracker.DI;
 using GoalTracker.Droid.PlatformServices.Notification;
 using GoalTracker.Entities;
 using GoalTracker.Extensions;
 using GoalTracker.PlatformServices;
-using GoalTracker.Services.Interface;
 using Microsoft.AppCenter.Crashes;
 using Newtonsoft.Json;
 
@@ -16,7 +13,7 @@ namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver
     [BroadcastReceiver(Enabled = true)]
     public class GoalNotificationReceiver : BroadcastReceiver
     {
-        public override async void OnReceive(Android.Content.Context context, Intent intent)
+        public override void OnReceive(Android.Content.Context context, Intent intent)
         {
             INotifier notifier = new Notifier();
 
@@ -54,11 +51,8 @@ namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver
                         var alarmManager = (AlarmManager) Application.Context.GetSystemService(Android.Content.Context.AlarmService);
                         alarmManager?.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, notificationDateTimeInMilliseconds, pendingNotificationIntent);
 
-                        var container = Bootstrapper.GetContainer();
-                        var repository = container.Resolve<IGoalRepository>();
-
                         // Push the notification which was received by the alarm
-                        notifier.PushNotification(repository, notificationGoal.Title, notificationGoal.NotificationId, notificationGoal.RequestCode, username);
+                        notifier.PushNotification(notificationGoal.Title, notificationGoal.NotificationId, notificationGoal.RequestCode, username);
                     }
                 }
             }

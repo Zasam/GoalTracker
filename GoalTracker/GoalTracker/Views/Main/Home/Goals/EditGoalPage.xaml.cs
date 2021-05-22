@@ -5,7 +5,6 @@ using GoalTracker.PlatformServices;
 using GoalTracker.Utilities;
 using GoalTracker.ViewModels.Interface;
 using Microsoft.AppCenter.Crashes;
-using Syncfusion.XForms.Pickers;
 using Syncfusion.XForms.TextInputLayout;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -15,6 +14,8 @@ namespace GoalTracker.Views.Main.Home.Goals
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class EditGoalPage : ContentPage
     {
+        public ISettingViewModel SettingViewModel { get; }
+
         private readonly GoalTask[] goalTasks;
         private readonly IGoalViewModel goalViewModel;
         private readonly Goal goalToEdit;
@@ -22,8 +23,10 @@ namespace GoalTracker.Views.Main.Home.Goals
         private int goalTaskCounter;
         private bool saving;
 
-        public EditGoalPage(IGoalViewModel goalViewModel, Goal goal, GoalTask[] goalTasks)
+        public EditGoalPage(IGoalViewModel goalViewModel, ISettingViewModel settingViewModel, Goal goal, GoalTask[] goalTasks)
         {
+            SettingViewModel = settingViewModel;
+
             goalToEdit = goal;
             contentLoaded = false;
             this.goalTasks = goalTasks;
@@ -92,28 +95,6 @@ namespace GoalTracker.Views.Main.Home.Goals
             GoalTitleTextInputLayout.HasError = !valid;
             ErrorTextLabel.IsVisible = !valid;
             return valid;
-        }
-
-        private void GoalNotificationTimePicker_TimeSelected(object sender, TimeChangedEventArgs e)
-        {
-            try
-            {
-                var newValue = (TimeSpan) e.NewValue;
-
-                var hour = DateTime.Now.Hour;
-                var minute = DateTime.Now.Minute;
-                if ((newValue < TimeSpan.FromHours(hour) || newValue.Hours == hour && newValue.Minutes <= minute) &&
-                    GoalStartDatePicker.Date.Day <= DateTime.Now.Day &&
-                    GoalStartDatePicker.Date.Month <= DateTime.Now.Month && !saving && contentLoaded)
-                {
-                    GoalNotificationTimePicker.Time = new TimeSpan(hour + 1, 00, 00);
-                    DependencyService.Get<IMessenger>().ShortMessage("Bitte wähle einen Zeitpunkt in der Zukunft aus.");
-                }
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
         }
 
         private void AddGoalTaskButton_OnClicked(object sender, EventArgs e)

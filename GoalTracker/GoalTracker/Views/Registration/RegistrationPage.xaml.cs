@@ -46,7 +46,7 @@ namespace GoalTracker.Views.Registration
                 }
 
                 //TODO: How to get title of the unlocked achievement?
-                await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel, AchievementProgressBar, "Erfolg freigeschaltet: " + "SIGNUP");
+                await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel, AchievementProgressBar, "Erfolg freigeschaltet: " + settingViewModel.LoadedAchievement.Title);
             }
             catch (Exception ex)
             {

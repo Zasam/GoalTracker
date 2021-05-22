@@ -58,7 +58,7 @@ namespace GoalTracker.Views.Main.Home.Goals
 
         private async void AddGoalToolbarItem_OnClicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new AddGoalPage(goalViewModel));
+            await Navigation.PushAsync(new AddGoalPage(goalViewModel, settingViewModel));
         }
 
         #endregion // ToolbarItem Events
@@ -94,7 +94,7 @@ namespace GoalTracker.Views.Main.Home.Goals
                     if (editSwipeImage?.Parent is View editSwipeImageView)
                     {
                         var tapGestureRecognizer = new TapGestureRecognizer();
-                        tapGestureRecognizer.Tapped += delegate { Navigation.PushAsync(new EditGoalPage(goalViewModel, goalViewModel.SelectedGoal, goalViewModel.SelectedGoal.GoalTasks.ToArray())); };
+                        tapGestureRecognizer.Tapped += delegate { Navigation.PushAsync(new EditGoalPage(goalViewModel, settingViewModel, goalViewModel.SelectedGoal, goalViewModel.SelectedGoal.GoalTasks.ToArray())); };
                         editSwipeImageView.GestureRecognizers.Add(tapGestureRecognizer);
                     }
                 }

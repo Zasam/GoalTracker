@@ -214,7 +214,6 @@ namespace GoalTracker.ViewModels
                 if (LoadedAchievement != null)
                 {
                     var firstUnlock = LoadedAchievement.Unlock();
-
                     if (firstUnlock)
                         await achievementRepository.SaveChangesAsync();
                 }
@@ -260,8 +259,8 @@ namespace GoalTracker.ViewModels
                     await RegisterDefaultUserAsync();
 
                 var signUpAchievement = new Achievement(User, "SIGNUP", "Erfolgreich registriert 💯", "Vielen Dank das du " + nameof(GoalTracker) + " installiert hast 💖", 15);
-                var firstGoalCreatedAchievement = new Achievement(User, "GOALADD", "Dein erstes Ziel 🚀 erstellt", "Du hast dein erstes Ziel gesetzt, Super!", 25);
-                var firstGoalEditedAchievement = new Achievement(User, "GOALEDIT", "Dein erstes Ziel 🚀 bearbeitet", "Du hast dein erstes Ziel bearbeitet", 10);
+                var firstGoalCreatedAchievement = new Achievement(User, "ADDGOAL", "Dein erstes Ziel 🚀 erstellt", "Du hast dein erstes Ziel gesetzt, Super!", 25);
+                var firstGoalEditedAchievement = new Achievement(User, "EDITGOAL", "Dein erstes Ziel 🚀 bearbeitet", "Du hast dein erstes Ziel bearbeitet", 10);
                 var successApproval10Reached = new Achievement(User, "GOALSUCCESSAPPROVAL10", "10x erfolgreich", "Du hast dein Ziel schon 10 mal erfolgreich abgeschlossen", 30);
                 var successApproval25Reached = new Achievement(User, "GOALSUCCESSAPPROVAL25", "25x erfolgreich", "Du hast dein Ziel schon 25 mal erfolgreich abgeschlossen", 45);
                 var successApproval50Reached = new Achievement(User, "GOALSUCCESSAPPROVAL50", "50x erfolgreich", "Du hast dein Ziel schon 50 mal erfolgreich abgeschlossen", 60);
@@ -306,6 +305,7 @@ namespace GoalTracker.ViewModels
             try
             {
                 await userRepository.ChangeUsernameAsync(name);
+                await LoadUserAsync();
             }
             catch (Exception ex)
             {

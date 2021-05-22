@@ -32,6 +32,7 @@ namespace GoalTracker.Entities
         /// <param name="notificationTime">First notification time of the goal</param>
         /// <param name="notificationId">The notification id of the goal</param>
         /// <param name="startingRequestCode">The starting request code of the goal</param>
+        /// <param name="goalImage">The descriptive image of the goal</param>
         public Goal(string title, string notes, DateTime startDate, bool hasDueDate, DateTime endDate,
             GoalAppointmentInterval goalAppointmentInterval, TimeSpan notificationTime, int notificationId,
             int startingRequestCode, string goalImage)

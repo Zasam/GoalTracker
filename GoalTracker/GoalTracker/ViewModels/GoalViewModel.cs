@@ -356,9 +356,7 @@ namespace GoalTracker.ViewModels
                 var notificationQueueManager = DependencyService.Get<INotificationQueueManager>();
                 //TODO: Alarms canceled properly?
                 notificationQueueManager.CancelAlarms(goal);
-                notificationQueueManager.QueueGoalNotificationBroadcast(goalRepository, goal,
-                    new[] {goal.RequestCode, goal.RequestCode - 1, goal.RequestCode - 2},
-                    user.Name);
+                notificationQueueManager.QueueGoalNotificationBroadcast(goal, new[] {goal.RequestCode, goal.RequestCode - 1, goal.RequestCode - 2}, user.Name);
             }
             catch (Exception ex)
             {
@@ -405,24 +403,25 @@ namespace GoalTracker.ViewModels
                 var goalAppointments = goal.GetAppointments();
                 await GoalAppointmentRepository.AddRangeAsync(goalAppointments);
 
-                var tasks = new List<GoalTask>();
-                foreach (var goalTaskTitle in GoalTaskTitles)
+                if (GoalTaskTitles != null)
                 {
-                    var task = new GoalTask(goal, goalTaskTitle, string.Empty, false);
-                    tasks.Add(task);
+                    var tasks = new List<GoalTask>();
+                    foreach (var goalTaskTitle in GoalTaskTitles)
+                    {
+                        var task = new GoalTask(goal, goalTaskTitle, string.Empty, false);
+                        tasks.Add(task);
+                    }
+
+                    if (tasks.Any())
+                        await GoalTaskRepository.AddRangeAsync(tasks);
+
+                    goal.GoalTaskCount = tasks.Count;
+                    await goalRepository.SaveChangesAsync();
                 }
 
-                if (tasks.Any())
-                    await GoalTaskRepository.AddRangeAsync(tasks);
-
-                goal.GoalTaskCount = tasks.Count;
-                await goalRepository.SaveChangesAsync();
-
                 var user = await userRepository.GetUserAsync();
-
                 var notificationQueueManager = DependencyService.Get<INotificationQueueManager>();
-                notificationQueueManager.QueueGoalNotificationBroadcast(goalRepository, goal, goalRequestCodes,
-                    user.Name);
+                notificationQueueManager.QueueGoalNotificationBroadcast(goal, goalRequestCodes, user.Name);
             }
             catch (Exception ex)
             {

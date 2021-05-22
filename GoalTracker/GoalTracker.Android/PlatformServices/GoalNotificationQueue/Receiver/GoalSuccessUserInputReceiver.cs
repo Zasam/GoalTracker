@@ -39,11 +39,12 @@ namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver
                 if (savedGoal == null)
                     return;
 
-                //TODO: Really get only one appointment with this method? Inspect further!!!
-                var goalAppointment = await goalAppointmentRepository.GetByParentAndApprovalDayAsync(savedGoal, DateTime.Now);
-                goalAppointment.Approved = true;
-                goalAppointment.Success = false;
-                await goalAppointmentRepository.SaveChangesAsync();
+                var goalAppointment = await goalAppointmentRepository.GetByParentAndAppointmentDateAsync(savedGoal, DateTime.Now);
+                if (goalAppointment != null)
+                {
+                    goalAppointment.Approve(true);
+                    await goalAppointmentRepository.SaveChangesAsync();
+                }
             }
             catch (Exception ex)
             {
