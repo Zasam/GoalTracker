@@ -65,14 +65,14 @@
                 
                 <border:SfBorder Grid.Row="3" HasShadow="True" ShadowColor="Black" BorderWidth="0">
                     <pickers:SfDatePicker x:Name="GoalStartDatePicker"
-                                                       Date="{Binding GoalStartDate}"
-                                                       MinimumDate="{Binding GoalMinimumStartDate}"
-                                                       HeaderText="&#x1F5D3; Start"/>
+                                          Date="{Binding GoalStartDate}"
+                                          MinimumDate="{Binding GoalMinimumStartDate}"
+                                          HeaderText="&#x1F5D3; Start"/>
                 </border:SfBorder>
 
                 <buttons:SfCheckBox Grid.Row="4"  x:Name="GoalHasDueDateCheckBox"
-                                              IsChecked="{Binding GoalHasDueDate}" 
-                                              Text="Endet"/>
+                                    IsChecked="{Binding GoalHasDueDate}" 
+                                    Text="Endet"/>
 
                 <pickers:SfDatePicker Grid.Row="5"
                                       Grid.Column="0"

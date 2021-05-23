@@ -118,7 +118,6 @@
                             <infrastructure:EventToCommandBehavior EventName="Clicked" Command="{Binding SettingViewModel.UnlockAchievementAsyncCommand, Source={x:Reference AddGoalPageInstance}}" CommandParameter="ADDGOAL"/>
                         </syncfusionButtons:SfButton.Behaviors>
                     </syncfusionButtons:SfButton>
-
                 </StackLayout>
 
                 <StackLayout x:Name="AchievementStackLayout" Margin="0, 15, 0, 0" Grid.Row="11" Grid.Column="0">

@@ -258,15 +258,16 @@ namespace GoalTracker.ViewModels
                 if (User == null)
                     await RegisterDefaultUserAsync();
 
+                // TODO: Make this to a enum / struct so you can statically reference to it? Like when playing achievement unlocked animation, you need to get the title/description of the unlocked achievement!
                 var signUpAchievement = new Achievement(User, "SIGNUP", "Erfolgreich registriert 💯", "Vielen Dank das du " + nameof(GoalTracker) + " installiert hast 💖", 15);
                 var firstGoalCreatedAchievement = new Achievement(User, "ADDGOAL", "Dein erstes Ziel 🚀 erstellt", "Du hast dein erstes Ziel gesetzt, Super!", 25);
                 var firstGoalEditedAchievement = new Achievement(User, "EDITGOAL", "Dein erstes Ziel 🚀 bearbeitet", "Du hast dein erstes Ziel bearbeitet", 10);
                 var successApproval10Reached = new Achievement(User, "GOALSUCCESSAPPROVAL10", "10x erfolgreich", "Du hast dein Ziel schon 10 mal erfolgreich abgeschlossen", 30);
                 var successApproval25Reached = new Achievement(User, "GOALSUCCESSAPPROVAL25", "25x erfolgreich", "Du hast dein Ziel schon 25 mal erfolgreich abgeschlossen", 45);
                 var successApproval50Reached = new Achievement(User, "GOALSUCCESSAPPROVAL50", "50x erfolgreich", "Du hast dein Ziel schon 50 mal erfolgreich abgeschlossen", 60);
-                var approval10Reached = new Achievement(User, "GOALAPPROVALGEN10", "10 Benachrichtigung bestätigt", "Vielen Dank das du " + nameof(GoalTracker) + " nutzt! Schön das du an deinen Zielen dran bleibst.", 10);
-                var approval25Reached = new Achievement(User, "GOALAPPROVALGEN25", "25 Benachrichtigung bestätigt", "Vielen Dank das du " + nameof(GoalTracker) + " nutzt! Wow du hast schon 25 Benachrichtigungen bestätigt.", 25);
-                var approval50Reached = new Achievement(User, "GOALAPPROVALGEN50", "50 Benachrichtigung bestätigt", "Vielen Dank das du " + nameof(GoalTracker) + " nutzt! Unglaublich du hast schon 50 Benachrichtigungen bestätigt.", 50);
+                var approval10Reached = new Achievement(User, "GOALAPPROVAL10", "10 Benachrichtigung bestätigt", "Vielen Dank das du " + nameof(GoalTracker) + " nutzt! Schön das du an deinen Zielen dran bleibst.", 10);
+                var approval25Reached = new Achievement(User, "GOALAPPROVAL25", "25 Benachrichtigung bestätigt", "Vielen Dank das du " + nameof(GoalTracker) + " nutzt! Wow du hast schon 25 Benachrichtigungen bestätigt.", 25);
+                var approval50Reached = new Achievement(User, "GOALAPPROVAL50", "50 Benachrichtigung bestätigt", "Vielen Dank das du " + nameof(GoalTracker) + " nutzt! Unglaublich du hast schon 50 Benachrichtigungen bestätigt.", 50);
 
                 var newAchievements = new List<Achievement>
                 {

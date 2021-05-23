@@ -64,7 +64,7 @@ namespace GoalTracker.Views.Main.Home.GoalTasks
             //TODO: Implement editing of goal tasks!!!
         }
 
-        private void EditGoalTaskRightSwipe_OnBindingContextChanged(object sender, EventArgs e)
+        private void EditGoalTaskLeftSwipe_OnBindingContextChanged(object sender, EventArgs e)
         {
             try
             {
@@ -105,17 +105,6 @@ namespace GoalTracker.Views.Main.Home.GoalTasks
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-            }
-        }
-
-        private void SetTaskCompletedLeftSwipeImage_OnBindingContextChanged(object sender, EventArgs e)
-        {
-            if (setTaskCompletedImage == null)
-            {
-                setTaskCompletedImage = sender as Image;
-
-                if (setTaskCompletedImage?.Parent is View setTaskCompletedImageView)
-                    setTaskCompletedImageView.GestureRecognizers.Add(new TapGestureRecognizer {Command = goalTaskViewModel.SetTaskCompletedAsyncCommand, CommandParameter = goalTaskViewModel.SelectedGoalTask});
             }
         }
     }

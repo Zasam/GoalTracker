@@ -21,16 +21,13 @@ namespace GoalTracker.Views.Main.Home.Goals
         private readonly GoalTask[] goalTasks;
         private readonly IGoalViewModel goalViewModel;
         private readonly Goal goalToEdit;
-        private bool contentLoaded;
         private int goalTaskCounter;
-        private bool saving;
 
         public EditGoalPage(IGoalViewModel goalViewModel, ISettingViewModel settingViewModel, Goal goal, GoalTask[] goalTasks)
         {
             SettingViewModel = settingViewModel;
 
             goalToEdit = goal;
-            contentLoaded = false;
             this.goalTasks = goalTasks;
             this.goalViewModel = goalViewModel;
             BindingContext = goalViewModel;
@@ -44,10 +41,8 @@ namespace GoalTracker.Views.Main.Home.Goals
             try
             {
                 base.OnAppearing();
-
-                saving = false;
                 InitializeComponentValues(goalToEdit, goalTasks);
-                contentLoaded = true;
+                AchievementStackLayout.InitializeAchievementAnimation();
             }
             catch (Exception ex)
             {
@@ -66,6 +61,7 @@ namespace GoalTracker.Views.Main.Home.Goals
                 goalViewModel.GoalEndDate = goal.EndDate;
                 goalViewModel.GoalNotificationTime = goal.NotificationTime;
                 goalViewModel.GoalNotificationIntervalIndex = (int) goal.GoalAppointmentInterval;
+                goalViewModel.GoalImage = goal.DetailImage;
                 InitializeGoalTasksComponent(tasks);
             }
             catch (Exception ex)
@@ -83,7 +79,7 @@ namespace GoalTracker.Views.Main.Home.Goals
 
                 var messenger = DependencyService.Get<IMessenger>();
                 messenger.LongMessage($"Ziel: {goalToEdit.Title} wurde erfolgreich bearbeitet.");
-                await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel, AchievementProgressBar, SettingViewModel.LoadedAchievement.Title);
+                await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel, AchievementProgressBar, "Erfolg freigeschaltet: Dein erstes Ziel 🚀 bearbeitet" + Environment.NewLine + "Du hast dein erstes Ziel bearbeitet, toll :)");
             }
             catch (Exception ex)
             {
@@ -173,13 +169,13 @@ namespace GoalTracker.Views.Main.Home.Goals
             }
         }
 
-        private void InitializeGoalTasksComponent(GoalTask[] goalTasks)
+        private void InitializeGoalTasksComponent(GoalTask[] tasks)
         {
             try
             {
-                if (goalTasks.Any())
+                if (tasks.Any())
                 {
-                    foreach (var goalTask in goalTasks)
+                    foreach (var goalTask in tasks)
                     {
                         goalTaskCounter++;
 

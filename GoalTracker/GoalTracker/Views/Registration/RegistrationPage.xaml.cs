@@ -45,8 +45,8 @@ namespace GoalTracker.Views.Registration
                     return;
                 }
 
-                //TODO: How to get title of the unlocked achievement?
-                await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel, AchievementProgressBar, "Erfolg freigeschaltet: " + settingViewModel.LoadedAchievement.Title);
+                await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel, AchievementProgressBar,
+                    "Erfolg freigeschaltet: Erfolgreich registriert 💯" + Environment.NewLine + "Vielen Dank das du " + nameof(GoalTracker) + " installiert hast 💖");
             }
             catch (Exception ex)
             {

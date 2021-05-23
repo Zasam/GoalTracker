@@ -56,18 +56,16 @@
                         <syncfusionListView:SfListView.LeftSwipeTemplate>
                             <DataTemplate>
                                 <syncfusionBorder:SfBorder Style="{StaticResource SelectedViewcellBorderContainer}">
-                                    <Grid>
-                                        <Grid HorizontalOptions="Fill" VerticalOptions="Fill" Grid.Column="0">
-                                            <Grid VerticalOptions="Center" HorizontalOptions="Center">
-                                                <Image Grid.Column="0"
-                                                           Grid.Row="0"
-                                                           BackgroundColor="Transparent"
-                                                           HeightRequest="35"
-                                                           WidthRequest="35"
-                                                           Source="{Binding Completed, Converter={StaticResource GoalTaskCompletionToImageSourceConverter}}"
-                                                           x:Name="SetTaskCompletedLeftSwipeImage"
-                                                           BindingContextChanged="SetTaskCompletedLeftSwipeImage_OnBindingContextChanged"/>
-                                            </Grid>
+                                    <Grid HorizontalOptions="Fill" VerticalOptions="Fill" Grid.Column="0">
+                                        <Grid VerticalOptions="Center" HorizontalOptions="Center">
+                                            <Image Grid.Column="0"
+                                                   Grid.Row="0"
+                                                   BackgroundColor="Transparent"
+                                                   HeightRequest="35"
+                                                   WidthRequest="35"
+                                                   Source="Edit.png"
+                                                   x:Name="EditGoalTaskRightSwipe"
+                                                   BindingContextChanged="EditGoalTaskLeftSwipe_OnBindingContextChanged"/>
                                         </Grid>
                                     </Grid>
                                 </syncfusionBorder:SfBorder>
@@ -77,36 +75,16 @@
                         <syncfusionListView:SfListView.RightSwipeTemplate>
                             <DataTemplate>
                                 <syncfusionBorder:SfBorder Style="{StaticResource SelectedViewcellBorderContainer}">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <Grid HorizontalOptions="Fill" VerticalOptions="Fill" Grid.Column="0">
-                                            <Grid VerticalOptions="Center" HorizontalOptions="Center">
-                                                <Image Grid.Column="0"
-                                                           Grid.Row="0"
-                                                           BackgroundColor="Transparent"
-                                                           HeightRequest="35"
-                                                           WidthRequest="35"
-                                                           Source="Edit.png"
-                                                           x:Name="EditGoalTaskRightSwipe"
-                                                           BindingContextChanged="EditGoalTaskRightSwipe_OnBindingContextChanged"/>
-                                            </Grid>
-                                        </Grid>
-
-                                        <Grid HorizontalOptions="Fill" VerticalOptions="Fill" Grid.Column="1">
-                                            <Grid VerticalOptions="Center" HorizontalOptions="Center">
-                                                <Image Grid.Column="0"
-                                                           Grid.Row="0"
-                                                           BackgroundColor="Transparent"
-                                                           HeightRequest="35"
-                                                           WidthRequest="35"
-                                                           Source="Delete.png"
-                                                           x:Name="DeleteGoalTaskRightSwipe"
-                                                           BindingContextChanged="DeleteGoalTaskRightSwipe_OnBindingContextChanged"/>
-                                            </Grid>
+                                    <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
+                                        <Grid VerticalOptions="Center" HorizontalOptions="Center">
+                                            <Image Grid.Column="0"
+                                                   Grid.Row="0"
+                                                   BackgroundColor="Transparent"
+                                                   HeightRequest="35"
+                                                   WidthRequest="35"
+                                                   Source="Delete.png"
+                                                   x:Name="DeleteGoalTaskRightSwipe"
+                                                   BindingContextChanged="DeleteGoalTaskRightSwipe_OnBindingContextChanged"/>
                                         </Grid>
                                     </Grid>
                                 </syncfusionBorder:SfBorder>

@@ -327,21 +327,21 @@ namespace GoalTracker.ViewModels
         {
             try
             {
-                goal.Title = GoalTitle;
-                goal.Notes = GoalNotes;
-                goal.StartDate = GoalStartDate;
-                goal.HasDueDate = GoalHasDueDate;
-                goal.EndDate = GoalEndDate;
-                goal.GoalAppointmentInterval = GoalNotificationInterval;
-                goal.NotificationTime = GoalNotificationTime;
-                goal.DetailImage = GoalImage;
-
+                var savedGoal = await goalRepository.GetByTitleAsync(goal.Title);
+                savedGoal.Title = GoalTitle;
+                savedGoal.Notes = GoalNotes;
+                savedGoal.StartDate = GoalStartDate;
+                savedGoal.HasDueDate = GoalHasDueDate;
+                savedGoal.EndDate = GoalEndDate;
+                savedGoal.GoalAppointmentInterval = GoalNotificationInterval;
+                savedGoal.NotificationTime = GoalNotificationTime;
+                savedGoal.DetailImage = GoalImage;
                 await goalRepository.SaveChangesAsync();
 
                 var currentGoalTasks = await GoalTaskRepository.GetAllByParentAsync(goal);
                 await GoalTaskRepository.RemoveRangeAsync(currentGoalTasks);
 
-                if (goalTasks.Any())
+                if (goalTasks != null && goalTasks.Any())
                 {
                     foreach (var goalTask in goalTasks)
                         await GoalTaskRepository.AddAsync(goalTask);
@@ -352,6 +352,8 @@ namespace GoalTracker.ViewModels
                 await GoalTaskRepository.SaveChangesAsync();
 
                 var user = await userRepository.GetUserAsync();
+
+                await LoadGoalsAsync();
 
                 var notificationQueueManager = DependencyService.Get<INotificationQueueManager>();
                 //TODO: Alarms canceled properly?

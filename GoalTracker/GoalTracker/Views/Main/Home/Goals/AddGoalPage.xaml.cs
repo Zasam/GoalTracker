@@ -17,17 +17,13 @@ namespace GoalTracker.Views.Main.Home.Goals
         public ISettingViewModel SettingViewModel { get; }
 
         private readonly IGoalViewModel goalViewModel;
-        private bool contentLoaded;
         private int goalTaskCounter;
-        private bool saving;
         private string[] goalTaskTitles;
 
         public AddGoalPage(IGoalViewModel goalViewModel, ISettingViewModel settingViewModel)
         {
             this.goalViewModel = goalViewModel;
             SettingViewModel = settingViewModel;
-
-            contentLoaded = false;
             goalViewModel.GoalHasDueDate = false;
             BindingContext = goalViewModel;
 
@@ -38,11 +34,9 @@ namespace GoalTracker.Views.Main.Home.Goals
         {
             try
             {
-                saving = false;
                 ResetInputs();
                 base.OnAppearing();
                 AchievementStackLayout.InitializeAchievementAnimation();
-                contentLoaded = true;
             }
             catch (Exception ex)
             {
@@ -62,7 +56,7 @@ namespace GoalTracker.Views.Main.Home.Goals
 
                 //TODO: how to identify if new achievement was unlocked? or is already unlocked?
                 await AchievementStackLayout.StartAchievementUnlockedAnimation(AchievementLabel,
-                    AchievementProgressBar, "Erfolg freigeschaltet: " + SettingViewModel.LoadedAchievement.Title);
+                    AchievementProgressBar, "Erfolg freigeschaltet: Dein erstes Ziel 🚀 erstellt" + Environment.NewLine + "Du hast dein erstes Ziel gesetzt, Super!");
             }
             catch (Exception ex)
             {
