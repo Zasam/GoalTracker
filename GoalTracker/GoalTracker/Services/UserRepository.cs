@@ -34,23 +34,37 @@ namespace GoalTracker.Services
 
         public async Task AddUserAsync(User user)
         {
-            var savedUser = await GetUserAsync();
+            try
+            {
+                var savedUser = await GetUserAsync();
 
-            if (savedUser == null)
-                await AddAsync(user);
-            else
-                throw new Exception("WARNING: Only one user should be registered, you are trying to add a second user to the database.");
+                if (savedUser == null)
+                    await AddAsync(user);
+                else
+                    throw new Exception("WARNING: Only one user should be registered, you are trying to add a second user to the database.");
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         public async Task ChangeUsernameAsync(string name)
         {
-            var user = await GetUserAsync();
+            try
+            {
+                var user = await GetUserAsync();
 
-            if (user == null)
-                throw new InvalidOperationException("WARNING: You are trying to change the username of a user, but no registered user could be found.");
+                if (user == null)
+                    throw new InvalidOperationException("WARNING: You are trying to change the username of a user, but no registered user could be found.");
 
-            user.Name = name;
-            await SaveChangesAsync();
+                user.Name = name;
+                await SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
     }
 }

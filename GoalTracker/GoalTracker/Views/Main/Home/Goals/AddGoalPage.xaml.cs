@@ -22,12 +22,19 @@ namespace GoalTracker.Views.Main.Home.Goals
 
         public AddGoalPage(IGoalViewModel goalViewModel, ISettingViewModel settingViewModel)
         {
-            this.goalViewModel = goalViewModel;
-            SettingViewModel = settingViewModel;
-            goalViewModel.GoalHasDueDate = false;
-            BindingContext = goalViewModel;
+            try
+            {
+                this.goalViewModel = goalViewModel;
+                SettingViewModel = settingViewModel;
+                goalViewModel.GoalHasDueDate = false;
+                BindingContext = goalViewModel;
 
-            InitializeComponent();
+                InitializeComponent();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         protected override void OnAppearing()
@@ -83,13 +90,20 @@ namespace GoalTracker.Views.Main.Home.Goals
 
         private void GoalImageEntry_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            var text = GoalImageEntry.Text;
-
-            // TODO: Implement check if a emoji was selected | All emojis equal to string.Length => 2?
-            if (text.Length != 0 && text.Length != 2)
+            try
             {
-                goalViewModel.GoalImage = string.Empty;
-                DependencyService.Get<IMessenger>().ShortMessage("Bitte hinterlege ein Emoji als beschreibendes Bild für dein Ziel");
+                var text = GoalImageEntry.Text;
+
+                // TODO: Implement check if a emoji was selected | All emojis equal to string.Length => 2?
+                if (text.Length != 0 && text.Length != 2)
+                {
+                    goalViewModel.GoalImage = string.Empty;
+                    DependencyService.Get<IMessenger>().ShortMessage("Bitte hinterlege ein Emoji als beschreibendes Bild für dein Ziel");
+                }
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
             }
         }
 
@@ -134,19 +148,33 @@ namespace GoalTracker.Views.Main.Home.Goals
 
         private void RemoveGoalTaskButton_OnClicked(object sender, EventArgs e)
         {
-            if (goalTaskCounter > 0)
+            try
             {
-                GoalTaskStackLayout.Children.RemoveAt(goalTaskCounter - 1);
-                goalTaskCounter--;
-            }
+                if (goalTaskCounter > 0)
+                {
+                    GoalTaskStackLayout.Children.RemoveAt(goalTaskCounter - 1);
+                    goalTaskCounter--;
+                }
 
-            if (goalTaskCounter == 0)
-                RemoveGoalTaskButton.IsVisible = false;
+                if (goalTaskCounter == 0)
+                    RemoveGoalTaskButton.IsVisible = false;
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         private void TaskTitleEntry_TextChanged(object sender, TextChangedEventArgs e)
         {
-            GetTasks();
+            try
+            {
+                GetTasks();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         // TODO: Implement tasks in viewmodel!
@@ -176,7 +204,14 @@ namespace GoalTracker.Views.Main.Home.Goals
 
         private async void AchievementProgressBar_OnProgressCompleted(object sender, ProgressValueEventArgs e)
         {
-            await Navigation.PopAsync(true);
+            try
+            {
+                await Navigation.PopAsync(true);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
     }
 }

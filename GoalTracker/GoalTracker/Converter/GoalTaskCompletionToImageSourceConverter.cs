@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 
 namespace GoalTracker.Converter
@@ -8,11 +9,19 @@ namespace GoalTracker.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool goalTaskCompleted)
-                if (goalTaskCompleted)
-                    return "Failed.png";
+            try
+            {
+                if (value is bool goalTaskCompleted)
+                    if (goalTaskCompleted)
+                        return "Failed.png";
 
-            return "Success.png";
+                return "Success.png";
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                return "Failed.png";
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

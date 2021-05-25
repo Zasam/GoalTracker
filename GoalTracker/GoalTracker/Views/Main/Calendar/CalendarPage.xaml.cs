@@ -12,10 +12,17 @@ namespace GoalTracker.Views.Main.Calendar
     {
         public CalendarPage(ICalendarViewModel calendarViewModel)
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
 
-            GoalReminderCalendar.Locale = new CultureInfo("de-DE");
-            BindingContext = calendarViewModel;
+                GoalReminderCalendar.Locale = new CultureInfo("de-DE");
+                BindingContext = calendarViewModel;
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         protected override void OnAppearing()

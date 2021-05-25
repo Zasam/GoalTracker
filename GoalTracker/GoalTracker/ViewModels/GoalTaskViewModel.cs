@@ -81,12 +81,19 @@ namespace GoalTracker.ViewModels
 
         public GoalTaskViewModel(Goal parent, IGoalTaskRepository goalTaskRepository)
         {
-            ParentGoal = parent ?? throw new ArgumentNullException("Passed parent goal is null. Please provide a valid goal to instantiate the goal task viewmodel.");
-            this.goalTaskRepository = goalTaskRepository;
+            try
+            {
+                ParentGoal = parent ?? throw new ArgumentNullException("Passed parent goal is null. Please provide a valid goal to instantiate the goal task viewmodel.");
+                this.goalTaskRepository = goalTaskRepository;
 
-            DeleteTaskAsyncCommand = new Command<GoalTask>(async goalTask => await DeleteTaskAsync(goalTask));
-            SetTaskCompletedAsyncCommand = new Command<GoalTask>(async goalTask => await SetTaskCompletedAsync(goalTask));
-            LoadTasksAsyncCommand = new Command(async () => await LoadTasksAsync());
+                DeleteTaskAsyncCommand = new Command<GoalTask>(async goalTask => await DeleteTaskAsync(goalTask));
+                SetTaskCompletedAsyncCommand = new Command<GoalTask>(async goalTask => await SetTaskCompletedAsync(goalTask));
+                LoadTasksAsyncCommand = new Command(async () => await LoadTasksAsync());
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         private async Task DeleteTaskAsync(GoalTask goalTask)

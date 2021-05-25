@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 
 namespace GoalTracker.Converter
@@ -8,11 +9,18 @@ namespace GoalTracker.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool val)
+            try
             {
-                if (val)
-                    return Color.Green;
-                return Color.Red;
+                if (value is bool val)
+                {
+                    if (val)
+                        return Color.Green;
+                    return Color.Red;
+                }
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
             }
 
             return Color.Transparent;

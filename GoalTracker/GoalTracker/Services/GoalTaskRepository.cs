@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GoalTracker.Context;
 using GoalTracker.Entities;
 using GoalTracker.Services.Interface;
+using Microsoft.AppCenter.Crashes;
 
 namespace GoalTracker.Services
 {
@@ -18,41 +20,85 @@ namespace GoalTracker.Services
 
         public async Task<IEnumerable<GoalTask>> GetAllByParentAsync(Goal parent)
         {
-            return await FindAsync(gt => gt.GoalId == parent.Id);
+            try
+            {
+                return await FindAsync(gt => gt.GoalId == parent.Id);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                return null;
+            }
         }
 
         public new async Task RemoveRangeAsync(IEnumerable<GoalTask> goalTasks)
         {
-            await base.RemoveRangeAsync(goalTasks);
+            try
+            {
+                await base.RemoveRangeAsync(goalTasks);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         public new async Task AddAsync(GoalTask goalTask)
         {
-            await base.AddAsync(goalTask);
+            try
+            {
+                await base.AddAsync(goalTask);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         public new async Task AddRangeAsync(IEnumerable<GoalTask> goalTasks)
         {
-            var goalTaskCollection = goalTasks as GoalTask[] ?? goalTasks.ToArray();
-            foreach (var goalTask in goalTaskCollection)
+            try
             {
-                var parent = await GetParentAsync(goalTask);
-                parent.GoalTaskCount++;
-            }
+                var goalTaskCollection = goalTasks as GoalTask[] ?? goalTasks.ToArray();
+                foreach (var goalTask in goalTaskCollection)
+                {
+                    var parent = await GetParentAsync(goalTask);
+                    parent.GoalTaskCount++;
+                }
 
-            await base.AddRangeAsync(goalTaskCollection);
+                await base.AddRangeAsync(goalTaskCollection);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         public new async Task RemoveAsync(GoalTask goalTask)
         {
-            var parent = await GetParentAsync(goalTask);
-            parent.GoalTaskCount = parent.GoalTaskCount > 0 ? parent.GoalTaskCount - 1 : 0;
-            await base.RemoveAsync(goalTask);
+            try
+            {
+                var parent = await GetParentAsync(goalTask);
+                parent.GoalTaskCount = parent.GoalTaskCount > 0 ? parent.GoalTaskCount - 1 : 0;
+                await base.RemoveAsync(goalTask);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         private async Task<Goal> GetParentAsync(GoalTask child)
         {
-            return await context.Goals.FindAsync(child.GoalId);
+            try
+            {
+                return await context.Goals.FindAsync(child.GoalId);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                return null;
+            }
         }
     }
 }

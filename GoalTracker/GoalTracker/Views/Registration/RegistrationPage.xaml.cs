@@ -56,7 +56,14 @@ namespace GoalTracker.Views.Registration
 
         private void AchievementProgressBar_OnProgressCompleted(object sender, ProgressValueEventArgs e)
         {
-            AppShell.Instance.SetUIState(UIStates.Configuration, UIStates.Home);
+            try
+            {
+                AppShell.Instance.SetUIState(UIStates.Configuration, UIStates.Home);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
     }
 }

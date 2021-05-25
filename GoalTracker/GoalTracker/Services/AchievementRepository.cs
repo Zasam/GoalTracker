@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GoalTracker.Context;
 using GoalTracker.Entities;
 using GoalTracker.Services.Interface;
+using Microsoft.AppCenter.Crashes;
 
 namespace GoalTracker.Services
 {
@@ -17,31 +18,54 @@ namespace GoalTracker.Services
 
         public new async Task<IEnumerable<Achievement>> GetAllAsync()
         {
-            return await base.GetAllAsync();
+            try
+            {
+                return await base.GetAllAsync();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                return null;
+            }
         }
 
         public async Task<Achievement> GetByInternalTag(string internalTag)
         {
-            var achievements = await FindAsync(a => a.InternalTag == internalTag);
-            return achievements.ToList().FirstOrDefault();
+            try
+            {
+                var achievements = await FindAsync(a => a.InternalTag == internalTag);
+                return achievements.ToList().FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                return null;
+            }
         }
 
         public new async Task AddRangeAsync(IEnumerable<Achievement> achievements)
         {
-            User user = null;
-            var achievementsToSave = achievements as Achievement[] ?? achievements.ToArray();
-            foreach (var achievement in achievementsToSave)
-                if (user == null)
-                    user = achievement.User;
-                else if (user != achievement.User)
-                    throw new Exception("Multiple users where defined in the supplied achievements.");
+            try
+            {
+                User user = null;
+                var achievementsToSave = achievements as Achievement[] ?? achievements.ToArray();
+                foreach (var achievement in achievementsToSave)
+                    if (user == null)
+                        user = achievement.User;
+                    else if (user != achievement.User)
+                        throw new Exception("Multiple users where defined in the supplied achievements.");
 
-            var savedUser = Context.Users.FirstOrDefault(u => u.Name == user.Name);
+                var savedUser = Context.Users.FirstOrDefault(u => u.Name == user.Name);
 
-            if (savedUser == null)
-                throw new Exception("Supplied user(s) couldn't be found in the database. Please create the supplied user and try again");
+                if (savedUser == null)
+                    throw new Exception("Supplied user(s) couldn't be found in the database. Please create the supplied user and try again");
 
-            await base.AddRangeAsync(achievementsToSave);
+                await base.AddRangeAsync(achievementsToSave);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
     }
 }

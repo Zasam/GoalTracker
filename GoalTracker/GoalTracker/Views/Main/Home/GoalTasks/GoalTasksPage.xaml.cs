@@ -15,15 +15,21 @@ namespace GoalTracker.Views.Main.Home.GoalTasks
         private readonly IGoalTaskViewModel goalTaskViewModel;
         private Image deleteSwipeImage;
         private Image editSwipeImage;
-        private Image setTaskCompletedImage;
 
         public GoalTasksPage(IGoalTaskViewModel goalTaskViewModel, Goal parent)
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
 
-            this.goalTaskViewModel = goalTaskViewModel;
-            BindingContext = goalTaskViewModel;
-            Title = "Aufgaben für: " + parent.Title;
+                this.goalTaskViewModel = goalTaskViewModel;
+                BindingContext = goalTaskViewModel;
+                Title = "Aufgaben für: " + parent.Title;
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         private void GoalTaskListViewPullToRefresh_OnRefreshing(object sender, EventArgs e)

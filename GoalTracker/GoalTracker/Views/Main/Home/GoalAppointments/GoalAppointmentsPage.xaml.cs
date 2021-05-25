@@ -19,25 +19,46 @@ namespace GoalTracker.Views.Main.Home.GoalAppointments
 
         public GoalAppointmentsPage(IGoalAppointmentViewModel viewModel, Goal parent)
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
 
-            this.viewModel = viewModel;
-            BindingContext = viewModel;
+                this.viewModel = viewModel;
+                BindingContext = viewModel;
 
-            this.viewModel.OnApproved += ViewModelOnOnApproved;
+                this.viewModel.OnApproved += ViewModelOnOnApproved;
 
-            Title = "Benachrichtigungen für: " + parent.Title;
+                Title = "Benachrichtigungen für: " + parent.Title;
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         private void ViewModelOnOnApproved(object sender, EventArgs e)
         {
-            GoalAppointmentListView.ResetSwipe();
+            try
+            {
+                GoalAppointmentListView.ResetSwipe();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         protected override void OnDisappearing()
         {
-            GoalAppointmentListView.ResetSwipe();
-            base.OnDisappearing();
+            try
+            {
+                GoalAppointmentListView.ResetSwipe();
+                base.OnDisappearing();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         private void ApproveGoalAppointmentSuccess_OnBindingContextChanged(object sender, EventArgs e)

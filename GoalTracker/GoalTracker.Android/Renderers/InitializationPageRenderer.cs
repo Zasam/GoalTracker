@@ -1,5 +1,7 @@
-﻿using GoalTracker.Droid.Renderers;
+﻿using System;
+using GoalTracker.Droid.Renderers;
 using GoalTracker.Views.Initialization;
+using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
@@ -16,8 +18,15 @@ namespace GoalTracker.Droid.Renderers
 
         protected override void OnAttachedToWindow()
         {
-            base.OnAttachedToWindow();
-            MessagingCenter.Send(new object(), "ViewLoaded");
+            try
+            {
+                base.OnAttachedToWindow();
+                MessagingCenter.Send(new object(), "ViewLoaded");
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
     }
 }

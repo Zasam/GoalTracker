@@ -38,7 +38,6 @@ namespace GoalTracker.ViewModels
             }
         }
 
-
         private int successApprovalsWeek;
 
         /// <summary>
@@ -98,14 +97,21 @@ namespace GoalTracker.ViewModels
 
         public CalendarViewModel(IGoalRepository goalRepository, IGoalAppointmentRepository goalAppointmentRepository)
         {
-            this.goalRepository = goalRepository;
-            this.goalAppointmentRepository = goalAppointmentRepository;
+            try
+            {
+                this.goalRepository = goalRepository;
+                this.goalAppointmentRepository = goalAppointmentRepository;
 
-            var now = DateTime.Now;
-            CalendarMinDate = new DateTime(now.Year - 1, now.Month, now.Day);
-            CalendarMaxDate = new DateTime(now.Year + 1, now.Month, now.Day);
+                var now = DateTime.Now;
+                CalendarMinDate = new DateTime(now.Year - 1, now.Month, now.Day);
+                CalendarMaxDate = new DateTime(now.Year + 1, now.Month, now.Day);
 
-            LoadEventsAsyncCommand = new Command(async () => await LoadEventsAsync());
+                LoadEventsAsyncCommand = new Command(async () => await LoadEventsAsync());
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         private async Task LoadEventsAsync()

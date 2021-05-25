@@ -1,6 +1,7 @@
 ﻿using System;
 using GoalTracker.ViewModels.Interface;
 using GoalTracker.Views.Main.Settings.Achievements;
+using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -21,7 +22,14 @@ namespace GoalTracker.Views.Main.Settings
 
         private void ShowAchievementsButton_Clicked(object sender, EventArgs e)
         {
-            Navigation.PushAsync(new AchievementsPage(settingViewModel), true);
+            try
+            {
+                Navigation.PushAsync(new AchievementsPage(settingViewModel), true);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
     }
 }

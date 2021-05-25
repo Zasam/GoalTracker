@@ -25,15 +25,21 @@ namespace GoalTracker.Views.Main.Home.Goals
 
         public EditGoalPage(IGoalViewModel goalViewModel, ISettingViewModel settingViewModel, Goal goal, GoalTask[] goalTasks)
         {
-            SettingViewModel = settingViewModel;
+            try
+            {
+                SettingViewModel = settingViewModel;
+                goalToEdit = goal;
+                this.goalTasks = goalTasks;
+                this.goalViewModel = goalViewModel;
+                BindingContext = goalViewModel;
+                Title = $"Ziel: {goal.Title} bearbeiten";
 
-            goalToEdit = goal;
-            this.goalTasks = goalTasks;
-            this.goalViewModel = goalViewModel;
-            BindingContext = goalViewModel;
-            Title = $"Ziel: {goal.Title} bearbeiten";
-
-            InitializeComponent();
+                InitializeComponent();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         protected override void OnAppearing()
@@ -89,10 +95,18 @@ namespace GoalTracker.Views.Main.Home.Goals
 
         private bool ValidateInputs(Goal input)
         {
-            var valid = Validator.ValidateGoalInputs(input);
-            GoalTitleTextInputLayout.HasError = !valid;
-            ErrorTextLabel.IsVisible = !valid;
-            return valid;
+            try
+            {
+                var valid = Validator.ValidateGoalInputs(input);
+                GoalTitleTextInputLayout.HasError = !valid;
+                ErrorTextLabel.IsVisible = !valid;
+                return valid;
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                return false;
+            }
         }
 
         private void AddGoalTaskButton_OnClicked(object sender, EventArgs e)
@@ -135,39 +149,47 @@ namespace GoalTracker.Views.Main.Home.Goals
 
         private void RemoveGoalTaskButton_OnClicked(object sender, EventArgs e)
         {
-            if (goalTaskCounter > 0)
-            {
-                GoalTaskStackLayout.Children.RemoveAt(goalTaskCounter - 1);
-                goalTaskCounter--;
-            }
-
-            if (goalTaskCounter == 0)
-                RemoveGoalTaskButton.IsVisible = false;
-        }
-
-        private GoalTask[] GetTasks(Goal parent)
-        {
             try
             {
-                var tasks = new GoalTask[goalTaskCounter];
-
                 if (goalTaskCounter > 0)
-                    for (var i = 0; i <= goalTaskCounter - 1; i++)
-                    {
-                        var taskChildLayout = GoalTaskStackLayout.Children[i] as StackLayout;
-                        var taskTitleTextInputLayout = taskChildLayout?.Children[0] as SfTextInputLayout;
-                        var title = !(taskTitleTextInputLayout?.InputView is Entry taskTitleEntry) ? string.Empty : taskTitleEntry.Text;
-                        goalTasks[i] = new GoalTask(parent, title, string.Empty, false);
-                    }
+                {
+                    GoalTaskStackLayout.Children.RemoveAt(goalTaskCounter - 1);
+                    goalTaskCounter--;
+                }
 
-                return goalTasks;
+                if (goalTaskCounter == 0)
+                    RemoveGoalTaskButton.IsVisible = false;
             }
             catch (Exception ex)
             {
                 Crashes.TrackError(ex);
-                return null;
             }
         }
+
+        //TODO: Implement this in viewModel command EditGoalAsyncCommand!
+        //private GoalTask[] GetTasks(Goal parent)
+        //{
+        //    try
+        //    {
+        //        var tasks = new GoalTask[goalTaskCounter];
+
+        //        if (goalTaskCounter > 0)
+        //            for (var i = 0; i <= goalTaskCounter - 1; i++)
+        //            {
+        //                var taskChildLayout = GoalTaskStackLayout.Children[i] as StackLayout;
+        //                var taskTitleTextInputLayout = taskChildLayout?.Children[0] as SfTextInputLayout;
+        //                var title = !(taskTitleTextInputLayout?.InputView is Entry taskTitleEntry) ? string.Empty : taskTitleEntry.Text;
+        //                tasks[i] = new GoalTask(parent, title, string.Empty, false);
+        //            }
+
+        //        return tasks;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Crashes.TrackError(ex);
+        //        return null;
+        //    }
+        //}
 
         private void InitializeGoalTasksComponent(GoalTask[] tasks)
         {
@@ -215,15 +237,29 @@ namespace GoalTracker.Views.Main.Home.Goals
 
         private void GoalImageEntry_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            // TODO: Implement check if a emoji was selected
-            var text = GoalImageEntry.Text;
-            if (text.Length != 2)
-                GoalImageEntry.Text = string.Empty;
+            try
+            {
+                // TODO: Implement check if a emoji was selected
+                var text = GoalImageEntry.Text;
+                if (text.Length != 2)
+                    GoalImageEntry.Text = string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         private async void AchievementProgressBar_OnProgressCompleted(object sender, ProgressValueEventArgs e)
         {
-            await Navigation.PopAsync();
+            try
+            {
+                await Navigation.PopAsync();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
     }
 }

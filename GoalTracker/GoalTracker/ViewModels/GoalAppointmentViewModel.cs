@@ -85,12 +85,19 @@ namespace GoalTracker.ViewModels
 
         public GoalAppointmentViewModel(Goal parent, IGoalAppointmentRepository goalAppointmentRepository)
         {
-            Parent = parent ?? throw new ArgumentNullException("Passed parent goal is null. Please provide a valid goal to instantiate the goal appointment viewmodel.");
-            this.goalAppointmentRepository = goalAppointmentRepository;
+            try
+            {
+                Parent = parent ?? throw new ArgumentNullException("Passed parent goal is null. Please provide a valid goal to instantiate the goal appointment viewmodel.");
+                this.goalAppointmentRepository = goalAppointmentRepository;
 
-            LoadAppointmentsAsyncCommand = new Command(async () => await LoadAppointmentsAsync());
-            ApproveAppointmentAsyncCommand = new Command<GoalAppointment>(async appointment => await ApproveAppointmentAsync(appointment));
-            DisapproveAppointmentAsyncCommand = new Command<GoalAppointment>(async appointment => await DisapproveAppointmentAsync(appointment));
+                LoadAppointmentsAsyncCommand = new Command(async () => await LoadAppointmentsAsync());
+                ApproveAppointmentAsyncCommand = new Command<GoalAppointment>(async appointment => await ApproveAppointmentAsync(appointment));
+                DisapproveAppointmentAsyncCommand = new Command<GoalAppointment>(async appointment => await DisapproveAppointmentAsync(appointment));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         private async Task LoadAppointmentsAsync()

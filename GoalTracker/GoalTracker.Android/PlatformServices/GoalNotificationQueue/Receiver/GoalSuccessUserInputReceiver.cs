@@ -65,49 +65,56 @@ namespace GoalTracker.Droid.PlatformServices.GoalNotificationQueue.Receiver
 
         private static async Task CheckForUnlockedAchievements(INotifier notifier, IAchievementRepository achievementRepository, IEnumerable<GoalAppointment> goalAppointments)
         {
-            var appointments = goalAppointments.ToArray();
-            var approvedAppointments = appointments.Select(a => a.Approved).Count();
-            var successfulApprovedAppointments = appointments.Select(a => a.Approved && a.Success.HasValue && a.Success.Value).Count();
-
-            Achievement unlockedAchievement = null;
-
-            switch (approvedAppointments)
+            try
             {
-                case 10:
-                    unlockedAchievement = await achievementRepository.GetByInternalTag("GOALAPPROVAL10");
-                    break;
-                case 25:
-                    unlockedAchievement = await achievementRepository.GetByInternalTag("GOALAPPROVAL25");
-                    break;
-                case 50:
-                    unlockedAchievement = await achievementRepository.GetByInternalTag("GOALAPPROVAL50");
-                    break;
+                var appointments = goalAppointments.ToArray();
+                var approvedAppointments = appointments.Select(a => a.Approved).Count();
+                var successfulApprovedAppointments = appointments.Select(a => a.Approved && a.Success.HasValue && a.Success.Value).Count();
+
+                Achievement unlockedAchievement = null;
+
+                switch (approvedAppointments)
+                {
+                    case 10:
+                        unlockedAchievement = await achievementRepository.GetByInternalTag("GOALAPPROVAL10");
+                        break;
+                    case 25:
+                        unlockedAchievement = await achievementRepository.GetByInternalTag("GOALAPPROVAL25");
+                        break;
+                    case 50:
+                        unlockedAchievement = await achievementRepository.GetByInternalTag("GOALAPPROVAL50");
+                        break;
+                }
+
+                if (unlockedAchievement != null)
+                {
+                    unlockedAchievement.Unlock();
+                    notifier.PushNotification("Neuer Erfolg freigeschaltet", "Erfolg freigeschaltet: " + unlockedAchievement.Title + Environment.NewLine + unlockedAchievement.Description, 999);
+                    unlockedAchievement = null;
+                }
+
+                switch (successfulApprovedAppointments)
+                {
+                    case 10:
+                        unlockedAchievement = await achievementRepository.GetByInternalTag("GOALSUCCESSAPPROVAL10");
+                        break;
+                    case 25:
+                        unlockedAchievement = await achievementRepository.GetByInternalTag("GOALSUCCESSAPPROVAL25");
+                        break;
+                    case 50:
+                        unlockedAchievement = await achievementRepository.GetByInternalTag("GOALSUCCESSAPPROVAL50");
+                        break;
+                }
+
+                if (unlockedAchievement != null)
+                {
+                    unlockedAchievement.Unlock();
+                    notifier.PushNotification("Neuer Erfolg freigeschaltet", "Erfolg freigeschaltet: " + unlockedAchievement.Title + Environment.NewLine + unlockedAchievement.Description, 999);
+                }
             }
-
-            if (unlockedAchievement != null)
+            catch (Exception ex)
             {
-                unlockedAchievement.Unlock();
-                notifier.PushNotification("Neuer Erfolg freigeschaltet", "Erfolg freigeschaltet: " + unlockedAchievement.Title + Environment.NewLine + unlockedAchievement.Description, 999);
-                unlockedAchievement = null;
-            }
-
-            switch (successfulApprovedAppointments)
-            {
-                case 10:
-                    unlockedAchievement = await achievementRepository.GetByInternalTag("GOALSUCCESSAPPROVAL10");
-                    break;
-                case 25:
-                    unlockedAchievement = await achievementRepository.GetByInternalTag("GOALSUCCESSAPPROVAL25");
-                    break;
-                case 50:
-                    unlockedAchievement = await achievementRepository.GetByInternalTag("GOALSUCCESSAPPROVAL50");
-                    break;
-            }
-
-            if (unlockedAchievement != null)
-            {
-                unlockedAchievement.Unlock();
-                notifier.PushNotification("Neuer Erfolg freigeschaltet", "Erfolg freigeschaltet: " + unlockedAchievement.Title + Environment.NewLine + unlockedAchievement.Description, 999);
+                Crashes.TrackError(ex);
             }
         }
     }

@@ -1,4 +1,6 @@
-﻿using GoalTracker.ViewModels.Interface;
+﻿using System;
+using GoalTracker.ViewModels.Interface;
+using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -9,8 +11,15 @@ namespace GoalTracker.Views.Main.Settings.Achievements
     {
         public AchievementsPage(ISettingViewModel settingViewModel)
         {
-            BindingContext = settingViewModel;
-            InitializeComponent();
+            try
+            {
+                BindingContext = settingViewModel;
+                InitializeComponent();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
     }
 }

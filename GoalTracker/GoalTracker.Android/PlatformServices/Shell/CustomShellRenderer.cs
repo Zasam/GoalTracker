@@ -1,4 +1,6 @@
-﻿using GoalTracker.Droid.PlatformServices.Shell;
+﻿using System;
+using GoalTracker.Droid.PlatformServices.Shell;
+using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
@@ -14,7 +16,15 @@ namespace GoalTracker.Droid.PlatformServices.Shell
 
         protected override IShellBottomNavViewAppearanceTracker CreateBottomNavViewAppearanceTracker(ShellItem shellItem)
         {
-            return new CustomBottomNavigationAppearanceTracker(this, shellItem);
+            try
+            {
+                return new CustomBottomNavigationAppearanceTracker(this, shellItem);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                return null;
+            }
         }
     }
 }

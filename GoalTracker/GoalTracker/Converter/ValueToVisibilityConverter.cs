@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 
 namespace GoalTracker.Converter
@@ -8,22 +9,30 @@ namespace GoalTracker.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null)
-                return false;
-
-            if (value is bool boolValue)
-                return boolValue;
-
-            if (value is string stringValue)
+            try
             {
-                if (string.IsNullOrWhiteSpace(stringValue))
+                if (value == null)
                     return false;
 
-                return true;
-            }
+                if (value is bool boolValue)
+                    return boolValue;
 
-            throw new InvalidOperationException(
-                "Type for convertion in ValueToVisibilityConverter is not defined. Add type in code...!");
+                if (value is string stringValue)
+                {
+                    if (string.IsNullOrWhiteSpace(stringValue))
+                        return false;
+
+                    return true;
+                }
+
+                throw new InvalidOperationException(
+                    "Type for convertion in ValueToVisibilityConverter is not defined. Add type for " + value.GetType() + "in code...!");
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                return false;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

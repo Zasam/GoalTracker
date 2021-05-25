@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -14,10 +16,17 @@ namespace GoalTracker.Views.Welcome
 
         protected override async void OnAppearing()
         {
-            base.OnAppearing();
+            try
+            {
+                base.OnAppearing();
 
-            await Task.Delay(5000);
-            AppShell.Instance.SetUIState(UIStates.Welcome, UIStates.Initialization);
+                await Task.Delay(5000);
+                AppShell.Instance.SetUIState(UIStates.Welcome, UIStates.Initialization);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
     }
 }

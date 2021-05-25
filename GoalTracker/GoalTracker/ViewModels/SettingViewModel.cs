@@ -176,22 +176,36 @@ namespace GoalTracker.ViewModels
 
         public SettingViewModel(IAchievementRepository achievementRepository, IUserRepository userRepository)
         {
-            this.userRepository = userRepository;
-            this.achievementRepository = achievementRepository;
+            try
+            {
+                this.userRepository = userRepository;
+                this.achievementRepository = achievementRepository;
 
-            OpenLinkCommand = new Command<string>(OpenLink);
-            LoadAchievementsAsyncCommand = new Command(async () => await LoadAchievementsAsync());
-            LoadAchievementAsyncCommand = new Command<string>(async internalTag => await LoadAchievementAsync(internalTag));
-            UnlockAchievementAsyncCommand = new Command<string>(async internalTag => await UnlockAchievementAsync(internalTag));
-            RegisterDefaultUserAsyncCommand = new Command(async () => await RegisterDefaultUserAsync());
-            CreateAchievementsAsyncCommand = new Command(async () => await CreateAchievementsAsync());
-            LoadUserAsyncCommand = new Command(async () => await LoadUserAsync());
-            ChangeUsernameAsyncCommand = new Command<string>(async name => await ChangeUsernameAsync(name));
+                OpenLinkCommand = new Command<string>(OpenLink);
+                LoadAchievementsAsyncCommand = new Command(async () => await LoadAchievementsAsync());
+                LoadAchievementAsyncCommand = new Command<string>(async internalTag => await LoadAchievementAsync(internalTag));
+                UnlockAchievementAsyncCommand = new Command<string>(async internalTag => await UnlockAchievementAsync(internalTag));
+                RegisterDefaultUserAsyncCommand = new Command(async () => await RegisterDefaultUserAsync());
+                CreateAchievementsAsyncCommand = new Command(async () => await CreateAchievementsAsync());
+                LoadUserAsyncCommand = new Command(async () => await LoadUserAsync());
+                ChangeUsernameAsyncCommand = new Command<string>(async name => await ChangeUsernameAsync(name));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         private void OpenLink(string url)
         {
-            Launcher.OpenAsync(url);
+            try
+            {
+                Launcher.OpenAsync(url);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         private async Task LoadAchievementAsync(string internalTag)
@@ -244,9 +258,16 @@ namespace GoalTracker.ViewModels
 
         private async Task RegisterDefaultUserAsync()
         {
-            var newUser = new User("Default");
-            await userRepository.AddUserAsync(newUser);
-            await LoadUserAsync();
+            try
+            {
+                var newUser = new User("Default");
+                await userRepository.AddUserAsync(newUser);
+                await LoadUserAsync();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         private async Task CreateAchievementsAsync()
@@ -291,7 +312,6 @@ namespace GoalTracker.ViewModels
             try
             {
                 User = await userRepository.GetUserAsync();
-
                 if (User != null)
                     WelcomeMessage = GetRandomWelcomeMessage(User.Name);
             }
@@ -316,16 +336,24 @@ namespace GoalTracker.ViewModels
 
         private string GetRandomWelcomeMessage(string name)
         {
-            var random = new Random().Next(0, 3);
-
-            return random switch
+            try
             {
-                0 => $"Na {name}, wie geht's? 😄",
-                1 => $"Hey {name}, schöner Tag oder? 😍",
-                2 => $"Schön das du wieder an deinen Zielen dran bist {name} 🎯",
-                3 => $"Ich hoffe dir gefällt {nameof(GoalTracker)}, {name} ♥️",
-                _ => $"Irgendwas ist schief gelaufen {name}, wenn was schief geht, starte die App neu 😰 "
-            };
+                var random = new Random().Next(0, 3);
+
+                return random switch
+                {
+                    0 => $"Na {name}, wie geht's? 😄",
+                    1 => $"Hey {name}, schöner Tag oder? 😍",
+                    2 => $"Schön das du wieder an deinen Zielen dran bist {name} 🎯",
+                    3 => $"Ich hoffe dir gefällt {nameof(GoalTracker)}, {name} ♥️",
+                    _ => $"Irgendwas ist schief gelaufen {name}, wenn was schief geht, starte die App neu 😰 "
+                };
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                return string.Empty;
+            }
         }
     }
 }

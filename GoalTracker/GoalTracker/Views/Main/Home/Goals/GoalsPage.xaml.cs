@@ -34,12 +34,19 @@ namespace GoalTracker.Views.Main.Home.Goals
 
         public GoalsPage(IGoalViewModel goalViewModel, ISettingViewModel settingViewModel)
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
 
-            SettingViewModel = settingViewModel;
-            this.goalViewModel = goalViewModel;
+                SettingViewModel = settingViewModel;
+                this.goalViewModel = goalViewModel;
 
-            BindingContext = goalViewModel;
+                BindingContext = goalViewModel;
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         #region Events
@@ -48,8 +55,15 @@ namespace GoalTracker.Views.Main.Home.Goals
 
         protected override void OnDisappearing()
         {
-            GoalListView.ResetSwipe();
-            base.OnDisappearing();
+            try
+            {
+                GoalListView.ResetSwipe();
+                base.OnDisappearing();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         #endregion Page Events
@@ -58,7 +72,14 @@ namespace GoalTracker.Views.Main.Home.Goals
 
         private async void AddGoalToolbarItem_OnClicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new AddGoalPage(goalViewModel, settingViewModel));
+            try
+            {
+                await Navigation.PushAsync(new AddGoalPage(goalViewModel, settingViewModel));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         #endregion // ToolbarItem Events

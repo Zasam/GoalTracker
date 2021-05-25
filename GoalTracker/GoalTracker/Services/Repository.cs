@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GoalTracker.Context;
 using GoalTracker.Services.Interface;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.EntityFrameworkCore;
 
 namespace GoalTracker.Services
@@ -21,51 +22,118 @@ namespace GoalTracker.Services
 
         protected async Task<TEntity> GetAsync(int id)
         {
-            return await Context.Set<TEntity>().FindAsync(id);
+            try
+            {
+                return await Context.Set<TEntity>().FindAsync(id);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                return null;
+            }
         }
 
         protected async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return await Context.Set<TEntity>().ToListAsync();
+            try
+            {
+                return await Context.Set<TEntity>().ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                return null;
+            }
         }
 
         public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await Context.Set<TEntity>().Where(predicate).ToListAsync();
+            try
+            {
+                return await Context.Set<TEntity>().Where(predicate).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                return null;
+            }
         }
 
         protected async Task AddAsync(TEntity entity)
         {
-            await Context.Set<TEntity>().AddAsync(entity);
-            await Context.SaveChangesAsync();
+            try
+            {
+                await Context.Set<TEntity>().AddAsync(entity);
+                await Context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         protected async Task AddRangeAsync(IEnumerable<TEntity> entities)
         {
-            await Context.Set<TEntity>().AddRangeAsync(entities);
-            await Context.SaveChangesAsync();
+            try
+            {
+                await Context.Set<TEntity>().AddRangeAsync(entities);
+                await Context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         protected async Task RemoveAsync(TEntity entity)
         {
-            Context.Set<TEntity>().Remove(entity);
-            await Context.SaveChangesAsync();
+            try
+            {
+                Context.Set<TEntity>().Remove(entity);
+                await Context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         protected async Task RemoveRangeAsync(IEnumerable<TEntity> entities)
         {
-            Context.Set<TEntity>().RemoveRange(entities);
-            await Context.SaveChangesAsync();
+            try
+            {
+                Context.Set<TEntity>().RemoveRange(entities);
+                await Context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         public async Task<bool> ExistsAsync(TEntity entity)
         {
-            return await Context.Set<TEntity>().ContainsAsync(entity);
+            try
+            {
+                return await Context.Set<TEntity>().ContainsAsync(entity);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                return false;
+            }
         }
 
         public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            await Context.SaveChangesAsync(cancellationToken);
+            try
+            {
+                await Context.SaveChangesAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
     }
 }

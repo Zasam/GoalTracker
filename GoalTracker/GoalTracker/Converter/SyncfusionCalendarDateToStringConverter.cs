@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
+using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 
 namespace GoalTracker.Converter
@@ -10,12 +9,18 @@ namespace GoalTracker.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            int returnValue = 0;
+            try
+            {
+                if (value is DateTime date)
+                    return date.Day;
 
-            if (value is DateTime date)
-                returnValue = date.Day;
-
-            return returnValue;
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+                return 0;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

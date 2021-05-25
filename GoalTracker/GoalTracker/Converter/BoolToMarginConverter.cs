@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 
 namespace GoalTracker.Converter
@@ -8,12 +9,19 @@ namespace GoalTracker.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool boolValue)
+            try
             {
-                if (boolValue)
-                    return new Thickness(0);
+                if (value is bool boolValue)
+                {
+                    if (boolValue)
+                        return new Thickness(0);
 
-                return new Thickness(0, -15, 0, 0);
+                    return new Thickness(0, -15, 0, 0);
+                }
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
             }
 
             return new Thickness(0);

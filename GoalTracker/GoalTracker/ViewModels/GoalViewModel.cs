@@ -298,29 +298,36 @@ namespace GoalTracker.ViewModels
 
         public GoalViewModel(IGoalRepository goalRepository, IGoalAppointmentRepository goalAppointmentRepository, IGoalTaskRepository goalTaskRepository, IUserRepository userRepository, ISettingViewModel settingViewModel)
         {
-            this.goalRepository = goalRepository;
-            this.userRepository = userRepository;
+            try
+            {
+                this.goalRepository = goalRepository;
+                this.userRepository = userRepository;
 
-            GoalTaskRepository = goalTaskRepository;
-            GoalAppointmentRepository = goalAppointmentRepository;
-            SettingViewModel = settingViewModel;
+                GoalTaskRepository = goalTaskRepository;
+                GoalAppointmentRepository = goalAppointmentRepository;
+                SettingViewModel = settingViewModel;
 
-            GoalMinimumStartDate = DateTime.Now;
-            GoalStartDate = DateTime.Now.AddHours(1);
-            GoalMinimumEndDate = DateTime.Now.AddDays(1);
-            GoalEndDate = DateTime.Now.AddDays(1);
-            GoalNotificationIntervalIndex = 3;
-            GoalNotificationTime = TimeSpan.FromHours(DateTime.Now.Hour + 1);
+                GoalMinimumStartDate = DateTime.Now;
+                GoalStartDate = DateTime.Now.AddHours(1);
+                GoalMinimumEndDate = DateTime.Now.AddDays(1);
+                GoalEndDate = DateTime.Now.AddDays(1);
+                GoalNotificationIntervalIndex = 3;
+                GoalNotificationTime = TimeSpan.FromHours(DateTime.Now.Hour + 1);
 
-            GoalNotificationIntervals = new List<string>();
-            foreach (var notificationInterval in Enum.GetValues(typeof(GoalAppointmentInterval)))
-                GoalNotificationIntervals.Add(Enum.GetName(typeof(GoalAppointmentInterval), notificationInterval));
+                GoalNotificationIntervals = new List<string>();
+                foreach (var notificationInterval in Enum.GetValues(typeof(GoalAppointmentInterval)))
+                    GoalNotificationIntervals.Add(Enum.GetName(typeof(GoalAppointmentInterval), notificationInterval));
 
-            LoadGoalsAsyncCommand = new Command(async () => await LoadGoalsAsync());
-            AddGoalAsyncCommand = new Command<Goal>(async goal => await AddGoalAsync(goal));
-            EditGoalAsyncCommand = new Command<Goal>(async goal => await EditGoalAsync(goal));
-            DeleteGoalAsyncCommand = new Command<Goal>(async goal => await DeleteGoalAsync(goal));
-            LoadTasksAsyncCommand = new Command<Goal>(async goal => await LoadTasksAsync(goal));
+                LoadGoalsAsyncCommand = new Command(async () => await LoadGoalsAsync());
+                AddGoalAsyncCommand = new Command<Goal>(async goal => await AddGoalAsync(goal));
+                EditGoalAsyncCommand = new Command<Goal>(async goal => await EditGoalAsync(goal));
+                DeleteGoalAsyncCommand = new Command<Goal>(async goal => await DeleteGoalAsync(goal));
+                LoadTasksAsyncCommand = new Command<Goal>(async goal => await LoadTasksAsync(goal));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         private async Task EditGoalAsync(Goal goal)
